@@ -1,0 +1,224 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProjectGuid>{DC8CFE83-6B94-445B-8BB7-D08DE6810E36}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>PICkit2V3</RootNamespace>
+    <AssemblyName>PICkit2V3</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <FileAlignment>4096</FileAlignment>
+    <ApplicationIcon>PICkit2V2.ico</ApplicationIcon>
+    <StartupObject>PICkit2V3.Program</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+  <ItemGroup>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Constants.cs" />
+    <Compile Include="Delegates\DelegateBlankCheck.cs" />
+    <Compile Include="Delegates\DelegateErase.cs" />
+    <Compile Include="Delegates\DelegateMemEdited.cs" />
+    <Compile Include="Delegates\DelegateMultiEEMemClosed.cs" />
+    <Compile Include="Delegates\DelegateMultiProgMemClosed.cs" />
+    <Compile Include="Delegates\DelegateOpenProgToGoGuide.cs" />
+    <Compile Include="Delegates\DelegateRead.cs" />
+    <Compile Include="Delegates\DelegateResetStatusBar.cs" />
+    <Compile Include="Delegates\DelegateStatusWin.cs" />
+    <Compile Include="Delegates\DelegateStepStatusBar.cs" />
+    <Compile Include="Delegates\DelegateUpdateGUI.cs" />
+    <Compile Include="Delegates\DelegateVddCallback.cs" />
+    <Compile Include="Delegates\DelegateVerify.cs" />
+    <Compile Include="Delegates\DelegateWrite.cs" />
+    <Compile Include="Delegates\DelegateWriteCal.cs" />
+    <Compile Include="DeviceData.cs" />
+    <Compile Include="DeviceFile.cs" />
+    <Compile Include="DialogAbout.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DialogAbout.Designer.cs">
+      <DependentUpon>DialogAbout.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DialogCalibrate.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DialogCalibrate.Designer.cs">
+      <DependentUpon>DialogCalibrate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DialogConfigEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DialogConfigEdit.Designer.cs">
+      <DependentUpon>DialogConfigEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DialogCustomBaud.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DialogCustomBaud.Designer.cs">
+      <DependentUpon>DialogCustomBaud.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DialogDevFile.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DialogDevFile.Designer.cs">
+      <DependentUpon>DialogDevFile.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DialogLogic.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DialogLogic.Designer.cs">
+      <DependentUpon>DialogLogic.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DialogPK2Go.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DialogPK2Go.Designer.cs">
+      <DependentUpon>DialogPK2Go.cs</DependentUpon>
+    </Compile>
+    <Compile Include="dialogSounds.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dialogSounds.Designer.cs">
+      <DependentUpon>dialogSounds.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DialogTrigger.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DialogTrigger.Designer.cs">
+      <DependentUpon>DialogTrigger.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DialogTroubleshoot.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DialogTroubleshoot.Designer.cs">
+      <DependentUpon>DialogTroubleshoot.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DialogUART.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DialogUART.Designer.cs">
+      <DependentUpon>DialogUART.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DialogUnitSelect.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DialogUnitSelect.Designer.cs">
+      <DependentUpon>DialogUnitSelect.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DialogUserIDs.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DialogUserIDs.Designer.cs">
+      <DependentUpon>DialogUserIDs.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DialogVDDErase.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DialogVDDErase.Designer.cs">
+      <DependentUpon>DialogVDDErase.cs</DependentUpon>
+    </Compile>
+    <Compile Include="dsPIC33_PE.cs" />
+    <Compile Include="FormMultiWinEEData.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormMultiWinEEData.Designer.cs">
+      <DependentUpon>FormMultiWinEEData.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormMultiWinProgMem.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormMultiWinProgMem.Designer.cs">
+      <DependentUpon>FormMultiWinProgMem.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormPICkit2.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormPICkit2.Designer.cs">
+      <DependentUpon>FormPICkit2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormTestMemory.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormTestMemory.Designer.cs">
+      <DependentUpon>FormTestMemory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ImportExportHex.cs" />
+    <Compile Include="PIC24F_PE.cs" />
+    <Compile Include="PIC32MXFunctions.cs" />
+    <Compile Include="PICkitFunctions.cs" />
+    <Compile Include="Pk2BootLoader.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <DependentUpon>Settings.settings</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="SetOSCCAL.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SetOSCCAL.Designer.cs">
+      <DependentUpon>SetOSCCAL.cs</DependentUpon>
+    </Compile>
+    <Compile Include="USB.cs" />
+    <Compile Include="Utilities.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DialogAbout.resources" />
+    <EmbeddedResource Include="DialogCalibrate.resources" />
+    <EmbeddedResource Include="DialogConfigEdit.resources" />
+    <EmbeddedResource Include="DialogCustomBaud.resources" />
+    <EmbeddedResource Include="DialogDevFile.resources" />
+    <EmbeddedResource Include="DialogLogic.resources" />
+    <EmbeddedResource Include="DialogPK2Go.resources" />
+    <EmbeddedResource Include="dialogSounds.resources" />
+    <EmbeddedResource Include="DialogTrigger.resources" />
+    <EmbeddedResource Include="DialogTroubleshoot.resources" />
+    <EmbeddedResource Include="DialogUART.resources" />
+    <EmbeddedResource Include="DialogUnitSelect.resources" />
+    <EmbeddedResource Include="DialogUserIDs.resources" />
+    <EmbeddedResource Include="DialogVDDErase.resources" />
+    <EmbeddedResource Include="FormMultiWinEEData.resources" />
+    <EmbeddedResource Include="FormMultiWinProgMem.resources" />
+    <EmbeddedResource Include="FormPICkit2.resources" />
+    <EmbeddedResource Include="FormTestMemory.resources" />
+    <EmbeddedResource Include="Properties\Resources.resources" />
+    <EmbeddedResource Include="SetOSCCAL.resources" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

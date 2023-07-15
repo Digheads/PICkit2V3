@@ -153,7 +153,6 @@ namespace PICkit2V3
 				this.timerInitalUpdate.Enabled = true;
 			}
 
-            File.WriteAllText("C:\\tmp\\debug.txt", filename);
             if (!string.IsNullOrEmpty(filename) && File.Exists(filename))
             {
                 hexImportFromHistory(filename);

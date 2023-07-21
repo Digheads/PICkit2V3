@@ -25,8 +25,8 @@ namespace PICkit2V3
 				AddOwnedForm(programMemMultiWin);
 				AddOwnedForm(eepromDataMultiWin);
 			}
-			initializeGUI();
-			if (!loadDeviceFile())
+			InitializeGUI();
+			if (!LoadDeviceFile())
 			{
 				return;
 			}
@@ -52,7 +52,7 @@ namespace PICkit2V3
 			PIC24F_PE.StepStatusBar = new DelegateStepStatusBar(StepStatusBar);
 			uartWindow.VddCallback = new DelegateVddCallback(SetVddState);
 			logicWindow.VddCallback = new DelegateVddCallback(SetVddState);
-			if (!detectPICkit2(true, true))
+			if (!DetectPICkit2(true, true))
 			{
 				if (bootLoad)
 				{
@@ -65,25 +65,25 @@ namespace PICkit2V3
 					return;
 				}
 				Thread.Sleep(3000);
-				if (!detectPICkit2(true, true))
+				if (!DetectPICkit2(true, true))
 				{
 					return;
 				}
 			}
-			partialEnableGUIControls();
+			PartialEnableGUIControls();
 			PICkitFunctions.ExitUARTMode();
 			PICkitFunctions.VddOff();
 			PICkitFunctions.SetVDDVoltage(3.3f, 0.85f);
 			if (autoDetectToolStripMenuItem.Checked)
 			{
-				lookForPoweredTarget(false);
+				LookForPoweredTarget(false);
 			}
 			if (searchOnStartup && PICkitFunctions.DetectDevice(16777215, true, chkBoxVddOn.Checked))
 			{
-				setGUIVoltageLimits(true);
+				SetGUIVoltageLimits(true);
 				PICkitFunctions.SetVDDVoltage((float)numUpDnVDD.Value, 0.85f);
 				displayStatusWindow.Text += "\nPIC Device Found.";
-				fullEnableGUIControls();
+				FullEnableGUIControls();
 			}
 			else
 			{
@@ -110,7 +110,7 @@ namespace PICkit2V3
 						break;
 					}
 				}
-				setGUIVoltageLimits(true);
+				SetGUIVoltageLimits(true);
 			}
 			if (num != 0f && PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].FamilyName == lastFamily && !selfPoweredTarget)
 			{
@@ -125,7 +125,7 @@ namespace PICkit2V3
 				numUpDnVDD.Value = (decimal)num;
 				PICkitFunctions.SetVDDVoltage((float)numUpDnVDD.Value, 0.85f);
 			}
-			checkForPowerErrors();
+			CheckForPowerErrors();
 			if (TestMemoryEnabled)
 			{
 				toolStripMenuItemTestMemory.Visible = true;
@@ -136,7 +136,7 @@ namespace PICkit2V3
 			}
 			if (!PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].PartDetect)
 			{
-				disableGUIControls();
+				DisableGUIControls();
 			}
 			if (multiWindow)
 			{
@@ -193,65 +193,57 @@ namespace PICkit2V3
 			updateGUI(true);
 		}
 
-		// Token: 0x060000AE RID: 174 RVA: 0x00025B23 File Offset: 0x00024B23
 		public bool ExtCallVerify()
 		{
-			return this.deviceVerify(false, 0, false);
+			return deviceVerify(false, 0, false);
 		}
 
-		// Token: 0x060000AF RID: 175 RVA: 0x00025B30 File Offset: 0x00024B30
 		public bool ExtCallWrite(bool verify)
 		{
-			bool @checked = this.verifyOnWriteToolStripMenuItem.Checked;
+			bool @checked = verifyOnWriteToolStripMenuItem.Checked;
 			if (verify)
 			{
-				this.verifyOnWriteToolStripMenuItem.Checked = true;
+				verifyOnWriteToolStripMenuItem.Checked = true;
 			}
 			else
 			{
-				this.verifyOnWriteToolStripMenuItem.Checked = false;
+				verifyOnWriteToolStripMenuItem.Checked = false;
 			}
-			bool result = this.deviceWrite();
-			this.verifyOnWriteToolStripMenuItem.Checked = @checked;
+			bool result = deviceWrite();
+			verifyOnWriteToolStripMenuItem.Checked = @checked;
 			return result;
 		}
 
-		// Token: 0x060000B0 RID: 176 RVA: 0x00025B7A File Offset: 0x00024B7A
 		public void ExtCallRead()
 		{
-			this.deviceRead();
+			deviceRead();
 		}
 
-		// Token: 0x060000B1 RID: 177 RVA: 0x00025B82 File Offset: 0x00024B82
 		public void ExtCallErase(bool writeOSCCAL)
 		{
-			this.eraseDeviceAll(writeOSCCAL, new uint[0]);
+			eraseDeviceAll(writeOSCCAL, new uint[0]);
 		}
 
-		// Token: 0x060000B2 RID: 178 RVA: 0x00025B91 File Offset: 0x00024B91
 		public void ExtCallCalEraseWrite(uint[] calwords)
 		{
-			this.eraseDeviceAll(false, calwords);
+			eraseDeviceAll(false, calwords);
 		}
 
-		// Token: 0x060000B3 RID: 179 RVA: 0x00025B9B File Offset: 0x00024B9B
 		public bool ExtCallBlank()
 		{
-			return this.blankCheckDevice();
+			return blankCheckDevice();
 		}
 
-		// Token: 0x060000B4 RID: 180 RVA: 0x00025BA3 File Offset: 0x00024BA3
 		public void MultiWinProgMemClosed()
 		{
-			this.multiWinPMemOpen = false;
-			this.toolStripMenuItemShowProgramMemory.Checked = false;
+			multiWinPMemOpen = false;
+			toolStripMenuItemShowProgramMemory.Checked = false;
 		}
 
-		// Token: 0x060000B5 RID: 181 RVA: 0x00025BB8 File Offset: 0x00024BB8
 		public void MultiWinEEMemClosed()
 		{
-			this.multiWinEEMemOpen = false;
-			this.toolStripMenuItemShowEEPROMData.Checked = false;
+			multiWinEEMemOpen = false;
+			toolStripMenuItemShowEEPROMData.Checked = false;
 		}
 
 		public void ShowMemEdited()
@@ -260,57 +252,52 @@ namespace PICkit2V3
 			checkImportFile = false;
 		}
 
-		// Token: 0x060000B7 RID: 183 RVA: 0x00025BE6 File Offset: 0x00024BE6
 		public void StatusWinWr(string dispText)
 		{
-			this.displayStatusWindow.Text = dispText;
-			base.Update();
+			displayStatusWindow.Text = dispText;
+			Update();
 		}
 
-		// Token: 0x060000B8 RID: 184 RVA: 0x00025BFA File Offset: 0x00024BFA
 		public void ResetStatusBar(int maxValue)
 		{
-			this.progressBar1.Value = 0;
-			this.progressBar1.Maximum = maxValue;
-			base.Update();
+			progressBar1.Value = 0;
+			progressBar1.Maximum = maxValue;
+			Update();
 		}
 
-		// Token: 0x060000B9 RID: 185 RVA: 0x00025C1A File Offset: 0x00024C1A
 		public void StepStatusBar()
 		{
-			this.progressBar1.PerformStep();
+			progressBar1.PerformStep();
 		}
 
-		// Token: 0x060000BA RID: 186 RVA: 0x00025C28 File Offset: 0x00024C28
 		public void SetVddState(bool force, bool forceState)
 		{
-			this.vddControl(force, forceState);
-			this.uartWindow.SetVddBox(this.numUpDnVDD.Enabled, this.chkBoxVddOn.Checked);
-			this.logicWindow.SetVddBox(this.numUpDnVDD.Enabled, this.chkBoxVddOn.Checked);
+			vddControl(force, forceState);
+			uartWindow.SetVddBox(numUpDnVDD.Enabled, chkBoxVddOn.Checked);
+			logicWindow.SetVddBox(numUpDnVDD.Enabled, chkBoxVddOn.Checked);
 		}
 
-		// Token: 0x060000BB RID: 187 RVA: 0x00025C80 File Offset: 0x00024C80
-		private bool checkForPowerErrors()
+		private bool CheckForPowerErrors()
 		{
 			Thread.Sleep(100);
 			Constants.PICkit2PWR pickit2PWR = PICkitFunctions.PowerStatus();
 			if (pickit2PWR == Constants.PICkit2PWR.vdderror)
 			{
-				if (!this.timerAutoImportWrite.Enabled)
+				if (!timerAutoImportWrite.Enabled)
 				{
 					MessageBox.Show("PICkit 2 VDD voltage level error.\nCheck target & retry operation.", "PICkit 2 Error");
 				}
 			}
 			else if (pickit2PWR == Constants.PICkit2PWR.vpperror)
 			{
-				if (!this.timerAutoImportWrite.Enabled)
+				if (!timerAutoImportWrite.Enabled)
 				{
 					MessageBox.Show("PICkit 2 VPP voltage level error.\nCheck target & retry operation.", "PICkit 2 Error");
 				}
 			}
 			else if (pickit2PWR == Constants.PICkit2PWR.vddvpperrors)
 			{
-				if (!this.timerAutoImportWrite.Enabled)
+				if (!timerAutoImportWrite.Enabled)
 				{
 					MessageBox.Show("PICkit 2 VDD and VPP voltage level errors.\nCheck target & retry operation.", "PICkit 2 Error");
 				}
@@ -319,110 +306,104 @@ namespace PICkit2V3
 			{
 				if (pickit2PWR == Constants.PICkit2PWR.vdd_on)
 				{
-					this.chkBoxVddOn.Checked = true;
+					chkBoxVddOn.Checked = true;
 					return false;
 				}
 				if (pickit2PWR == Constants.PICkit2PWR.vdd_off)
 				{
-					this.chkBoxVddOn.Checked = false;
+					chkBoxVddOn.Checked = false;
 					return false;
 				}
 			}
-			this.chkBoxVddOn.Checked = false;
+			chkBoxVddOn.Checked = false;
 			return true;
 		}
 
-		// Token: 0x060000BC RID: 188 RVA: 0x00025D34 File Offset: 0x00024D34
-		private bool lookForPoweredTarget(bool showMessageBox)
+		private bool LookForPoweredTarget(bool showMessageBox)
 		{
 			float num = 0f;
 			float num2 = 0f;
-			if (this.fastProgrammingToolStripMenuItem.Checked)
+			if (fastProgrammingToolStripMenuItem.Checked)
 			{
 				PICkitFunctions.SetProgrammingSpeed(0);
 			}
 			else
 			{
-				PICkitFunctions.SetProgrammingSpeed(FormPICkit2.slowSpeedICSP);
+				PICkitFunctions.SetProgrammingSpeed(slowSpeedICSP);
 			}
-			if (this.autoDetectToolStripMenuItem.Checked)
+			if (autoDetectToolStripMenuItem.Checked)
 			{
 				if (PICkitFunctions.CheckTargetPower(ref num, ref num2) == Constants.PICkit2PWR.selfpowered)
 				{
-					this.chkBoxVddOn.Checked = false;
-					if (!FormPICkit2.selfPoweredTarget)
+					chkBoxVddOn.Checked = false;
+					if (!selfPoweredTarget)
 					{
-						FormPICkit2.selfPoweredTarget = true;
-						this.chkBoxVddOn.Enabled = true;
-						this.chkBoxVddOn.Text = "Check";
-						this.numUpDnVDD.Enabled = false;
-						this.groupBoxVDD.Text = "VDD Target";
+						selfPoweredTarget = true;
+						chkBoxVddOn.Enabled = true;
+						chkBoxVddOn.Text = "Check";
+						numUpDnVDD.Enabled = false;
+						groupBoxVDD.Text = "VDD Target";
 						if (showMessageBox)
-						{
 							MessageBox.Show("Powered target detected.\n VDD source set to target.", "Target VDD");
-						}
 					}
-					this.numUpDnVDD.Maximum = (decimal)num;
-					this.numUpDnVDD.Value = (decimal)num;
-					this.numUpDnVDD.Update();
+					numUpDnVDD.Maximum = (decimal)num;
+					numUpDnVDD.Value = (decimal)num;
+					numUpDnVDD.Update();
 					return true;
 				}
-				if (FormPICkit2.selfPoweredTarget)
+				if (selfPoweredTarget)
 				{
-					FormPICkit2.selfPoweredTarget = false;
-					this.chkBoxVddOn.Enabled = true;
-					this.chkBoxVddOn.Text = "On";
-					this.numUpDnVDD.Enabled = true;
-					this.setGUIVoltageLimits(true);
-					this.groupBoxVDD.Text = "VDD PICkit 2";
+					selfPoweredTarget = false;
+					chkBoxVddOn.Enabled = true;
+					chkBoxVddOn.Text = "On";
+					numUpDnVDD.Enabled = true;
+					SetGUIVoltageLimits(true);
+					groupBoxVDD.Text = "VDD PICkit 2";
 					if (showMessageBox)
-					{
 						MessageBox.Show("Unpowered target detected.\n VDD source set to PICkit 2.", "Target VDD");
-					}
 				}
 				return false;
 			}
 			else
 			{
-				if (this.forcePICkit2ToolStripMenuItem.Checked)
+				if (forcePICkit2ToolStripMenuItem.Checked)
 				{
-					if (FormPICkit2.selfPoweredTarget)
+					if (selfPoweredTarget)
 					{
 						PICkitFunctions.ForcePICkitPowered();
-						FormPICkit2.selfPoweredTarget = false;
-						this.chkBoxVddOn.Enabled = true;
-						this.chkBoxVddOn.Text = "On";
-						this.numUpDnVDD.Enabled = true;
-						this.setGUIVoltageLimits(true);
-						this.groupBoxVDD.Text = "VDD PICkit 2";
+						selfPoweredTarget = false;
+						chkBoxVddOn.Enabled = true;
+						chkBoxVddOn.Text = "On";
+						numUpDnVDD.Enabled = true;
+						SetGUIVoltageLimits(true);
+						groupBoxVDD.Text = "VDD PICkit 2";
 					}
 					return false;
 				}
 				PICkitFunctions.CheckTargetPower(ref num, ref num2);
 				PICkitFunctions.ForceTargetPowered();
-				this.chkBoxVddOn.Checked = false;
-				if (!FormPICkit2.selfPoweredTarget)
+				chkBoxVddOn.Checked = false;
+				if (!selfPoweredTarget)
 				{
-					FormPICkit2.selfPoweredTarget = true;
-					this.chkBoxVddOn.Enabled = true;
-					this.chkBoxVddOn.Text = "Check";
-					this.numUpDnVDD.Enabled = false;
-					this.groupBoxVDD.Text = "VDD Target";
+					selfPoweredTarget = true;
+					chkBoxVddOn.Enabled = true;
+					chkBoxVddOn.Text = "Check";
+					numUpDnVDD.Enabled = false;
+					groupBoxVDD.Text = "VDD Target";
 				}
-				this.numUpDnVDD.Maximum = (decimal)num;
-				this.numUpDnVDD.Value = (decimal)num;
-				this.numUpDnVDD.Update();
+				numUpDnVDD.Maximum = (decimal)num;
+				numUpDnVDD.Value = (decimal)num;
+				numUpDnVDD.Update();
 				return true;
 			}
 		}
 
-		// Token: 0x060000BD RID: 189 RVA: 0x00025F74 File Offset: 0x00024F74
-		private void setGUIVoltageLimits(bool setValue)
+		private void SetGUIVoltageLimits(bool setValue)
 		{
-			if (this.numUpDnVDD.Enabled)
+			if (numUpDnVDD.Enabled)
 			{
-				this.numUpDnVDD.Maximum = (decimal)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].VddMax;
-				this.numUpDnVDD.Minimum = (decimal)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].VddMin;
+				numUpDnVDD.Maximum = (decimal)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].VddMax;
+				numUpDnVDD.Minimum = (decimal)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].VddMin;
 				if (PICkitFunctions.ActivePart != 0)
 				{
 					PICkitFunctions.DevFile.PartsList[0].VddMax = PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].VddMax;
@@ -430,93 +411,83 @@ namespace PICkit2V3
 				}
 				if (setValue)
 				{
-					if ((double)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].VddMax <= 4.0 && (double)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].VddMax >= 3.3)
+					if (PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].VddMax <= 4.0 && PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].VddMax >= 3.3)
 					{
-						this.numUpDnVDD.Value = 3.3m;
+						numUpDnVDD.Value = 3.3m;
 						return;
 					}
-					if ((double)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].VddMax == 5.0)
+					if (PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].VddMax == 5.0)
 					{
-						this.numUpDnVDD.Value = 5.0m;
+						numUpDnVDD.Value = 5.0m;
 						return;
 					}
-					this.numUpDnVDD.Value = (decimal)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].VddMax;
+					numUpDnVDD.Value = (decimal)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].VddMax;
 				}
 			}
 		}
 
-		// Token: 0x060000BE RID: 190 RVA: 0x00026118 File Offset: 0x00025118
-		private void initializeGUI()
+		private void InitializeGUI()
 		{
-			FormPICkit2.ScalefactW = (float)this.dataGridProgramMemory.Size.Width / 502f;
-			FormPICkit2.ScalefactH = (float)this.dataGridProgramMemory.Size.Height / 208f;
-			this.dataGridConfigWords.BackgroundColor = SystemColors.Control;
-			this.dataGridConfigWords.ColumnCount = 4;
-			this.dataGridConfigWords.RowCount = 2;
-			this.dataGridConfigWords.DefaultCellStyle.BackColor = SystemColors.Control;
-			this.dataGridConfigWords[0, 0].Selected = true;
-			this.dataGridConfigWords[0, 0].Selected = false;
-			int width = (int)(40f * FormPICkit2.ScalefactW);
+			ScalefactW = dataGridProgramMemory.Size.Width / 502f;
+			ScalefactH = dataGridProgramMemory.Size.Height / 208f;
+			dataGridConfigWords.BackgroundColor = SystemColors.Control;
+			dataGridConfigWords.ColumnCount = 4;
+			dataGridConfigWords.RowCount = 2;
+			dataGridConfigWords.DefaultCellStyle.BackColor = SystemColors.Control;
+			dataGridConfigWords[0, 0].Selected = true;
+			dataGridConfigWords[0, 0].Selected = false;
+			int width = (int)(40f * ScalefactW);
 			for (int i = 0; i < 4; i++)
 			{
-				this.dataGridConfigWords.Columns[i].Width = width;
+				dataGridConfigWords.Columns[i].Width = width;
 			}
-			this.dataGridConfigWords.Rows[0].Height = (int)(17f * FormPICkit2.ScalefactH);
-			this.dataGridConfigWords.Rows[1].Height = (int)(17f * FormPICkit2.ScalefactH);
-			this.progressBar1.Step = 1;
-			if (this.comboBoxProgMemView.SelectedIndex < 0)
-			{
-				this.comboBoxProgMemView.SelectedIndex = 0;
-			}
-			this.dataGridProgramMemory.DefaultCellStyle.Font = new Font("Courier New", 9f);
-			this.dataGridProgramMemory.ColumnCount = 9;
-			this.dataGridProgramMemory.RowCount = 512;
-			this.dataGridProgramMemory[0, 0].Selected = true;
-			this.dataGridProgramMemory[0, 0].Selected = false;
-			width = (int)(59f * FormPICkit2.ScalefactW);
-			this.dataGridProgramMemory.Columns[0].Width = width;
-			this.dataGridProgramMemory.Columns[0].ReadOnly = true;
-			width = (int)(53f * FormPICkit2.ScalefactW);
+			dataGridConfigWords.Rows[0].Height = (int)(17f * ScalefactH);
+			dataGridConfigWords.Rows[1].Height = (int)(17f * ScalefactH);
+			progressBar1.Step = 1;
+			if (comboBoxProgMemView.SelectedIndex < 0)
+				comboBoxProgMemView.SelectedIndex = 0;
+			dataGridProgramMemory.DefaultCellStyle.Font = new Font("Courier New", 9f);
+			dataGridProgramMemory.ColumnCount = 9;
+			dataGridProgramMemory.RowCount = 512;
+			dataGridProgramMemory[0, 0].Selected = true;
+			dataGridProgramMemory[0, 0].Selected = false;
+			width = (int)(59f * ScalefactW);
+			dataGridProgramMemory.Columns[0].Width = width;
+			dataGridProgramMemory.Columns[0].ReadOnly = true;
+			width = (int)(53f * ScalefactW);
 			for (int j = 1; j < 9; j++)
-			{
-				this.dataGridProgramMemory.Columns[j].Width = width;
-			}
+				dataGridProgramMemory.Columns[j].Width = width;
 			for (int k = 0; k < 32; k++)
 			{
-				this.dataGridProgramMemory[0, k].Style.BackColor = SystemColors.ControlLight;
-				this.dataGridProgramMemory[0, k].Value = string.Format("{0:X5}", k * 8);
+				dataGridProgramMemory[0, k].Style.BackColor = SystemColors.ControlLight;
+				dataGridProgramMemory[0, k].Value = string.Format("{0:X5}", k * 8);
 			}
-			if (this.comboBoxEE.SelectedIndex < 0)
-			{
-				this.comboBoxEE.SelectedIndex = 0;
-			}
-			this.dataGridViewEEPROM.DefaultCellStyle.Font = new Font("Courier New", 9f);
-			this.dataGridViewEEPROM.ColumnCount = 9;
-			this.dataGridViewEEPROM.RowCount = 16;
-			width = (int)(40f * FormPICkit2.ScalefactW);
-			this.dataGridViewEEPROM.Columns[0].Width = width;
-			this.dataGridViewEEPROM.Columns[0].ReadOnly = true;
-			width = (int)(41f * FormPICkit2.ScalefactW);
+			if (comboBoxEE.SelectedIndex < 0)
+				comboBoxEE.SelectedIndex = 0;
+			dataGridViewEEPROM.DefaultCellStyle.Font = new Font("Courier New", 9f);
+			dataGridViewEEPROM.ColumnCount = 9;
+			dataGridViewEEPROM.RowCount = 16;
+			width = (int)(40f * ScalefactW);
+			dataGridViewEEPROM.Columns[0].Width = width;
+			dataGridViewEEPROM.Columns[0].ReadOnly = true;
+			width = (int)(41f * ScalefactW);
 			for (int l = 1; l < 9; l++)
-			{
-				this.dataGridViewEEPROM.Columns[l].Width = width;
-			}
-			this.dataGridViewEEPROM[0, 0].Selected = true;
-			this.dataGridViewEEPROM[0, 0].Selected = false;
-			this.dataGridViewEEPROM.Visible = false;
-			this.updateAlertSoundCheck();
-			this.programMemMultiWin.TellMainFormProgMemClosed = new DelegateMultiProgMemClosed(this.MultiWinProgMemClosed);
-			this.programMemMultiWin.TellMainFormProgMemEdited = new DelegateMemEdited(this.ShowMemEdited);
-			this.programMemMultiWin.TellMainFormUpdateGUI = new DelegateUpdateGUI(this.ExtCallUpdateGUI);
-			this.eepromDataMultiWin.TellMainFormEEMemClosed = new DelegateMultiEEMemClosed(this.MultiWinEEMemClosed);
-			this.eepromDataMultiWin.TellMainFormProgMemEdited = new DelegateMemEdited(this.ShowMemEdited);
-			this.eepromDataMultiWin.TellMainFormUpdateGUI = new DelegateUpdateGUI(this.ExtCallUpdateGUI);
+				dataGridViewEEPROM.Columns[l].Width = width;
+			dataGridViewEEPROM[0, 0].Selected = true;
+			dataGridViewEEPROM[0, 0].Selected = false;
+			dataGridViewEEPROM.Visible = false;
+			updateAlertSoundCheck();
+			programMemMultiWin.TellMainFormProgMemClosed = new DelegateMultiProgMemClosed(MultiWinProgMemClosed);
+			programMemMultiWin.TellMainFormProgMemEdited = new DelegateMemEdited(ShowMemEdited);
+			programMemMultiWin.TellMainFormUpdateGUI = new DelegateUpdateGUI(ExtCallUpdateGUI);
+			eepromDataMultiWin.TellMainFormEEMemClosed = new DelegateMultiEEMemClosed(MultiWinEEMemClosed);
+			eepromDataMultiWin.TellMainFormProgMemEdited = new DelegateMemEdited(ShowMemEdited);
+			eepromDataMultiWin.TellMainFormUpdateGUI = new DelegateUpdateGUI(ExtCallUpdateGUI);
 		}
 
-		// Token: 0x060000BF RID: 191 RVA: 0x00026504 File Offset: 0x00025504
-		private bool loadDeviceFile()
+		private bool LoadDeviceFile()
 		{
-			if (this.selectDeviceFile)
+			if (selectDeviceFile)
 			{
 				DialogDevFile dialogDevFile = new DialogDevFile();
 				dialogDevFile.ShowDialog();
@@ -529,26 +500,25 @@ namespace PICkit2V3
 			}
 			if (PICkitFunctions.DevFile.Info.Compatibility < 0)
 			{
-				this.displayStatusWindow.Text = "Older device file is not compatible with this PICkit 2\nversion.  Visit www.microchip.com for updates.";
-				this.checkCommunicationToolStripMenuItem.Enabled = false;
+				displayStatusWindow.Text = "Older device file is not compatible with this PICkit 2\nversion.  Visit www.microchip.com for updates.";
+				checkCommunicationToolStripMenuItem.Enabled = false;
 				return false;
 			}
 			if (PICkitFunctions.DevFile.Info.Compatibility > 6)
 			{
-				this.displayStatusWindow.Text = "The device file requires a newer version of PICkit 2.\nVisit www.microchip.com for updates.";
-				this.checkCommunicationToolStripMenuItem.Enabled = false;
+				displayStatusWindow.Text = "The device file requires a newer version of PICkit 2.\nVisit www.microchip.com for updates.";
+				checkCommunicationToolStripMenuItem.Enabled = false;
 				return false;
 			}
 			return true;
 		}
 
-		// Token: 0x060000C0 RID: 192 RVA: 0x000265C0 File Offset: 0x000255C0
-		private bool detectPICkit2(bool showFound, bool detectMult)
+		private bool DetectPICkit2(bool showFound, bool detectMult)
 		{
 			Constants.PICkit2USB pickit2USB;
 			if (detectMult)
 			{
-				FormPICkit2.pk2number = 0;
+				pk2number = 0;
 				pickit2USB = PICkitFunctions.DetectPICkit2Device(0, false);
 				if (pickit2USB != Constants.PICkit2USB.notFound)
 				{
@@ -560,205 +530,201 @@ namespace PICkit2V3
 					}
 				}
 			}
-			pickit2USB = PICkitFunctions.DetectPICkit2Device(FormPICkit2.pk2number, true);
+			pickit2USB = PICkitFunctions.DetectPICkit2Device(pk2number, true);
 			if (pickit2USB == Constants.PICkit2USB.found)
 			{
-				this.downloadPICkit2FirmwareToolStripMenuItem.Enabled = true;
-				this.chkBoxVddOn.Enabled = true;
-				if (!FormPICkit2.selfPoweredTarget)
+				downloadPICkit2FirmwareToolStripMenuItem.Enabled = true;
+				chkBoxVddOn.Enabled = true;
+				if (!selfPoweredTarget)
 				{
-					this.numUpDnVDD.Enabled = true;
+					numUpDnVDD.Enabled = true;
 				}
-				this.deviceToolStripMenuItem.Enabled = true;
+				deviceToolStripMenuItem.Enabled = true;
 				if (showFound)
 				{
 					string serialUnitID = PICkitFunctions.GetSerialUnitID();
 					if (serialUnitID[0] == '-')
 					{
-						this.displayStatusWindow.Text = "PICkit 2 found and connected.";
-						this.Text = "PICkit 2 Programmer";
+						displayStatusWindow.Text = "PICkit 2 found and connected.";
+						Text = "PICkit 2 Programmer";
 					}
 					else
 					{
-						this.displayStatusWindow.Text = "PICkit 2 connected.  ID = " + serialUnitID;
-						this.Text = "PICkit 2 Programmer - " + serialUnitID;
+						displayStatusWindow.Text = "PICkit 2 connected.  ID = " + serialUnitID;
+						Text = "PICkit 2 Programmer - " + serialUnitID;
 					}
 				}
 				return true;
 			}
-			this.downloadPICkit2FirmwareToolStripMenuItem.Enabled = false;
-			this.chkBoxVddOn.Enabled = false;
-			this.numUpDnVDD.Enabled = false;
-			this.deviceToolStripMenuItem.Enabled = false;
-			this.disableGUIControls();
+			downloadPICkit2FirmwareToolStripMenuItem.Enabled = false;
+			chkBoxVddOn.Enabled = false;
+			numUpDnVDD.Enabled = false;
+			deviceToolStripMenuItem.Enabled = false;
+			DisableGUIControls();
 			if (pickit2USB == Constants.PICkit2USB.firmwareInvalid)
 			{
-				this.displayStatusWindow.BackColor = Color.Yellow;
-				this.downloadPICkit2FirmwareToolStripMenuItem.Enabled = true;
-				this.displayStatusWindow.Text = "The PICkit 2 OS v" + PICkitFunctions.FirmwareVersion + " must be updated.\nUse the Tools menu to download a new OS.";
-				this.oldFirmware = true;
+				displayStatusWindow.BackColor = Color.Yellow;
+				downloadPICkit2FirmwareToolStripMenuItem.Enabled = true;
+				displayStatusWindow.Text = "The PICkit 2 OS v" + PICkitFunctions.FirmwareVersion + " must be updated.\nUse the Tools menu to download a new OS.";
+				oldFirmware = true;
 				return false;
 			}
 			if (pickit2USB == Constants.PICkit2USB.bootloader)
 			{
-				this.displayStatusWindow.BackColor = Color.Yellow;
-				this.downloadPICkit2FirmwareToolStripMenuItem.Enabled = true;
-				this.displayStatusWindow.Text = "The PICkit 2 has no Operating System.\nUse the Tools menu to download an OS.";
-				this.bootLoad = true;
+				displayStatusWindow.BackColor = Color.Yellow;
+				downloadPICkit2FirmwareToolStripMenuItem.Enabled = true;
+				displayStatusWindow.Text = "The PICkit 2 has no Operating System.\nUse the Tools menu to download an OS.";
+				bootLoad = true;
 				return false;
 			}
-			this.displayStatusWindow.BackColor = Color.Salmon;
-			this.displayStatusWindow.Text = "PICkit 2 not found.  Check USB connections and \nuse Tools->Check Communication to retry.";
+			displayStatusWindow.BackColor = Color.Salmon;
+			displayStatusWindow.Text = "PICkit 2 not found.  Check USB connections and \nuse Tools->Check Communication to retry.";
 			return false;
 		}
 
-		// Token: 0x060000C1 RID: 193 RVA: 0x00026778 File Offset: 0x00025778
-		private void disableGUIControls()
+		private void DisableGUIControls()
 		{
-			this.importFileToolStripMenuItem.Enabled = false;
-			this.exportFileToolStripMenuItem.Enabled = false;
-			this.readDeviceToolStripMenuItem.Enabled = false;
-			this.writeDeviceToolStripMenuItem.Enabled = false;
-			this.verifyToolStripMenuItem.Enabled = false;
-			this.eraseToolStripMenuItem.Enabled = false;
-			this.blankCheckToolStripMenuItem.Enabled = false;
-			this.writeOnPICkitButtonToolStripMenuItem.Enabled = false;
-			this.pICkit2GoToolStripMenuItem.Enabled = false;
-			this.setOSCCALToolStripMenuItem.Enabled = false;
-			this.buttonRead.Enabled = false;
-			this.buttonWrite.Enabled = false;
-			this.buttonVerify.Enabled = false;
-			this.buttonErase.Enabled = false;
-			this.buttonBlankCheck.Enabled = false;
-			this.checkBoxProgMemEnabled.Enabled = false;
-			this.checkBoxProgMemEnabledAlt.Enabled = false;
-			this.comboBoxProgMemView.Enabled = false;
-			this.dataGridProgramMemory.ForeColor = SystemColors.GrayText;
-			this.dataGridProgramMemory.Enabled = false;
-			this.dataGridViewEEPROM.Visible = false;
-			this.comboBoxEE.Enabled = false;
-			this.checkBoxEEMem.Enabled = false;
-			this.checkBoxEEDATAMemoryEnabledAlt.Enabled = false;
-			this.buttonExportHex.Enabled = false;
-			this.checkBoxAutoImportWrite.Enabled = false;
-			this.troubleshhotToolStripMenuItem.Enabled = false;
-			this.calibrateToolStripMenuItem.Enabled = false;
-			this.programMemMultiWin.DisplayDisable();
-			this.eepromDataMultiWin.DisplayDisable();
-			this.UARTtoolStripMenuItem.Enabled = false;
-			this.toolStripMenuItemLogicTool.Enabled = false;
+			importFileToolStripMenuItem.Enabled = false;
+			exportFileToolStripMenuItem.Enabled = false;
+			readDeviceToolStripMenuItem.Enabled = false;
+			writeDeviceToolStripMenuItem.Enabled = false;
+			verifyToolStripMenuItem.Enabled = false;
+			eraseToolStripMenuItem.Enabled = false;
+			blankCheckToolStripMenuItem.Enabled = false;
+			writeOnPICkitButtonToolStripMenuItem.Enabled = false;
+			pICkit2GoToolStripMenuItem.Enabled = false;
+			setOSCCALToolStripMenuItem.Enabled = false;
+			buttonRead.Enabled = false;
+			buttonWrite.Enabled = false;
+			buttonVerify.Enabled = false;
+			buttonErase.Enabled = false;
+			buttonBlankCheck.Enabled = false;
+			checkBoxProgMemEnabled.Enabled = false;
+			checkBoxProgMemEnabledAlt.Enabled = false;
+			comboBoxProgMemView.Enabled = false;
+			dataGridProgramMemory.ForeColor = SystemColors.GrayText;
+			dataGridProgramMemory.Enabled = false;
+			dataGridViewEEPROM.Visible = false;
+			comboBoxEE.Enabled = false;
+			checkBoxEEMem.Enabled = false;
+			checkBoxEEDATAMemoryEnabledAlt.Enabled = false;
+			buttonExportHex.Enabled = false;
+			checkBoxAutoImportWrite.Enabled = false;
+			troubleshhotToolStripMenuItem.Enabled = false;
+			calibrateToolStripMenuItem.Enabled = false;
+			programMemMultiWin.DisplayDisable();
+			eepromDataMultiWin.DisplayDisable();
+			UARTtoolStripMenuItem.Enabled = false;
+			toolStripMenuItemLogicTool.Enabled = false;
 		}
 
-		// Token: 0x060000C2 RID: 194 RVA: 0x00026908 File Offset: 0x00025908
-		private void partialEnableGUIControls()
+		private void PartialEnableGUIControls()
 		{
-			this.importFileToolStripMenuItem.Enabled = true;
-			this.exportFileToolStripMenuItem.Enabled = false;
-			this.readDeviceToolStripMenuItem.Enabled = true;
-			this.writeDeviceToolStripMenuItem.Enabled = true;
-			this.verifyToolStripMenuItem.Enabled = true;
-			this.eraseToolStripMenuItem.Enabled = true;
-			this.blankCheckToolStripMenuItem.Enabled = true;
-			this.writeOnPICkitButtonToolStripMenuItem.Enabled = true;
-			this.pICkit2GoToolStripMenuItem.Enabled = true;
-			this.setOSCCALToolStripMenuItem.Enabled = false;
-			this.writeDeviceToolStripMenuItem.Enabled = false;
-			this.verifyToolStripMenuItem.Enabled = false;
-			this.buttonRead.Enabled = true;
-			this.buttonWrite.Enabled = false;
-			this.buttonVerify.Enabled = false;
-			this.buttonErase.Enabled = true;
-			this.buttonBlankCheck.Enabled = true;
-			this.checkBoxProgMemEnabled.Enabled = false;
-			this.checkBoxProgMemEnabledAlt.Enabled = false;
-			this.comboBoxProgMemView.Enabled = false;
-			this.dataGridProgramMemory.ForeColor = SystemColors.GrayText;
-			this.dataGridProgramMemory.Enabled = false;
-			this.dataGridViewEEPROM.Visible = false;
-			this.comboBoxEE.Enabled = false;
-			this.checkBoxEEMem.Enabled = false;
-			this.checkBoxEEDATAMemoryEnabledAlt.Enabled = false;
-			this.buttonExportHex.Enabled = false;
-			this.checkBoxAutoImportWrite.Enabled = false;
-			this.troubleshhotToolStripMenuItem.Enabled = true;
-			this.calibrateToolStripMenuItem.Enabled = true;
-			this.programMemMultiWin.DisplayDisable();
-			this.eepromDataMultiWin.DisplayDisable();
-			this.UARTtoolStripMenuItem.Enabled = true;
-			this.toolStripMenuItemLogicTool.Enabled = true;
+			importFileToolStripMenuItem.Enabled = true;
+			exportFileToolStripMenuItem.Enabled = false;
+			readDeviceToolStripMenuItem.Enabled = true;
+			writeDeviceToolStripMenuItem.Enabled = true;
+			verifyToolStripMenuItem.Enabled = true;
+			eraseToolStripMenuItem.Enabled = true;
+			blankCheckToolStripMenuItem.Enabled = true;
+			writeOnPICkitButtonToolStripMenuItem.Enabled = true;
+			pICkit2GoToolStripMenuItem.Enabled = true;
+			setOSCCALToolStripMenuItem.Enabled = false;
+			writeDeviceToolStripMenuItem.Enabled = false;
+			verifyToolStripMenuItem.Enabled = false;
+			buttonRead.Enabled = true;
+			buttonWrite.Enabled = false;
+			buttonVerify.Enabled = false;
+			buttonErase.Enabled = true;
+			buttonBlankCheck.Enabled = true;
+			checkBoxProgMemEnabled.Enabled = false;
+			checkBoxProgMemEnabledAlt.Enabled = false;
+			comboBoxProgMemView.Enabled = false;
+			dataGridProgramMemory.ForeColor = SystemColors.GrayText;
+			dataGridProgramMemory.Enabled = false;
+			dataGridViewEEPROM.Visible = false;
+			comboBoxEE.Enabled = false;
+			checkBoxEEMem.Enabled = false;
+			checkBoxEEDATAMemoryEnabledAlt.Enabled = false;
+			buttonExportHex.Enabled = false;
+			checkBoxAutoImportWrite.Enabled = false;
+			troubleshhotToolStripMenuItem.Enabled = true;
+			calibrateToolStripMenuItem.Enabled = true;
+			programMemMultiWin.DisplayDisable();
+			eepromDataMultiWin.DisplayDisable();
+			UARTtoolStripMenuItem.Enabled = true;
+			toolStripMenuItemLogicTool.Enabled = true;
 		}
 
-		// Token: 0x060000C3 RID: 195 RVA: 0x00026AB0 File Offset: 0x00025AB0
-		private void semiEnableGUIControls()
+		private void SemiEnableGUIControls()
 		{
-			this.importFileToolStripMenuItem.Enabled = true;
-			this.exportFileToolStripMenuItem.Enabled = false;
-			this.readDeviceToolStripMenuItem.Enabled = true;
-			this.writeDeviceToolStripMenuItem.Enabled = true;
-			this.verifyToolStripMenuItem.Enabled = true;
-			this.eraseToolStripMenuItem.Enabled = true;
-			this.blankCheckToolStripMenuItem.Enabled = true;
-			this.writeOnPICkitButtonToolStripMenuItem.Enabled = true;
-			this.pICkit2GoToolStripMenuItem.Enabled = true;
-			this.writeDeviceToolStripMenuItem.Enabled = true;
-			this.verifyToolStripMenuItem.Enabled = true;
-			this.setOSCCALToolStripMenuItem.Enabled = false;
-			this.buttonRead.Enabled = true;
-			this.buttonWrite.Enabled = true;
-			this.buttonVerify.Enabled = true;
-			this.buttonErase.Enabled = true;
-			this.buttonBlankCheck.Enabled = true;
-			this.checkBoxProgMemEnabled.Enabled = false;
-			this.checkBoxProgMemEnabledAlt.Enabled = false;
-			this.comboBoxProgMemView.Enabled = false;
-			this.dataGridProgramMemory.ForeColor = SystemColors.GrayText;
-			this.dataGridProgramMemory.Enabled = false;
-			this.dataGridViewEEPROM.Visible = true;
-			this.dataGridViewEEPROM.ForeColor = SystemColors.GrayText;
-			this.comboBoxEE.Enabled = false;
-			this.checkBoxEEMem.Enabled = false;
-			this.checkBoxEEDATAMemoryEnabledAlt.Enabled = false;
-			this.buttonExportHex.Enabled = false;
-			this.checkBoxAutoImportWrite.Enabled = true;
-			this.troubleshhotToolStripMenuItem.Enabled = true;
-			this.calibrateToolStripMenuItem.Enabled = true;
-			this.UARTtoolStripMenuItem.Enabled = true;
-			this.toolStripMenuItemLogicTool.Enabled = true;
+			importFileToolStripMenuItem.Enabled = true;
+			exportFileToolStripMenuItem.Enabled = false;
+			readDeviceToolStripMenuItem.Enabled = true;
+			writeDeviceToolStripMenuItem.Enabled = true;
+			verifyToolStripMenuItem.Enabled = true;
+			eraseToolStripMenuItem.Enabled = true;
+			blankCheckToolStripMenuItem.Enabled = true;
+			writeOnPICkitButtonToolStripMenuItem.Enabled = true;
+			pICkit2GoToolStripMenuItem.Enabled = true;
+			writeDeviceToolStripMenuItem.Enabled = true;
+			verifyToolStripMenuItem.Enabled = true;
+			setOSCCALToolStripMenuItem.Enabled = false;
+			buttonRead.Enabled = true;
+			buttonWrite.Enabled = true;
+			buttonVerify.Enabled = true;
+			buttonErase.Enabled = true;
+			buttonBlankCheck.Enabled = true;
+			checkBoxProgMemEnabled.Enabled = false;
+			checkBoxProgMemEnabledAlt.Enabled = false;
+			comboBoxProgMemView.Enabled = false;
+			dataGridProgramMemory.ForeColor = SystemColors.GrayText;
+			dataGridProgramMemory.Enabled = false;
+			dataGridViewEEPROM.Visible = true;
+			dataGridViewEEPROM.ForeColor = SystemColors.GrayText;
+			comboBoxEE.Enabled = false;
+			checkBoxEEMem.Enabled = false;
+			checkBoxEEDATAMemoryEnabledAlt.Enabled = false;
+			buttonExportHex.Enabled = false;
+			checkBoxAutoImportWrite.Enabled = true;
+			troubleshhotToolStripMenuItem.Enabled = true;
+			calibrateToolStripMenuItem.Enabled = true;
+			UARTtoolStripMenuItem.Enabled = true;
+			toolStripMenuItemLogicTool.Enabled = true;
 		}
 
-		// Token: 0x060000C4 RID: 196 RVA: 0x00026C54 File Offset: 0x00025C54
-		private void fullEnableGUIControls()
+		private void FullEnableGUIControls()
 		{
-			this.importFileToolStripMenuItem.Enabled = true;
-			this.exportFileToolStripMenuItem.Enabled = true;
-			this.readDeviceToolStripMenuItem.Enabled = true;
-			this.writeDeviceToolStripMenuItem.Enabled = true;
-			this.verifyToolStripMenuItem.Enabled = true;
-			this.eraseToolStripMenuItem.Enabled = true;
-			this.blankCheckToolStripMenuItem.Enabled = true;
-			this.writeOnPICkitButtonToolStripMenuItem.Enabled = true;
-			this.pICkit2GoToolStripMenuItem.Enabled = true;
-			this.writeDeviceToolStripMenuItem.Enabled = true;
-			this.verifyToolStripMenuItem.Enabled = true;
-			this.buttonRead.Enabled = true;
-			this.buttonWrite.Enabled = true;
-			this.buttonVerify.Enabled = true;
-			this.buttonErase.Enabled = true;
-			this.buttonBlankCheck.Enabled = true;
-			this.checkBoxProgMemEnabled.Enabled = true;
-			this.checkBoxProgMemEnabledAlt.Enabled = true;
-			this.comboBoxProgMemView.Enabled = true;
-			this.dataGridProgramMemory.Enabled = true;
-			this.dataGridProgramMemory.ForeColor = SystemColors.WindowText;
-			this.dataGridViewEEPROM.ForeColor = SystemColors.WindowText;
-			this.buttonExportHex.Enabled = true;
-			this.checkBoxAutoImportWrite.Enabled = true;
-			this.troubleshhotToolStripMenuItem.Enabled = true;
-			this.calibrateToolStripMenuItem.Enabled = true;
-			this.programMemMultiWin.DisplayEnable();
-			this.eepromDataMultiWin.DisplayEnable();
-			this.UARTtoolStripMenuItem.Enabled = true;
-			this.toolStripMenuItemLogicTool.Enabled = true;
+			importFileToolStripMenuItem.Enabled = true;
+			exportFileToolStripMenuItem.Enabled = true;
+			readDeviceToolStripMenuItem.Enabled = true;
+			writeDeviceToolStripMenuItem.Enabled = true;
+			verifyToolStripMenuItem.Enabled = true;
+			eraseToolStripMenuItem.Enabled = true;
+			blankCheckToolStripMenuItem.Enabled = true;
+			writeOnPICkitButtonToolStripMenuItem.Enabled = true;
+			pICkit2GoToolStripMenuItem.Enabled = true;
+			writeDeviceToolStripMenuItem.Enabled = true;
+			verifyToolStripMenuItem.Enabled = true;
+			buttonRead.Enabled = true;
+			buttonWrite.Enabled = true;
+			buttonVerify.Enabled = true;
+			buttonErase.Enabled = true;
+			buttonBlankCheck.Enabled = true;
+			checkBoxProgMemEnabled.Enabled = true;
+			checkBoxProgMemEnabledAlt.Enabled = true;
+			comboBoxProgMemView.Enabled = true;
+			dataGridProgramMemory.Enabled = true;
+			dataGridProgramMemory.ForeColor = SystemColors.WindowText;
+			dataGridViewEEPROM.ForeColor = SystemColors.WindowText;
+			buttonExportHex.Enabled = true;
+			checkBoxAutoImportWrite.Enabled = true;
+			troubleshhotToolStripMenuItem.Enabled = true;
+			calibrateToolStripMenuItem.Enabled = true;
+			programMemMultiWin.DisplayEnable();
+			eepromDataMultiWin.DisplayEnable();
+			UARTtoolStripMenuItem.Enabled = true;
+			toolStripMenuItemLogicTool.Enabled = true;
 		}
 
 		// Token: 0x060000C5 RID: 197 RVA: 0x00026DD0 File Offset: 0x00025DD0
@@ -1796,20 +1762,20 @@ namespace PICkit2V3
 				this.chkBoxVddOn.Checked = forceState;
 			}
 			bool @checked = this.chkBoxVddOn.Checked;
-			if (this.detectPICkit2(false, false))
+			if (this.DetectPICkit2(false, false))
 			{
 				if (@checked)
 				{
-					if (this.lookForPoweredTarget(true))
+					if (this.LookForPoweredTarget(true))
 					{
-						this.checkForPowerErrors();
+						this.CheckForPowerErrors();
 						PICkitFunctions.VddOff();
 						return;
 					}
 					this.chkBoxVddOn.Checked = true;
 					PICkitFunctions.SetVDDVoltage((float)this.numUpDnVDD.Value, 0.85f);
 					PICkitFunctions.VddOn();
-					if (this.checkForPowerErrors())
+					if (this.CheckForPowerErrors())
 					{
 						PICkitFunctions.VddOff();
 						return;
@@ -1826,7 +1792,7 @@ namespace PICkit2V3
 		// Token: 0x060000CC RID: 204 RVA: 0x00029703 File Offset: 0x00028703
 		private void guiChangeVDD(object sender, EventArgs e)
 		{
-			if (this.detectPICkit2(false, false))
+			if (this.DetectPICkit2(false, false))
 			{
 				PICkitFunctions.SetVDDVoltage((float)this.numUpDnVDD.Value, 0.85f);
 			}
@@ -2079,21 +2045,21 @@ namespace PICkit2V3
 				PICkitFunctions.SetVDDVoltage((float)this.numUpDnVDD.Value, 0.85f);
 				return true;
 			}
-			if (!this.detectPICkit2(false, false))
+			if (!this.DetectPICkit2(false, false))
 			{
 				return false;
 			}
-			if (this.checkForPowerErrors())
+			if (this.CheckForPowerErrors())
 			{
 				this.updateGUI(false);
 				return false;
 			}
-			this.lookForPoweredTarget(!this.timerAutoImportWrite.Enabled);
+			this.LookForPoweredTarget(!this.timerAutoImportWrite.Enabled);
 			if (PICkitFunctions.DevFile.Families[family].PartDetect)
 			{
 				if (!PICkitFunctions.DetectDevice(family, false, this.chkBoxVddOn.Checked))
 				{
-					this.semiEnableGUIControls();
+					this.SemiEnableGUIControls();
 					FormPICkit2.statusWindowColor = Constants.StatusColor.yellow;
 					this.displayStatusWindow.Text = "No device detected.";
 					if (PICkitFunctions.DevFile.Families[family].Vpp < 1f)
@@ -2101,12 +2067,12 @@ namespace PICkit2V3
 						Label label = this.displayStatusWindow;
 						label.Text += "\nEnsure proper capacitance on VDDCORE/VCAP pin.";
 					}
-					this.checkForPowerErrors();
+					this.CheckForPowerErrors();
 					this.updateGUI(false);
 					return false;
 				}
-				this.setGUIVoltageLimits(false);
-				this.fullEnableGUIControls();
+				this.SetGUIVoltageLimits(false);
+				this.FullEnableGUIControls();
 				this.updateGUI(false);
 			}
 			else if (PICkitFunctions.DevFile.Families[family].DeviceIDMask > 0U && this.deviceVerification)
@@ -2131,7 +2097,7 @@ namespace PICkit2V3
 							}
 						}
 					}
-					this.checkForPowerErrors();
+					this.CheckForPowerErrors();
 					this.updateGUI(false);
 					return false;
 				}
@@ -2145,7 +2111,7 @@ namespace PICkit2V3
 				Thread.Sleep(300);
 				PICkitFunctions.RunScript(1, 1);
 				this.conditionalVDDOff();
-				if (this.checkForPowerErrors())
+				if (this.CheckForPowerErrors())
 				{
 					this.updateGUI(false);
 					return false;
@@ -3702,28 +3668,28 @@ namespace PICkit2V3
 		// Token: 0x060000E4 RID: 228 RVA: 0x0002D8B0 File Offset: 0x0002C8B0
 		private void checkCommunication(object sender, EventArgs e)
 		{
-			if (!this.detectPICkit2(true, true))
+			if (!this.DetectPICkit2(true, true))
 			{
 				return;
 			}
-			this.partialEnableGUIControls();
-			this.lookForPoweredTarget(false);
+			this.PartialEnableGUIControls();
+			this.LookForPoweredTarget(false);
 			if (!PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].PartDetect)
 			{
-				this.setGUIVoltageLimits(true);
+				this.SetGUIVoltageLimits(true);
 				PICkitFunctions.SetVDDVoltage((float)this.numUpDnVDD.Value, 0.85f);
 				this.displayStatusWindow.Text = this.displayStatusWindow.Text + "\n[Parts in this family are not auto-detect.]";
-				this.fullEnableGUIControls();
+				this.FullEnableGUIControls();
 			}
 			else if (PICkitFunctions.DetectDevice(16777215, true, this.chkBoxVddOn.Checked))
 			{
-				this.setGUIVoltageLimits(true);
+				this.SetGUIVoltageLimits(true);
 				PICkitFunctions.SetVDDVoltage((float)this.numUpDnVDD.Value, 0.85f);
 				this.displayStatusWindow.Text = this.displayStatusWindow.Text + "\nPIC Device Found.";
-				this.fullEnableGUIControls();
+				this.FullEnableGUIControls();
 			}
 			this.displayDataSource.Text = "None (Empty/Erased)";
-			this.checkForPowerErrors();
+			this.CheckForPowerErrors();
 			this.updateGUI(true);
 		}
 
@@ -4185,7 +4151,7 @@ namespace PICkit2V3
 				this.chkBoxVddOn.Enabled = false;
 				this.numUpDnVDD.Enabled = false;
 				this.deviceToolStripMenuItem.Enabled = false;
-				this.disableGUIControls();
+				this.DisableGUIControls();
 				return;
 			}
 			this.progressBar1.PerformStep();
@@ -4210,23 +4176,23 @@ namespace PICkit2V3
 			PICkitFunctions.BL_Reset();
 			Thread.Sleep(5000);
 			PICkitFunctions.ResetPk2Number();
-			if (!this.detectPICkit2(true, true))
+			if (!this.DetectPICkit2(true, true))
 			{
 				return;
 			}
 			PICkitFunctions.VddOff();
-			this.lookForPoweredTarget(false);
+			this.LookForPoweredTarget(false);
 			if (PICkitFunctions.DetectDevice(16777215, true, this.chkBoxVddOn.Checked))
 			{
-				this.setGUIVoltageLimits(true);
+				this.SetGUIVoltageLimits(true);
 				this.displayStatusWindow.Text = this.displayStatusWindow.Text + "\nPIC Device Found.";
-				this.fullEnableGUIControls();
+				this.FullEnableGUIControls();
 			}
 			else
 			{
-				this.partialEnableGUIControls();
+				this.PartialEnableGUIControls();
 			}
-			this.checkForPowerErrors();
+			this.CheckForPowerErrors();
 			this.updateGUI(true);
 		}
 
@@ -4362,7 +4328,7 @@ namespace PICkit2V3
 			}
 			this.buttonLast = true;
 			this.deviceWrite();
-			this.checkForPowerErrors();
+			this.CheckForPowerErrors();
 		}
 
 		// Token: 0x060000F2 RID: 242 RVA: 0x0002ED24 File Offset: 0x0002DD24
@@ -4402,7 +4368,7 @@ namespace PICkit2V3
 			this.autoDetectToolStripMenuItem.Checked = true;
 			this.forcePICkit2ToolStripMenuItem.Checked = false;
 			this.forceTargetToolStripMenuItem.Checked = false;
-			this.lookForPoweredTarget(false);
+			this.LookForPoweredTarget(false);
 		}
 
 		// Token: 0x060000F6 RID: 246 RVA: 0x0002EDC3 File Offset: 0x0002DDC3
@@ -4417,7 +4383,7 @@ namespace PICkit2V3
 			this.autoDetectToolStripMenuItem.Checked = false;
 			this.forcePICkit2ToolStripMenuItem.Checked = true;
 			this.forceTargetToolStripMenuItem.Checked = false;
-			this.lookForPoweredTarget(false);
+			this.LookForPoweredTarget(false);
 		}
 
 		// Token: 0x060000F8 RID: 248 RVA: 0x0002EDF9 File Offset: 0x0002DDF9
@@ -4432,7 +4398,7 @@ namespace PICkit2V3
 			this.autoDetectToolStripMenuItem.Checked = false;
 			this.forcePICkit2ToolStripMenuItem.Checked = false;
 			this.forceTargetToolStripMenuItem.Checked = true;
-			this.lookForPoweredTarget(false);
+			this.LookForPoweredTarget(false);
 		}
 
 		// Token: 0x060000FA RID: 250 RVA: 0x0002EE30 File Offset: 0x0002DE30
@@ -4476,11 +4442,11 @@ namespace PICkit2V3
 			if (family != PICkitFunctions.GetActiveFamily())
 			{
 				PICkitFunctions.ActivePart = 0;
-				this.setGUIVoltageLimits(true);
+				this.SetGUIVoltageLimits(true);
 			}
 			else
 			{
-				this.setGUIVoltageLimits(false);
+				this.SetGUIVoltageLimits(false);
 			}
 			this.displayStatusWindow.Text = "";
 			if (PICkitFunctions.DevFile.Families[family].PartDetect)
@@ -4489,7 +4455,7 @@ namespace PICkit2V3
 				if (this.preProgrammingCheck(family))
 				{
 					this.displayStatusWindow.Text = PICkitFunctions.DevFile.Families[family].FamilyName + " device found.";
-					this.setGUIVoltageLimits(false);
+					this.SetGUIVoltageLimits(false);
 				}
 				this.comboBoxSelectPart.Visible = false;
 				this.displayDevice.Visible = true;
@@ -4509,7 +4475,7 @@ namespace PICkit2V3
 				{
 					this.updateGUI(true);
 				}
-				this.disableGUIControls();
+				this.DisableGUIControls();
 			}
 			this.displayDataSource.Text = "None (Empty/Erased)";
 		}
@@ -4533,12 +4499,12 @@ namespace PICkit2V3
 		{
 			if (this.comboBoxSelectPart.SelectedIndex == 0)
 			{
-				this.disableGUIControls();
+				this.DisableGUIControls();
 			}
 			else
 			{
 				string b = this.comboBoxSelectPart.SelectedItem.ToString();
-				this.fullEnableGUIControls();
+				this.FullEnableGUIControls();
 				for (int i = 0; i < PICkitFunctions.DevFile.Info.NumberParts; i++)
 				{
 					if (PICkitFunctions.DevFile.PartsList[i].PartName == b)
@@ -4549,7 +4515,7 @@ namespace PICkit2V3
 				}
 			}
 			PICkitFunctions.PrepNewPart(true);
-			this.setGUIVoltageLimits(true);
+			this.SetGUIVoltageLimits(true);
 			this.displayDataSource.Text = "None (Empty/Erased)";
 			if (this.useLVP && PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].LVPScript > 0)
 			{
@@ -6207,7 +6173,7 @@ namespace PICkit2V3
 			{
 				PICkitFunctions.ForceTargetPowered();
 			}
-			this.detectPICkit2(true, true);
+			this.DetectPICkit2(true, true);
 		}
 
 		// Token: 0x0600011F RID: 287 RVA: 0x00032584 File Offset: 0x00031584

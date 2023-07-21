@@ -587,7 +587,7 @@
 			this.readMeToolStripMenuItem.Name = "readMeToolStripMenuItem";
 			this.readMeToolStripMenuItem.Size = new global::System.Drawing.Size(206, 22);
 			this.readMeToolStripMenuItem.Text = "&ReadMe";
-			this.readMeToolStripMenuItem.Click += new global::System.EventHandler(this.launchReadMe);
+			this.readMeToolStripMenuItem.Click += new global::System.EventHandler(this.LaunchReadMe);
 			this.toolStripMenuItem3.Name = "toolStripMenuItem3";
 			this.toolStripMenuItem3.Size = new global::System.Drawing.Size(203, 6);
 			this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";

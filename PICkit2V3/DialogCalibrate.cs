@@ -1,141 +1,132 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 
 namespace PICkit2V3
 {
-	// Token: 0x02000008 RID: 8
 	public partial class DialogCalibrate : Form
 	{
-		// Token: 0x06000052 RID: 82 RVA: 0x00007CAD File Offset: 0x00006CAD
 		public DialogCalibrate()
 		{
-			this.InitializeComponent();
+			InitializeComponent();
 			PICkitFunctions.VddOff();
 			PICkitFunctions.ForcePICkitPowered();
-			this.setupClearButtons();
+			SetupClearButtons();
 		}
 
-		// Token: 0x06000053 RID: 83 RVA: 0x00007CCC File Offset: 0x00006CCC
-		private void buttonCancel_Click(object sender, EventArgs e)
+		private void ButtonCancel_Click(object sender, EventArgs e)
 		{
 			PICkitFunctions.VddOff();
-			if (this.unitIDChanged)
+			if (unitIDChanged)
 			{
 				PICkitFunctions.ResetPICkit2();
 				Thread.Sleep(1000);
 				MessageBox.Show("Resetting PICkit 2.\n\nPlease wait for USB enumeration\nto complete before clicking OK...", "Reset PICkit 2");
 				Thread.Sleep(1000);
 			}
-			base.Close();
+			Close();
 		}
 
-		// Token: 0x06000054 RID: 84 RVA: 0x00007D0C File Offset: 0x00006D0C
-		private void setupClearButtons()
+		private void SetupClearButtons()
 		{
 			if (PICkitFunctions.isCalibrated())
 			{
-				this.buttonClearCal.Enabled = true;
-				this.buttonClearCal.Text = "Clear Calibration";
+				buttonClearCal.Enabled = true;
+				buttonClearCal.Text = "Clear Calibration";
 			}
 			else
 			{
-				this.buttonClearCal.Enabled = false;
-				this.buttonClearCal.Text = "Unit Not Calibrated";
+				buttonClearCal.Enabled = false;
+				buttonClearCal.Text = "Unit Not Calibrated";
 			}
 			if (PICkitFunctions.UnitIDRead().Length > 0)
 			{
-				this.buttonClearUnitID.Enabled = true;
-				this.buttonClearUnitID.Text = "Clear Unit ID";
+				buttonClearUnitID.Enabled = true;
+				buttonClearUnitID.Text = "Clear Unit ID";
 				return;
 			}
-			this.buttonClearUnitID.Enabled = false;
-			this.buttonClearUnitID.Text = "No Assigned ID";
+			buttonClearUnitID.Enabled = false;
+			buttonClearUnitID.Text = "No Assigned ID";
 		}
 
-		// Token: 0x06000055 RID: 85 RVA: 0x00007DA0 File Offset: 0x00006DA0
-		private void buttonNext_Click(object sender, EventArgs e)
+		private void ButtonNext_Click(object sender, EventArgs e)
 		{
-			if (this.panelIntro.Visible)
+			if (panelIntro.Visible)
 			{
-				this.panelIntro.Visible = false;
-				this.panelSetup.Visible = true;
-				this.buttonBack.Enabled = true;
+				panelIntro.Visible = false;
+				panelSetup.Visible = true;
+				buttonBack.Enabled = true;
 				return;
 			}
-			if (this.panelSetup.Visible)
+			if (panelSetup.Visible)
 			{
-				this.panelSetup.Visible = false;
-				this.panelCal.Visible = true;
-				this.buttonCalibrate.Enabled = true;
-				this.labelGoodCal.Visible = false;
-				this.labelBadCal.Visible = false;
-				this.textBoxVDD.Text = "4.000";
-				this.textBoxVDD.Focus();
-				this.textBoxVDD.SelectAll();
+				panelSetup.Visible = false;
+				panelCal.Visible = true;
+				buttonCalibrate.Enabled = true;
+				labelGoodCal.Visible = false;
+				labelBadCal.Visible = false;
+				textBoxVDD.Text = "4.000";
+				textBoxVDD.Focus();
+				textBoxVDD.SelectAll();
 				PICkitFunctions.SetVoltageCals(256, 0, 128);
 				PICkitFunctions.SetVDDVoltage(4f, 3.4f);
 				PICkitFunctions.VddOn();
 				return;
 			}
-			if (this.panelCal.Visible)
+			if (panelCal.Visible)
 			{
-				this.panelCal.Visible = false;
-				this.panelUnitID.Visible = true;
-				this.buttonSetUnitID.Enabled = true;
-				this.labelAssignedID.Visible = false;
-				this.textBoxUnitID.Text = PICkitFunctions.UnitIDRead();
-				this.textBoxUnitID.Focus();
-				this.textBoxVDD.SelectAll();
-				this.buttonNext.Enabled = false;
-				this.buttonCancel.Text = "Finished";
+				panelCal.Visible = false;
+				panelUnitID.Visible = true;
+				buttonSetUnitID.Enabled = true;
+				labelAssignedID.Visible = false;
+				textBoxUnitID.Text = PICkitFunctions.UnitIDRead();
+				textBoxUnitID.Focus();
+				textBoxVDD.SelectAll();
+				buttonNext.Enabled = false;
+				buttonCancel.Text = "Finished";
 				PICkitFunctions.VddOff();
 			}
 		}
 
-		// Token: 0x06000056 RID: 86 RVA: 0x00007F00 File Offset: 0x00006F00
-		private void buttonBack_Click(object sender, EventArgs e)
+		private void ButtonBack_Click(object sender, EventArgs e)
 		{
-			if (this.panelSetup.Visible)
+			if (panelSetup.Visible)
 			{
-				this.panelIntro.Visible = true;
-				this.panelSetup.Visible = false;
-				this.buttonBack.Enabled = false;
-				this.setupClearButtons();
+				panelIntro.Visible = true;
+				panelSetup.Visible = false;
+				buttonBack.Enabled = false;
+				SetupClearButtons();
 				return;
 			}
-			if (this.panelCal.Visible)
+			if (panelCal.Visible)
 			{
 				PICkitFunctions.VddOff();
-				this.panelSetup.Visible = true;
-				this.panelCal.Visible = false;
+				panelSetup.Visible = true;
+				panelCal.Visible = false;
 				return;
 			}
-			if (this.panelUnitID.Visible)
+			if (panelUnitID.Visible)
 			{
-				this.panelUnitID.Visible = false;
-				this.panelCal.Visible = true;
-				this.buttonCalibrate.Enabled = false;
-				this.labelGoodCal.Visible = false;
-				this.labelBadCal.Visible = false;
-				this.textBoxVDD.Text = "-";
-				this.buttonNext.Enabled = true;
-				this.buttonCancel.Text = "Cancel";
+				panelUnitID.Visible = false;
+				panelCal.Visible = true;
+				buttonCalibrate.Enabled = false;
+				labelGoodCal.Visible = false;
+				labelBadCal.Visible = false;
+				textBoxVDD.Text = "-";
+				buttonNext.Enabled = true;
+				buttonCancel.Text = "Cancel";
 			}
 		}
 
-		// Token: 0x06000057 RID: 87 RVA: 0x00007FE8 File Offset: 0x00006FE8
-		private void buttonCalibrate_Click(object sender, EventArgs e)
+		private void ButtonCalibrate_Click(object sender, EventArgs e)
 		{
 			float num = 0f;
 			float num2 = 0f;
-			float num3 = 0f;
 			bool flag = true;
+			float num3;
 			try
 			{
-				num3 = float.Parse(this.textBoxVDD.Text);
+				num3 = float.Parse(textBoxVDD.Text);
 			}
 			catch
 			{
@@ -163,7 +154,7 @@ namespace PICkit2V3
 			PICkitFunctions.SetVDDVoltage(4f, 2.7f);
 			Thread.Sleep(150);
 			PICkitFunctions.ReadPICkitVoltages(ref num, ref num2);
-			float num6 = (3f - 4f * num5 / num) * (float)(PICkitFunctions.CalculateVddCPP(4f) >> 6);
+			float num6 = (3f - 4f * num5 / num) * (PICkitFunctions.CalculateVddCPP(4f) >> 6);
 			if (num6 > 127f)
 			{
 				num6 = 127f;
@@ -187,59 +178,54 @@ namespace PICkit2V3
 			}
 			if (flag)
 			{
-				this.labelGoodCal.Visible = true;
-				this.labelBadCal.Visible = false;
+				labelGoodCal.Visible = true;
+				labelBadCal.Visible = false;
 				PICkitFunctions.SetVoltageCals((ushort)num4, (byte)num6, (byte)((double)num7 + 0.5));
 			}
 			else
 			{
-				this.labelGoodCal.Visible = false;
-				this.labelBadCal.Visible = true;
+				labelGoodCal.Visible = false;
+				labelBadCal.Visible = true;
 				PICkitFunctions.SetVoltageCals(256, 0, 128);
 			}
-			this.buttonCalibrate.Enabled = false;
+			buttonCalibrate.Enabled = false;
 			PICkitFunctions.VddOff();
 		}
 
-		// Token: 0x06000058 RID: 88 RVA: 0x000081D0 File Offset: 0x000071D0
-		private void textBoxUnitID_TextChanged(object sender, EventArgs e)
+		private void TextBoxUnitID_TextChanged(object sender, EventArgs e)
 		{
-			if (this.textBoxUnitID.Text.Length > 14)
+			if (textBoxUnitID.Text.Length > 14)
 			{
-				this.textBoxUnitID.Text = this.textBoxUnitID.Text.Substring(0, 14);
-				this.textBoxUnitID.SelectionStart = 14;
+				textBoxUnitID.Text = textBoxUnitID.Text.Substring(0, 14);
+				textBoxUnitID.SelectionStart = 14;
 			}
 		}
 
-		// Token: 0x06000059 RID: 89 RVA: 0x0000821C File Offset: 0x0000721C
-		private void buttonSetUnitID_Click(object sender, EventArgs e)
+		private void ButtonSetUnitID_Click(object sender, EventArgs e)
 		{
-			if (PICkitFunctions.UnitIDWrite(this.textBoxUnitID.Text))
+			if (PICkitFunctions.UnitIDWrite(textBoxUnitID.Text))
 			{
-				this.labelAssignedID.Visible = true;
-				this.buttonSetUnitID.Enabled = false;
-				this.unitIDChanged = true;
+				labelAssignedID.Visible = true;
+				buttonSetUnitID.Enabled = false;
+				unitIDChanged = true;
 			}
 		}
 
-		// Token: 0x0600005A RID: 90 RVA: 0x0000824F File Offset: 0x0000724F
-		private void buttonClearCal_Click(object sender, EventArgs e)
+		private void ButtonClearCal_Click(object sender, EventArgs e)
 		{
 			PICkitFunctions.SetVoltageCals(256, 0, 128);
-			this.buttonClearCal.Enabled = false;
-			this.buttonClearCal.Text = "Unit Not Calibrated";
+			buttonClearCal.Enabled = false;
+			buttonClearCal.Text = "Unit Not Calibrated";
 		}
 
-		// Token: 0x0600005B RID: 91 RVA: 0x0000827E File Offset: 0x0000727E
 		private void buttonClearUnitID_Click(object sender, EventArgs e)
 		{
 			PICkitFunctions.UnitIDWrite("");
-			this.buttonClearUnitID.Enabled = false;
-			this.buttonClearUnitID.Text = "No Assigned ID";
-			this.unitIDChanged = true;
+			buttonClearUnitID.Enabled = false;
+			buttonClearUnitID.Text = "No Assigned ID";
+			unitIDChanged = true;
 		}
 
-		// Token: 0x0400006A RID: 106
 		private bool unitIDChanged;
 	}
 }

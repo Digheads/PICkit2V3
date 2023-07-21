@@ -4303,12 +4303,11 @@ namespace PICkit2V3
 			}
 		}
 
-		// Token: 0x060000ED RID: 237 RVA: 0x0002EBCC File Offset: 0x0002DBCC
-		private void launchReadMe(object sender, EventArgs e)
+		private void LaunchReadMe(object sender, EventArgs e)
 		{
 			try
 			{
-				Process.Start(FormPICkit2.HomeDirectory + "\\PICkit 2 Readme.txt");
+				Process.Start(HomeDirectory + "\\PICkit 2 Readme.txt");
 			}
 			catch
 			{
@@ -4579,7 +4578,7 @@ namespace PICkit2V3
 		// Token: 0x060000FF RID: 255 RVA: 0x0002F258 File Offset: 0x0002E258
 		private void SaveINI()
 		{
-			StreamWriter streamWriter = File.CreateText(FormPICkit2.HomeDirectory + "\\PICkit2.ini");
+			StreamWriter streamWriter = File.CreateText(HomeDirectory + "\\PICkit2.ini");
 			string text = ";PICkit 2 version 2.61.00 INI file.";
 			streamWriter.WriteLine(text);
 			DateTime dateTime = default(DateTime);

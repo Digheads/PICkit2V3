@@ -8,10 +8,11 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>PICkit2V3</RootNamespace>
     <AssemblyName>PICkit2V3</AssemblyName>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>4096</FileAlignment>
     <ApplicationIcon>PICkit2V2.ico</ApplicationIcon>
     <StartupObject>PICkit2V3.Program</StartupObject>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -174,6 +175,7 @@
     <Compile Include="PIC24F_PE.cs" />
     <Compile Include="PIC32MXFunctions.cs" />
     <Compile Include="PICkitFunctions.cs" />
+    <Compile Include="StreamString.cs" />
     <Compile Include="Pk2BootLoader.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -215,6 +217,7 @@
     <EmbeddedResource Include="SetOSCCAL.resources" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

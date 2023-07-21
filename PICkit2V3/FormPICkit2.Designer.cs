@@ -206,7 +206,7 @@
 			this.importFileToolStripMenuItem.ShortcutKeys = (global::System.Windows.Forms.Keys)131145;
 			this.importFileToolStripMenuItem.Size = new global::System.Drawing.Size(177, 22);
 			this.importFileToolStripMenuItem.Text = "&Import Hex";
-			this.importFileToolStripMenuItem.Click += new global::System.EventHandler(this.menuFileImportHex);
+			this.importFileToolStripMenuItem.Click += new global::System.EventHandler(this.MenuFileImportHex);
 			this.exportFileToolStripMenuItem.Enabled = false;
 			this.exportFileToolStripMenuItem.Name = "exportFileToolStripMenuItem";
 			this.exportFileToolStripMenuItem.ShortcutKeys = (global::System.Windows.Forms.Keys)131141;
@@ -1078,7 +1078,7 @@
 			this.openHexFileDialog.DefaultExt = "hex";
 			this.openHexFileDialog.Filter = "HEX files|*.hex|All files|*.*";
 			this.openHexFileDialog.Title = "Import Hex File";
-			this.openHexFileDialog.FileOk += new global::System.ComponentModel.CancelEventHandler(this.importHexFile);
+			this.openHexFileDialog.FileOk += new global::System.ComponentModel.CancelEventHandler(this.ImportHexFile);
 			this.saveHexFileDialog.DefaultExt = "hex";
 			this.saveHexFileDialog.Filter = "Hex files|*.hex|All files|*.*";
 			this.saveHexFileDialog.Title = "Export Hex File";

@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.IO.Pipes;
 using System.Media;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -10,160 +11,186 @@ using System.Windows.Forms;
 
 namespace PICkit2V3
 {
-	// Token: 0x02000010 RID: 16
-	public partial class FormPICkit2 : Form
+    public partial class FormPICkit2 : Form
 	{
 		[DllImport("user32.dll")]
 		private static extern short FlashWindowEx(ref FLASHWINFO pwfi);
 
 		public FormPICkit2(string filename = "")
 		{
-			this.InitializeComponent();
-			float num = this.loadINI();
-			if (this.mainWinOwnsMem)
+			InitializeComponent();
+			float num = loadINI();
+			if (mainWinOwnsMem)
 			{
-				base.AddOwnedForm(this.programMemMultiWin);
-				base.AddOwnedForm(this.eepromDataMultiWin);
+				AddOwnedForm(programMemMultiWin);
+				AddOwnedForm(eepromDataMultiWin);
 			}
-			this.initializeGUI();
-			if (!this.loadDeviceFile())
+			initializeGUI();
+			if (!loadDeviceFile())
 			{
 				return;
 			}
-			if (this.toolStripMenuItemManualSelect.Checked)
+			if (toolStripMenuItemManualSelect.Checked)
 			{
-				this.ManualAutoSelectToggle(false);
+				ManualAutoSelectToggle(false);
 			}
-			this.buildDeviceMenu();
-			if (!this.allowDataEdits)
+			buildDeviceMenu();
+			if (!allowDataEdits)
 			{
-				this.dataGridProgramMemory.ReadOnly = true;
-				this.dataGridViewEEPROM.ReadOnly = true;
+				dataGridProgramMemory.ReadOnly = true;
+				dataGridViewEEPROM.ReadOnly = true;
 			}
 			PICkitFunctions.ResetBuffers();
-			PIC32MXFunctions.UpdateStatusWinText = new DelegateStatusWin(this.StatusWinWr);
-			PIC32MXFunctions.ResetStatusBar = new DelegateResetStatusBar(this.ResetStatusBar);
-			PIC32MXFunctions.StepStatusBar = new DelegateStepStatusBar(this.StepStatusBar);
-			dsPIC33_PE.UpdateStatusWinText = new DelegateStatusWin(this.StatusWinWr);
-			dsPIC33_PE.ResetStatusBar = new DelegateResetStatusBar(this.ResetStatusBar);
-			dsPIC33_PE.StepStatusBar = new DelegateStepStatusBar(this.StepStatusBar);
-			PIC24F_PE.UpdateStatusWinText = new DelegateStatusWin(this.StatusWinWr);
-			PIC24F_PE.ResetStatusBar = new DelegateResetStatusBar(this.ResetStatusBar);
-			PIC24F_PE.StepStatusBar = new DelegateStepStatusBar(this.StepStatusBar);
-			this.uartWindow.VddCallback = new DelegateVddCallback(this.SetVddState);
-			this.logicWindow.VddCallback = new DelegateVddCallback(this.SetVddState);
-			if (!this.detectPICkit2(true, true))
+			PIC32MXFunctions.UpdateStatusWinText = new DelegateStatusWin(StatusWinWr);
+			PIC32MXFunctions.ResetStatusBar = new DelegateResetStatusBar(ResetStatusBar);
+			PIC32MXFunctions.StepStatusBar = new DelegateStepStatusBar(StepStatusBar);
+			dsPIC33_PE.UpdateStatusWinText = new DelegateStatusWin(StatusWinWr);
+			dsPIC33_PE.ResetStatusBar = new DelegateResetStatusBar(ResetStatusBar);
+			dsPIC33_PE.StepStatusBar = new DelegateStepStatusBar(StepStatusBar);
+			PIC24F_PE.UpdateStatusWinText = new DelegateStatusWin(StatusWinWr);
+			PIC24F_PE.ResetStatusBar = new DelegateResetStatusBar(ResetStatusBar);
+			PIC24F_PE.StepStatusBar = new DelegateStepStatusBar(StepStatusBar);
+			uartWindow.VddCallback = new DelegateVddCallback(SetVddState);
+			logicWindow.VddCallback = new DelegateVddCallback(SetVddState);
+			if (!detectPICkit2(true, true))
 			{
-				if (this.bootLoad)
+				if (bootLoad)
 				{
 					return;
 				}
-				if (this.oldFirmware)
+				if (oldFirmware)
 				{
-					FormPICkit2.TestMemoryOpen = false;
-					this.timerDLFW.Enabled = true;
+					TestMemoryOpen = false;
+					timerDLFW.Enabled = true;
 					return;
 				}
 				Thread.Sleep(3000);
-				if (!this.detectPICkit2(true, true))
+				if (!detectPICkit2(true, true))
 				{
 					return;
 				}
 			}
-			this.partialEnableGUIControls();
+			partialEnableGUIControls();
 			PICkitFunctions.ExitUARTMode();
 			PICkitFunctions.VddOff();
 			PICkitFunctions.SetVDDVoltage(3.3f, 0.85f);
-			if (this.autoDetectToolStripMenuItem.Checked)
+			if (autoDetectToolStripMenuItem.Checked)
 			{
-				this.lookForPoweredTarget(false);
+				lookForPoweredTarget(false);
 			}
-			if (this.searchOnStartup && PICkitFunctions.DetectDevice(16777215, true, this.chkBoxVddOn.Checked))
+			if (searchOnStartup && PICkitFunctions.DetectDevice(16777215, true, chkBoxVddOn.Checked))
 			{
-				this.setGUIVoltageLimits(true);
-				PICkitFunctions.SetVDDVoltage((float)this.numUpDnVDD.Value, 0.85f);
-				this.displayStatusWindow.Text = this.displayStatusWindow.Text + "\nPIC Device Found.";
-				this.fullEnableGUIControls();
+				setGUIVoltageLimits(true);
+				PICkitFunctions.SetVDDVoltage((float)numUpDnVDD.Value, 0.85f);
+				displayStatusWindow.Text += "\nPIC Device Found.";
+				fullEnableGUIControls();
 			}
 			else
 			{
 				for (int i = 0; i < PICkitFunctions.DevFile.Info.NumberFamilies; i++)
 				{
-					if (PICkitFunctions.DevFile.Families[i].FamilyName == this.lastFamily)
+					if (PICkitFunctions.DevFile.Families[i].FamilyName == lastFamily)
 					{
 						PICkitFunctions.SetActiveFamily(i);
 						if (!PICkitFunctions.DevFile.Families[i].PartDetect)
 						{
-							this.buildDeviceSelectDropDown(i);
-							this.comboBoxSelectPart.Visible = true;
-							this.comboBoxSelectPart.SelectedIndex = 0;
-							this.displayDevice.Visible = true;
+							buildDeviceSelectDropDown(i);
+							comboBoxSelectPart.Visible = true;
+							comboBoxSelectPart.SelectedIndex = 0;
+							displayDevice.Visible = true;
 						}
 					}
 				}
 				for (int j = 1; j < PICkitFunctions.DevFile.Info.NumberParts; j++)
 				{
-					if ((int)PICkitFunctions.DevFile.PartsList[j].Family == PICkitFunctions.GetActiveFamily())
+					if (PICkitFunctions.DevFile.PartsList[j].Family == PICkitFunctions.GetActiveFamily())
 					{
 						PICkitFunctions.DevFile.PartsList[0].VddMax = PICkitFunctions.DevFile.PartsList[j].VddMax;
 						PICkitFunctions.DevFile.PartsList[0].VddMin = PICkitFunctions.DevFile.PartsList[j].VddMin;
 						break;
 					}
 				}
-				this.setGUIVoltageLimits(true);
+				setGUIVoltageLimits(true);
 			}
-			if (num != 0f && PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].FamilyName == this.lastFamily && !FormPICkit2.selfPoweredTarget)
+			if (num != 0f && PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].FamilyName == lastFamily && !selfPoweredTarget)
 			{
-				if (num > (float)this.numUpDnVDD.Maximum)
+				if (num > (float)numUpDnVDD.Maximum)
 				{
-					num = (float)this.numUpDnVDD.Maximum;
+					num = (float)numUpDnVDD.Maximum;
 				}
-				if (num < (float)this.numUpDnVDD.Minimum)
+				if (num < (float)numUpDnVDD.Minimum)
 				{
-					num = (float)this.numUpDnVDD.Minimum;
+					num = (float)numUpDnVDD.Minimum;
 				}
-				this.numUpDnVDD.Value = (decimal)num;
-				PICkitFunctions.SetVDDVoltage((float)this.numUpDnVDD.Value, 0.85f);
+				numUpDnVDD.Value = (decimal)num;
+				PICkitFunctions.SetVDDVoltage((float)numUpDnVDD.Value, 0.85f);
 			}
-			this.checkForPowerErrors();
-			if (FormPICkit2.TestMemoryEnabled)
+			checkForPowerErrors();
+			if (TestMemoryEnabled)
 			{
-				this.toolStripMenuItemTestMemory.Visible = true;
-				if (FormPICkit2.TestMemoryOpen)
+				toolStripMenuItemTestMemory.Visible = true;
+				if (TestMemoryOpen)
 				{
-					this.openTestMemory();
+					openTestMemory();
 				}
 			}
 			if (!PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].PartDetect)
 			{
-				this.disableGUIControls();
+				disableGUIControls();
 			}
-			if (this.multiWindow)
+			if (multiWindow)
 			{
-				this.saveMultWinPMemOpen = this.multiWinPMemOpen;
-				this.toolStripMenuItemShowProgramMemory.Checked = false;
-				this.multiWinPMemOpen = false;
-				this.saveMultiWinEEMemOpen = this.multiWinEEMemOpen;
-				this.toolStripMenuItemShowEEPROMData.Checked = false;
-				this.multiWinEEMemOpen = false;
+				saveMultWinPMemOpen = multiWinPMemOpen;
+				toolStripMenuItemShowProgramMemory.Checked = false;
+				multiWinPMemOpen = false;
+				saveMultiWinEEMemOpen = multiWinEEMemOpen;
+				toolStripMenuItemShowEEPROMData.Checked = false;
+				multiWinEEMemOpen = false;
 			}
-			this.updateGUI(true);
-			if (this.multiWindow)
+			updateGUI(true);
+			if (multiWindow)
 			{
-				this.timerInitalUpdate.Enabled = true;
+				timerInitalUpdate.Enabled = true;
 			}
 
             if (!string.IsNullOrEmpty(filename) && File.Exists(filename))
+                HexImportFromHistory(filename);
+
+            var t = new Thread(ServerThread)
             {
-                hexImportFromHistory(filename);
-                //deviceWrite();
-            }
+                IsBackground = true
+            };
+            t.Start();
         }
 
-		// Token: 0x060000AD RID: 173 RVA: 0x00025B1A File Offset: 0x00024B1A
-		public void ExtCallUpdateGUI()
+		private void ServerThread()
 		{
-			this.updateGUI(true);
+			NamedPipeServerStream pipeServer = new NamedPipeServerStream("PICkit2V3_Pipe", PipeDirection.InOut);
+			StreamString ss = new StreamString(pipeServer);
+			pipeServer.WaitForConnection();
+
+			try
+			{
+				ss.WriteString("<RC%C6=?z76ek>*5");
+				string filename = ss.ReadString();
+                HexImportFromHistory(filename);
+				WindowState = FormWindowState.Minimized;
+				WindowState = FormWindowState.Normal;
+            }
+			finally
+			{
+				pipeServer.Close();
+                var t = new Thread(ServerThread)
+                {
+                    IsBackground = true
+                };
+                t.Start();
+            }
+		}
+
+        public void ExtCallUpdateGUI()
+		{
+			updateGUI(true);
 		}
 
 		// Token: 0x060000AE RID: 174 RVA: 0x00025B23 File Offset: 0x00024B23
@@ -803,23 +830,22 @@ namespace PICkit2V3
 			base.Focus();
 		}
 
-		// Token: 0x060000C6 RID: 198 RVA: 0x00027190 File Offset: 0x00026190
 		private void updateGUI(bool updateMemories)
 		{
-			if (this.viewChanged)
+			if (viewChanged)
 			{
-				this.updateGUIView();
-				this.viewChanged = false;
+				updateGUIView();
+				viewChanged = false;
 			}
-			this.statusGroupBox.Text = PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].FamilyName + " Configuration";
+			statusGroupBox.Text = PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].FamilyName + " Configuration";
 			if (PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].ProgEntryVPPScript > 0)
 			{
-				this.VppFirstToolStripMenuItem.Enabled = true;
+				VppFirstToolStripMenuItem.Enabled = true;
 			}
 			else
 			{
-				this.VppFirstToolStripMenuItem.Checked = false;
-				this.VppFirstToolStripMenuItem.Enabled = false;
+				VppFirstToolStripMenuItem.Checked = false;
+				VppFirstToolStripMenuItem.Enabled = false;
 			}
 			if (PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].LVPScript > 0)
 			{
@@ -827,325 +853,325 @@ namespace PICkit2V3
 				text = text.Substring(text.Length - 2);
 				if (text == "HV")
 				{
-					this.toolStripMenuItemLVPEnabled.Text = "Use &High Voltage Program Entry";
-					this.labelLVP.Text = "HVP";
+					toolStripMenuItemLVPEnabled.Text = "Use &High Voltage Program Entry";
+					labelLVP.Text = "HVP";
 				}
 				else
 				{
-					this.toolStripMenuItemLVPEnabled.Text = "Use &LVP Program Entry";
-					this.labelLVP.Text = "LVP";
+					toolStripMenuItemLVPEnabled.Text = "Use &LVP Program Entry";
+					labelLVP.Text = "LVP";
 				}
-				this.toolStripMenuItemLVPEnabled.Enabled = true;
-				if (this.toolStripMenuItemLVPEnabled.Checked)
+				toolStripMenuItemLVPEnabled.Enabled = true;
+				if (toolStripMenuItemLVPEnabled.Checked)
 				{
-					this.labelLVP.Visible = true;
+					labelLVP.Visible = true;
 				}
 				else
 				{
-					this.labelLVP.Visible = false;
+					labelLVP.Visible = false;
 				}
 			}
 			else
 			{
-				this.toolStripMenuItemLVPEnabled.Text = "Use &LVP Program Entry";
-				this.toolStripMenuItemLVPEnabled.Checked = false;
-				this.toolStripMenuItemLVPEnabled.Enabled = false;
-				this.labelLVP.Text = "LVP";
-				this.labelLVP.Visible = false;
+				toolStripMenuItemLVPEnabled.Text = "Use &LVP Program Entry";
+				toolStripMenuItemLVPEnabled.Checked = false;
+				toolStripMenuItemLVPEnabled.Enabled = false;
+				labelLVP.Text = "LVP";
+				labelLVP.Visible = false;
 			}
 			if (PICkitFunctions.FamilyIsEEPROM())
 			{
-				this.importFileToolStripMenuItem.Text = "&Import Hex/Bin";
-				this.exportFileToolStripMenuItem.Text = "&Export Hex/Bin";
-				this.toolStripMenuItemDisplayUnimplConfigAs.Enabled = false;
+				importFileToolStripMenuItem.Text = "&Import Hex/Bin";
+				exportFileToolStripMenuItem.Text = "&Export Hex/Bin";
+				toolStripMenuItemDisplayUnimplConfigAs.Enabled = false;
 			}
 			else
 			{
-				this.importFileToolStripMenuItem.Text = "&Import Hex";
-				this.exportFileToolStripMenuItem.Text = "&Export Hex";
-				this.toolStripMenuItemDisplayUnimplConfigAs.Enabled = true;
+				importFileToolStripMenuItem.Text = "&Import Hex";
+				exportFileToolStripMenuItem.Text = "&Export Hex";
+				toolStripMenuItemDisplayUnimplConfigAs.Enabled = true;
 			}
-			this.displayDevice.Text = PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].PartName;
+			displayDevice.Text = PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].PartName;
 			if (PICkitFunctions.ActivePart == 0)
 			{
 				if (PICkitFunctions.LastDeviceID == 0U)
 				{
-					this.displayDevice.Text = "No Device Found";
+					displayDevice.Text = "No Device Found";
 				}
 				else
 				{
-					Label label = this.displayDevice;
+					Label label = displayDevice;
 					label.Text = label.Text + " (ID=" + string.Format("{0:X4}", PICkitFunctions.LastDeviceID) + ")";
 				}
 			}
-			this.displayDevice.Update();
-			this.displayRev.Text = " <" + string.Format("{0:X2}", PICkitFunctions.LastDeviceRev) + ">";
+			displayDevice.Update();
+			displayRev.Text = " <" + string.Format("{0:X2}", PICkitFunctions.LastDeviceRev) + ">";
 			if (updateMemories)
 			{
 				if (PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].UserIDWords > 0)
 				{
-					this.labelUserIDs.Enabled = true;
+					labelUserIDs.Enabled = true;
 					if (PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].UserIDWords < 9)
 					{
-						this.displayUserIDs.Visible = true;
-						this.buttonShowIDMem.Visible = false;
+						displayUserIDs.Visible = true;
+						buttonShowIDMem.Visible = false;
 						string text2 = "";
 						for (int i = 0; i < (int)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].UserIDWords; i++)
 						{
 							text2 += string.Format("{0:X2} ", 255U & PICkitFunctions.DeviceBuffers.UserIDs[i]);
 						}
-						this.displayUserIDs.Text = text2;
+						displayUserIDs.Text = text2;
 					}
 					else
 					{
-						this.displayUserIDs.Visible = false;
-						this.buttonShowIDMem.Visible = true;
+						displayUserIDs.Visible = false;
+						buttonShowIDMem.Visible = true;
 						if (DialogUserIDs.IDMemOpen)
 						{
-							this.dialogIDMemory.UpdateIDMemoryGrid();
+							dialogIDMemory.UpdateIDMemoryGrid();
 						}
 					}
 				}
 				else
 				{
-					this.labelUserIDs.Enabled = false;
-					this.displayUserIDs.Text = "";
-					this.displayUserIDs.Visible = false;
-					this.buttonShowIDMem.Visible = false;
+					labelUserIDs.Enabled = false;
+					displayUserIDs.Text = "";
+					displayUserIDs.Visible = false;
+					buttonShowIDMem.Visible = false;
 				}
 			}
-			if (this.checkBoxProgMemEnabled.Checked)
+			if (checkBoxProgMemEnabled.Checked)
 			{
-				this.displayUserIDs.ForeColor = SystemColors.WindowText;
+				displayUserIDs.ForeColor = SystemColors.WindowText;
 			}
 			else
 			{
-				this.displayUserIDs.ForeColor = SystemColors.GrayText;
+				displayUserIDs.ForeColor = SystemColors.GrayText;
 			}
 			if (updateMemories)
 			{
-				this.displayChecksum.Text = string.Format("{0:X4}", PICkitFunctions.ComputeChecksum(this.enableCodeProtectToolStripMenuItem.Checked, this.enableDataProtectStripMenuItem.Checked));
+				displayChecksum.Text = string.Format("{0:X4}", PICkitFunctions.ComputeChecksum(enableCodeProtectToolStripMenuItem.Checked, enableDataProtectStripMenuItem.Checked));
 			}
 			if (updateMemories)
 			{
-				if (PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigWords == 0 || PICkitFunctions.ActivePart == 0 || !this.allowDataEdits)
+				if (PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigWords == 0 || PICkitFunctions.ActivePart == 0 || !allowDataEdits)
 				{
-					this.labelConfig.Enabled = false;
+					labelConfig.Enabled = false;
 				}
 				else
 				{
-					this.labelConfig.Enabled = true;
+					labelConfig.Enabled = true;
 				}
 				int num = 0;
 				for (int j = 0; j < 2; j++)
 				{
 					for (int k = 0; k < 4; k++)
 					{
-						if (num < (int)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigWords)
+						if (num < PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigWords)
 						{
 							uint num2 = PICkitFunctions.DeviceBuffers.ConfigWords[num];
-							if (this.as0BitValueToolStripMenuItem.Checked)
+							if (as0BitValueToolStripMenuItem.Checked)
 							{
-								num2 &= (uint)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigMasks[num];
+								num2 &= PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigMasks[num];
 							}
-							else if (this.as1BitValueToolStripMenuItem.Checked)
+							else if (as1BitValueToolStripMenuItem.Checked)
 							{
-								num2 |= (uint)(~(uint)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigMasks[num]);
+								num2 |= ~(uint)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigMasks[num];
 							}
-							num2 &= (PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].BlankValue & 65535U);
-							if ((int)(PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].CPConfig - 1) == num)
+							num2 &= PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].BlankValue & 65535U;
+							if ((PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].CPConfig - 1) == num)
 							{
-								if (this.enableCodeProtectToolStripMenuItem.Checked && (PICkitFunctions.DeviceBuffers.ConfigWords[(int)(PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].CPConfig - 1)] & (uint)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].CPMask) == (uint)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].CPMask)
+								if (enableCodeProtectToolStripMenuItem.Checked && (PICkitFunctions.DeviceBuffers.ConfigWords[(PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].CPConfig - 1)] & PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].CPMask) == PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].CPMask)
 								{
-									num2 &= (uint)(~(uint)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].CPMask);
+									num2 &= ~(uint)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].CPMask;
 								}
-								if (this.enableDataProtectStripMenuItem.Checked && (PICkitFunctions.DeviceBuffers.ConfigWords[(int)(PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].CPConfig - 1)] & (uint)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].DPMask) == (uint)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].DPMask)
+								if (enableDataProtectStripMenuItem.Checked && (PICkitFunctions.DeviceBuffers.ConfigWords[(PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].CPConfig - 1)] & PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].DPMask) == PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].DPMask)
 								{
-									num2 &= (uint)(~(uint)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].DPMask);
+									num2 &= ~(uint)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].DPMask;
 								}
 							}
-							this.dataGridConfigWords[k, j].Value = string.Format("{0:X4}", num2);
+							dataGridConfigWords[k, j].Value = string.Format("{0:X4}", num2);
 							num++;
 						}
 						else
 						{
-							this.dataGridConfigWords[k, j].Value = " ";
+							dataGridConfigWords[k, j].Value = " ";
 						}
 						if (PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigWords == 9)
 						{
 							uint num3 = PICkitFunctions.DeviceBuffers.ConfigWords[8];
-							if (this.as0BitValueToolStripMenuItem.Checked)
+							if (as0BitValueToolStripMenuItem.Checked)
 							{
-								num3 &= (uint)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigMasks[8];
+								num3 &= PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigMasks[8];
 							}
-							else if (this.as1BitValueToolStripMenuItem.Checked)
+							else if (as1BitValueToolStripMenuItem.Checked)
 							{
-								num3 |= (uint)(~(uint)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigMasks[8]);
+								num3 |= ~(uint)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigMasks[8];
 							}
-							num3 &= (PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].BlankValue & 65535U);
-							this.labelConfig9.Text = string.Format("{0:X4}", num3);
-							this.labelConfig9.Visible = true;
+							num3 &= PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].BlankValue & 65535U;
+							labelConfig9.Text = string.Format("{0:X4}", num3);
+							labelConfig9.Visible = true;
 						}
 						else
 						{
-							this.labelConfig9.Visible = false;
+							labelConfig9.Visible = false;
 						}
 					}
 				}
 			}
-			if (this.checkBoxProgMemEnabled.Checked)
+			if (checkBoxProgMemEnabled.Checked)
 			{
-				this.dataGridConfigWords.ForeColor = SystemColors.WindowText;
+				dataGridConfigWords.ForeColor = SystemColors.WindowText;
 			}
 			else
 			{
-				this.dataGridConfigWords.ForeColor = SystemColors.GrayText;
+				dataGridConfigWords.ForeColor = SystemColors.GrayText;
 			}
 			if (PICkitFunctions.FamilyIsEEPROM() && PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigMasks[0] == 1)
 			{
-				this.checkBoxA0CS.Visible = true;
-				this.checkBoxA1CS.Visible = true;
-				this.checkBoxA2CS.Visible = true;
+				checkBoxA0CS.Visible = true;
+				checkBoxA1CS.Visible = true;
+				checkBoxA2CS.Visible = true;
 				if (PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigMasks[3] == 1)
 				{
-					this.checkBoxA0CS.Enabled = true;
-					this.checkBoxA1CS.Enabled = false;
-					this.checkBoxA1CS.Checked = false;
-					this.checkBoxA2CS.Enabled = false;
-					this.checkBoxA2CS.Checked = false;
+					checkBoxA0CS.Enabled = true;
+					checkBoxA1CS.Enabled = false;
+					checkBoxA1CS.Checked = false;
+					checkBoxA2CS.Enabled = false;
+					checkBoxA2CS.Checked = false;
 				}
 				else if (PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigMasks[3] == 2)
 				{
-					this.checkBoxA0CS.Enabled = true;
-					this.checkBoxA1CS.Enabled = true;
-					this.checkBoxA2CS.Enabled = false;
-					this.checkBoxA2CS.Checked = false;
+					checkBoxA0CS.Enabled = true;
+					checkBoxA1CS.Enabled = true;
+					checkBoxA2CS.Enabled = false;
+					checkBoxA2CS.Checked = false;
 				}
 				else if (PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigMasks[3] == 3)
 				{
-					this.checkBoxA0CS.Enabled = true;
-					this.checkBoxA1CS.Enabled = true;
-					this.checkBoxA2CS.Enabled = true;
+					checkBoxA0CS.Enabled = true;
+					checkBoxA1CS.Enabled = true;
+					checkBoxA2CS.Enabled = true;
 				}
 				else
 				{
-					this.checkBoxA0CS.Enabled = false;
-					this.checkBoxA0CS.Checked = false;
-					this.checkBoxA1CS.Enabled = false;
-					this.checkBoxA1CS.Checked = false;
-					this.checkBoxA2CS.Enabled = false;
-					this.checkBoxA2CS.Checked = false;
+					checkBoxA0CS.Enabled = false;
+					checkBoxA0CS.Checked = false;
+					checkBoxA1CS.Enabled = false;
+					checkBoxA1CS.Checked = false;
+					checkBoxA2CS.Enabled = false;
+					checkBoxA2CS.Checked = false;
 				}
 			}
 			else
 			{
-				this.checkBoxA0CS.Visible = false;
-				this.checkBoxA1CS.Visible = false;
-				this.checkBoxA2CS.Visible = false;
+				checkBoxA0CS.Visible = false;
+				checkBoxA1CS.Visible = false;
+				checkBoxA2CS.Visible = false;
 			}
 			if (PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].OSSCALSave)
 			{
-				this.setOSCCALToolStripMenuItem.Enabled = true;
-				this.labelOSCCAL.Enabled = true;
-				this.displayOSCCAL.Text = string.Format("{0:X4}", PICkitFunctions.DeviceBuffers.OSCCAL);
+				setOSCCALToolStripMenuItem.Enabled = true;
+				labelOSCCAL.Enabled = true;
+				displayOSCCAL.Text = string.Format("{0:X4}", PICkitFunctions.DeviceBuffers.OSCCAL);
 				if (PICkitFunctions.ValidateOSSCAL())
 				{
-					this.labelOSSCALInvalid.Visible = false;
-					this.displayOSCCAL.ForeColor = SystemColors.ControlText;
+					labelOSSCALInvalid.Visible = false;
+					displayOSCCAL.ForeColor = SystemColors.ControlText;
 				}
 				else
 				{
-					this.labelOSSCALInvalid.Visible = true;
-					this.displayOSCCAL.ForeColor = Color.Red;
+					labelOSSCALInvalid.Visible = true;
+					displayOSCCAL.ForeColor = Color.Red;
 				}
 			}
 			else
 			{
-				this.labelOSSCALInvalid.Visible = false;
-				this.setOSCCALToolStripMenuItem.Enabled = false;
-				this.labelOSCCAL.Enabled = false;
-				this.displayOSCCAL.Text = "";
+				labelOSSCALInvalid.Visible = false;
+				setOSCCALToolStripMenuItem.Enabled = false;
+				labelOSCCAL.Enabled = false;
+				displayOSCCAL.Text = "";
 			}
 			if (PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].BandGapMask > 0U)
 			{
-				this.labelBandGap.Enabled = true;
+				labelBandGap.Enabled = true;
 				if (PICkitFunctions.DeviceBuffers.BandGap == PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].BlankValue)
 				{
-					this.displayBandGap.Text = "";
+					displayBandGap.Text = "";
 				}
 				else
 				{
-					this.displayBandGap.Text = string.Format("{0:X4}", PICkitFunctions.DeviceBuffers.BandGap);
+					displayBandGap.Text = string.Format("{0:X4}", PICkitFunctions.DeviceBuffers.BandGap);
 				}
 			}
 			else
 			{
-				this.labelBandGap.Enabled = false;
-				this.displayBandGap.Text = "";
+				labelBandGap.Enabled = false;
+				displayBandGap.Text = "";
 			}
-			switch (FormPICkit2.statusWindowColor)
+			switch (statusWindowColor)
 			{
 			case Constants.StatusColor.green:
-				this.displayStatusWindow.BackColor = Color.LimeGreen;
-				if (FormPICkit2.PlaySuccessWav)
+				displayStatusWindow.BackColor = Color.LimeGreen;
+				if (PlaySuccessWav)
 				{
-					this.wavPlayer.SoundLocation = FormPICkit2.SuccessWavFile;
-					this.wavPlayer.Play();
+					wavPlayer.SoundLocation = SuccessWavFile;
+					wavPlayer.Play();
 				}
 				break;
 			case Constants.StatusColor.yellow:
-				this.displayStatusWindow.BackColor = Color.Yellow;
-				if (FormPICkit2.PlayWarningWav)
+				displayStatusWindow.BackColor = Color.Yellow;
+				if (PlayWarningWav)
 				{
-					this.wavPlayer.SoundLocation = FormPICkit2.WarningWavFile;
-					this.wavPlayer.Play();
+					wavPlayer.SoundLocation = WarningWavFile;
+					wavPlayer.Play();
 				}
 				break;
 			case Constants.StatusColor.red:
-				this.displayStatusWindow.BackColor = Color.Salmon;
-				if (FormPICkit2.PlayErrorWav)
+				displayStatusWindow.BackColor = Color.Salmon;
+				if (PlayErrorWav)
 				{
-					this.wavPlayer.SoundLocation = FormPICkit2.ErrorWavFile;
-					this.wavPlayer.Play();
+					wavPlayer.SoundLocation = ErrorWavFile;
+					wavPlayer.Play();
 				}
 				break;
 			default:
-				this.displayStatusWindow.BackColor = SystemColors.Info;
+				displayStatusWindow.BackColor = SystemColors.Info;
 				break;
 			}
-			FormPICkit2.statusWindowColor = Constants.StatusColor.normal;
+			statusWindowColor = Constants.StatusColor.normal;
 			if (PICkitFunctions.FamilyIsEEPROM())
 			{
-				this.checkBoxMCLR.Checked = false;
-				this.checkBoxMCLR.Enabled = false;
-				this.MCLRtoolStripMenuItem.Checked = false;
-				this.MCLRtoolStripMenuItem.Enabled = false;
+				checkBoxMCLR.Checked = false;
+				checkBoxMCLR.Enabled = false;
+				MCLRtoolStripMenuItem.Checked = false;
+				MCLRtoolStripMenuItem.Enabled = false;
 				PICkitFunctions.HoldMCLR(false);
 			}
 			else
 			{
-				this.checkBoxMCLR.Enabled = true;
-				this.MCLRtoolStripMenuItem.Enabled = true;
+				checkBoxMCLR.Enabled = true;
+				MCLRtoolStripMenuItem.Enabled = true;
 			}
 			if (PICkitFunctions.FamilyIsPIC32())
 			{
-				this.fastProgrammingToolStripMenuItem.Checked = true;
-				this.fastProgrammingToolStripMenuItem.Enabled = false;
+				fastProgrammingToolStripMenuItem.Checked = true;
+				fastProgrammingToolStripMenuItem.Enabled = false;
 			}
 			else
 			{
-				this.fastProgrammingToolStripMenuItem.Enabled = true;
+				fastProgrammingToolStripMenuItem.Enabled = true;
 			}
 			if (updateMemories)
 			{
 				if (PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].CPMask == 0)
 				{
-					this.enableCodeProtectToolStripMenuItem.Checked = false;
-					this.enableCodeProtectToolStripMenuItem.Enabled = false;
+					enableCodeProtectToolStripMenuItem.Checked = false;
+					enableCodeProtectToolStripMenuItem.Enabled = false;
 				}
 				else
 				{
-					this.enableCodeProtectToolStripMenuItem.Enabled = true;
+					enableCodeProtectToolStripMenuItem.Enabled = true;
 				}
 			}
 			if (updateMemories && multiWindow)
@@ -1156,16 +1182,16 @@ namespace PICkit2V3
 				}
 				programMemMultiWin.UpdateMultiWinProgMem(displayDataSource.Text);
 			}
-			if (updateMemories && !this.multiWindow)
+			if (updateMemories && !multiWindow)
 			{
 				if (PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].BlankValue > 16777215U)
 				{
-					this.comboBoxProgMemView.SelectedIndex = 0;
-					this.comboBoxProgMemView.Enabled = false;
+					comboBoxProgMemView.SelectedIndex = 0;
+					comboBoxProgMemView.Enabled = false;
 				}
 				else
 				{
-					this.comboBoxProgMemView.Enabled = true;
+					comboBoxProgMemView.Enabled = true;
 				}
 				int num4;
 				int num5;
@@ -1175,50 +1201,50 @@ namespace PICkit2V3
 					if (PICkitFunctions.FamilyIsEEPROM())
 					{
 						num4 = 17;
-						this.dataGridProgramMemory.Columns[0].Width = (int)(51f * FormPICkit2.ScalefactW);
+						dataGridProgramMemory.Columns[0].Width = (int)(51f * ScalefactW);
 						num5 = 16;
-						width = (int)(27f * FormPICkit2.ScalefactW);
+						width = (int)(27f * ScalefactW);
 					}
 					else
 					{
 						num4 = 17;
-						this.dataGridProgramMemory.Columns[0].Width = (int)(35f * FormPICkit2.ScalefactW);
+						dataGridProgramMemory.Columns[0].Width = (int)(35f * ScalefactW);
 						num5 = 16;
-						width = (int)(28f * FormPICkit2.ScalefactW);
+						width = (int)(28f * ScalefactW);
 					}
 				}
 				else if (PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].BlankValue > 16777215U)
 				{
 					num4 = 5;
-					this.dataGridProgramMemory.Columns[0].Width = (int)(99f * FormPICkit2.ScalefactW);
+					dataGridProgramMemory.Columns[0].Width = (int)(99f * ScalefactW);
 					num5 = 4;
-					width = (int)(96f * FormPICkit2.ScalefactW);
+					width = (int)(96f * ScalefactW);
 				}
 				else
 				{
 					num4 = 9;
-					this.dataGridProgramMemory.Columns[0].Width = (int)(59f * FormPICkit2.ScalefactW);
+					dataGridProgramMemory.Columns[0].Width = (int)(59f * ScalefactW);
 					num5 = 8;
-					width = (int)(53f * FormPICkit2.ScalefactW);
+					width = (int)(53f * ScalefactW);
 				}
-				if (this.dataGridProgramMemory.ColumnCount != num4)
+				if (dataGridProgramMemory.ColumnCount != num4)
 				{
-					this.dataGridProgramMemory.Rows.Clear();
-					this.dataGridProgramMemory.ColumnCount = num4;
+					dataGridProgramMemory.Rows.Clear();
+					dataGridProgramMemory.ColumnCount = num4;
 				}
-				for (int l = 1; l < this.dataGridProgramMemory.ColumnCount; l++)
+				for (int l = 1; l < dataGridProgramMemory.ColumnCount; l++)
 				{
-					this.dataGridProgramMemory.Columns[l].Width = width;
+					dataGridProgramMemory.Columns[l].Width = width;
 				}
-				int addressIncrement = (int)PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].AddressIncrement;
+				int addressIncrement = PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].AddressIncrement;
 				int num6;
 				int num7;
 				int num8;
-				if (this.comboBoxProgMemView.SelectedIndex == 0)
+				if (comboBoxProgMemView.SelectedIndex == 0)
 				{
 					num6 = num5;
 					num7 = (int)(PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ProgramMem / (uint)num6);
-					if ((ulong)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ProgramMem % (ulong)((long)num6) > 0UL)
+					if (PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ProgramMem % (ulong)((long)num6) > 0UL)
 					{
 						num7++;
 					}
@@ -1228,7 +1254,7 @@ namespace PICkit2V3
 				{
 					num6 = num5 / 2;
 					num7 = (int)(PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ProgramMem / (uint)num6);
-					if ((ulong)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ProgramMem % (ulong)((long)num6) > 0UL)
+					if (PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ProgramMem % (ulong)((long)num6) > 0UL)
 					{
 						num7++;
 					}
@@ -1238,16 +1264,16 @@ namespace PICkit2V3
 				{
 					num7 += 2;
 				}
-				if (this.dataGridProgramMemory.RowCount != num7)
+				if (dataGridProgramMemory.RowCount != num7)
 				{
-					this.dataGridProgramMemory.Rows.Clear();
-					this.dataGridProgramMemory.RowCount = num7;
+					dataGridProgramMemory.Rows.Clear();
+					dataGridProgramMemory.RowCount = num7;
 				}
 				for (int m = 0; m < num6; m++)
 				{
-					this.dataGridProgramMemory.Columns[m + 1].ReadOnly = false;
+					dataGridProgramMemory.Columns[m + 1].ReadOnly = false;
 				}
-				int num9 = this.dataGridProgramMemory.RowCount * num8 - 1;
+				int num9 = dataGridProgramMemory.RowCount * num8 - 1;
 				string format = "{0:X3}";
 				if (PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].BlankValue > 16777215U)
 				{
@@ -1267,47 +1293,47 @@ namespace PICkit2V3
 				num10 /= num6;
 				if (PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].BlankValue > 16777215U)
 				{
-					this.dataGridProgramMemory.ShowCellToolTips = false;
-					this.dataGridProgramMemory[0, 0].Value = "Program Flash";
-					for (int n = 0; n < this.dataGridProgramMemory.ColumnCount; n++)
+					dataGridProgramMemory.ShowCellToolTips = false;
+					dataGridProgramMemory[0, 0].Value = "Program Flash";
+					for (int n = 0; n < dataGridProgramMemory.ColumnCount; n++)
 					{
-						this.dataGridProgramMemory[n, 0].Style.BackColor = SystemColors.ControlDark;
-						this.dataGridProgramMemory[n, 0].ReadOnly = true;
+						dataGridProgramMemory[n, 0].Style.BackColor = SystemColors.ControlDark;
+						dataGridProgramMemory[n, 0].ReadOnly = true;
 					}
 					int num11 = 1;
 					int num12 = 486539264;
 					while (num11 <= num10)
 					{
-						this.dataGridProgramMemory[0, num11].Value = string.Format(format, num12);
-						this.dataGridProgramMemory[0, num11].Style.BackColor = SystemColors.ControlLight;
+						dataGridProgramMemory[0, num11].Value = string.Format(format, num12);
+						dataGridProgramMemory[0, num11].Style.BackColor = SystemColors.ControlLight;
 						num12 += num8;
 						num11++;
 					}
-					this.dataGridProgramMemory[0, num10 + 1].Value = "Boot Flash";
-					for (int num13 = 0; num13 < this.dataGridProgramMemory.ColumnCount; num13++)
+					dataGridProgramMemory[0, num10 + 1].Value = "Boot Flash";
+					for (int num13 = 0; num13 < dataGridProgramMemory.ColumnCount; num13++)
 					{
-						this.dataGridProgramMemory[num13, num10 + 1].Style.BackColor = SystemColors.ControlDark;
-						this.dataGridProgramMemory[num13, num10 + 1].ReadOnly = true;
+						dataGridProgramMemory[num13, num10 + 1].Style.BackColor = SystemColors.ControlDark;
+						dataGridProgramMemory[num13, num10 + 1].ReadOnly = true;
 					}
 					int num14 = num10 + 2;
 					int num15 = 532676608;
-					while (num14 < this.dataGridProgramMemory.RowCount)
+					while (num14 < dataGridProgramMemory.RowCount)
 					{
-						this.dataGridProgramMemory[0, num14].Value = string.Format(format, num15);
-						this.dataGridProgramMemory[0, num14].Style.BackColor = SystemColors.ControlLight;
+						dataGridProgramMemory[0, num14].Value = string.Format(format, num15);
+						dataGridProgramMemory[0, num14].Style.BackColor = SystemColors.ControlLight;
 						num15 += num8;
 						num14++;
 					}
 				}
 				else
 				{
-					this.dataGridProgramMemory.ShowCellToolTips = true;
+					dataGridProgramMemory.ShowCellToolTips = true;
 					int num16 = 0;
 					int num17 = 0;
-					while (num16 < this.dataGridProgramMemory.RowCount)
+					while (num16 < dataGridProgramMemory.RowCount)
 					{
-						this.dataGridProgramMemory[0, num16].Value = string.Format(format, num17);
-						this.dataGridProgramMemory[0, num16].Style.BackColor = SystemColors.ControlLight;
+						dataGridProgramMemory[0, num16].Value = string.Format(format, num17);
+						dataGridProgramMemory[0, num16].Style.BackColor = SystemColors.ControlLight;
 						num17 += num8;
 						num16++;
 					}
@@ -1341,14 +1367,14 @@ namespace PICkit2V3
 					{
 						for (int num20 = 0; num20 < num6; num20++)
 						{
-							this.dataGridProgramMemory[num20 + 1, num19].Value = string.Format(format2, PICkitFunctions.DeviceBuffers.ProgramMemory[num18++]);
+							dataGridProgramMemory[num20 + 1, num19].Value = string.Format(format2, PICkitFunctions.DeviceBuffers.ProgramMemory[num18++]);
 						}
 					}
-					for (int num21 = num10 + 2; num21 < this.dataGridProgramMemory.RowCount; num21++)
+					for (int num21 = num10 + 2; num21 < dataGridProgramMemory.RowCount; num21++)
 					{
 						for (int num22 = 0; num22 < num6; num22++)
 						{
-							this.dataGridProgramMemory[num22 + 1, num21].Value = string.Format(format2, PICkitFunctions.DeviceBuffers.ProgramMemory[num18++]);
+							dataGridProgramMemory[num22 + 1, num21].Value = string.Format(format2, PICkitFunctions.DeviceBuffers.ProgramMemory[num18++]);
 						}
 					}
 				}
@@ -1356,17 +1382,17 @@ namespace PICkit2V3
 				{
 					int num23 = 0;
 					int num24 = 0;
-					while (num23 < this.dataGridProgramMemory.RowCount - 1)
+					while (num23 < dataGridProgramMemory.RowCount - 1)
 					{
 						for (int num25 = 0; num25 < num6; num25++)
 						{
-							this.dataGridProgramMemory[num25 + 1, num23].ToolTipText = string.Format(format, num24 * addressIncrement);
-							this.dataGridProgramMemory[num25 + 1, num23].Value = string.Format(format2, PICkitFunctions.DeviceBuffers.ProgramMemory[num24++]);
+							dataGridProgramMemory[num25 + 1, num23].ToolTipText = string.Format(format, num24 * addressIncrement);
+							dataGridProgramMemory[num25 + 1, num23].Value = string.Format(format2, PICkitFunctions.DeviceBuffers.ProgramMemory[num24++]);
 						}
 						num23++;
 					}
 				}
-				int num26 = this.dataGridProgramMemory.RowCount - 1;
+				int num26 = dataGridProgramMemory.RowCount - 1;
 				int num27 = num26 * num6;
 				int num28 = (int)(PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ProgramMem % (uint)num6);
 				if (num28 == 0)
@@ -1379,31 +1405,31 @@ namespace PICkit2V3
 					{
 						if (num29 < num28)
 						{
-							this.dataGridProgramMemory[num29 + 1, num26].ToolTipText = string.Format(format, num27 * addressIncrement);
-							this.dataGridProgramMemory[num29 + 1, num26].Value = string.Format(format2, PICkitFunctions.DeviceBuffers.ProgramMemory[num27++]);
+							dataGridProgramMemory[num29 + 1, num26].ToolTipText = string.Format(format, num27 * addressIncrement);
+							dataGridProgramMemory[num29 + 1, num26].Value = string.Format(format2, PICkitFunctions.DeviceBuffers.ProgramMemory[num27++]);
 						}
 						else
 						{
-							this.dataGridProgramMemory[num29 + 1, num26].ReadOnly = true;
+							dataGridProgramMemory[num29 + 1, num26].ReadOnly = true;
 						}
 					}
 				}
-				if (this.comboBoxProgMemView.SelectedIndex >= 1)
+				if (comboBoxProgMemView.SelectedIndex >= 1)
 				{
 					for (int num30 = 0; num30 < num6; num30++)
 					{
-						this.dataGridProgramMemory.Columns[num30 + num6 + 1].ReadOnly = true;
+						dataGridProgramMemory.Columns[num30 + num6 + 1].ReadOnly = true;
 					}
-					if (this.comboBoxProgMemView.SelectedIndex == 1)
+					if (comboBoxProgMemView.SelectedIndex == 1)
 					{
 						int num31 = 0;
 						int num32 = 0;
-						while (num31 < this.dataGridProgramMemory.RowCount)
+						while (num31 < dataGridProgramMemory.RowCount)
 						{
 							for (int num33 = 0; num33 < num6; num33++)
 							{
-								this.dataGridProgramMemory[num33 + num6 + 1, num31].ToolTipText = string.Format(format, num32 * addressIncrement);
-								this.dataGridProgramMemory[num33 + num6 + 1, num31].Value = Utilities.ConvertIntASCII((int)PICkitFunctions.DeviceBuffers.ProgramMemory[num32++], numBytes);
+								dataGridProgramMemory[num33 + num6 + 1, num31].ToolTipText = string.Format(format, num32 * addressIncrement);
+								dataGridProgramMemory[num33 + num6 + 1, num31].Value = Utilities.ConvertIntASCII((int)PICkitFunctions.DeviceBuffers.ProgramMemory[num32++], numBytes);
 							}
 							num31++;
 						}
@@ -1412,68 +1438,68 @@ namespace PICkit2V3
 					{
 						int num34 = 0;
 						int num35 = 0;
-						while (num34 < this.dataGridProgramMemory.RowCount)
+						while (num34 < dataGridProgramMemory.RowCount)
 						{
 							for (int num36 = 0; num36 < num6; num36++)
 							{
-								this.dataGridProgramMemory[num36 + num6 + 1, num34].ToolTipText = string.Format(format, num35 * addressIncrement);
-								this.dataGridProgramMemory[num36 + num6 + 1, num34].Value = Utilities.ConvertIntASCIIReverse((int)PICkitFunctions.DeviceBuffers.ProgramMemory[num35++], numBytes);
+								dataGridProgramMemory[num36 + num6 + 1, num34].ToolTipText = string.Format(format, num35 * addressIncrement);
+								dataGridProgramMemory[num36 + num6 + 1, num34].Value = Utilities.ConvertIntASCIIReverse((int)PICkitFunctions.DeviceBuffers.ProgramMemory[num35++], numBytes);
 							}
 							num34++;
 						}
 					}
 				}
-				if (this.dataGridProgramMemory.FirstDisplayedCell != null && !this.progMemJustEdited)
+				if (dataGridProgramMemory.FirstDisplayedCell != null && !progMemJustEdited)
 				{
-					int rowIndex = this.dataGridProgramMemory.FirstDisplayedCell.RowIndex;
-					this.dataGridProgramMemory.MultiSelect = false;
-					this.dataGridProgramMemory[0, rowIndex].Selected = true;
-					this.dataGridProgramMemory[0, rowIndex].Selected = false;
-					this.dataGridProgramMemory.MultiSelect = true;
+					int rowIndex = dataGridProgramMemory.FirstDisplayedCell.RowIndex;
+					dataGridProgramMemory.MultiSelect = false;
+					dataGridProgramMemory[0, rowIndex].Selected = true;
+					dataGridProgramMemory[0, rowIndex].Selected = false;
+					dataGridProgramMemory.MultiSelect = true;
 				}
-				else if (this.dataGridProgramMemory.FirstDisplayedCell == null)
+				else if (dataGridProgramMemory.FirstDisplayedCell == null)
 				{
-					this.dataGridProgramMemory.MultiSelect = false;
-					this.dataGridProgramMemory[0, 0].Selected = true;
-					this.dataGridProgramMemory[0, 0].Selected = false;
-					this.dataGridProgramMemory.MultiSelect = true;
+					dataGridProgramMemory.MultiSelect = false;
+					dataGridProgramMemory[0, 0].Selected = true;
+					dataGridProgramMemory[0, 0].Selected = false;
+					dataGridProgramMemory.MultiSelect = true;
 				}
-				this.progMemJustEdited = false;
+				progMemJustEdited = false;
 			}
 			if (updateMemories && PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].EEMem > 0)
 			{
-				this.checkBoxProgMemEnabled.Enabled = true;
-				this.comboBoxEE.Enabled = true;
-				if (!this.checkBoxEEMem.Enabled)
+				checkBoxProgMemEnabled.Enabled = true;
+				comboBoxEE.Enabled = true;
+				if (!checkBoxEEMem.Enabled)
 				{
-					this.checkBoxEEMem.Checked = true;
-					this.checkBoxEEDATAMemoryEnabledAlt.Checked = true;
+					checkBoxEEMem.Checked = true;
+					checkBoxEEDATAMemoryEnabledAlt.Checked = true;
 				}
-				this.checkBoxEEMem.Enabled = true;
-				this.enableDataProtectStripMenuItem.Enabled = true;
-				this.checkBoxEEDATAMemoryEnabledAlt.Enabled = true;
-				this.checkBoxProgMemEnabledAlt.Enabled = true;
-				if (this.multiWindow)
+				checkBoxEEMem.Enabled = true;
+				enableDataProtectStripMenuItem.Enabled = true;
+				checkBoxEEDATAMemoryEnabledAlt.Enabled = true;
+				checkBoxProgMemEnabledAlt.Enabled = true;
+				if (multiWindow)
 				{
-					if (!this.eepromDataMultiWin.InitDone)
+					if (!eepromDataMultiWin.InitDone)
 					{
-						this.eepromDataMultiWin.InitMemDisplay(this.comboBoxEE.SelectedIndex);
+						eepromDataMultiWin.InitMemDisplay(comboBoxEE.SelectedIndex);
 					}
-					if (!this.toolStripMenuItemShowEEPROMData.Enabled)
+					if (!toolStripMenuItemShowEEPROMData.Enabled)
 					{
-						this.toolStripMenuItemShowEEPROMData.Enabled = true;
-						if (this.multiWinEEMemOpen)
+						toolStripMenuItemShowEEPROMData.Enabled = true;
+						if (multiWinEEMemOpen)
 						{
-							this.eepromDataMultiWin.Show();
-							base.Focus();
+							eepromDataMultiWin.Show();
+							Focus();
 						}
 					}
-					this.eepromDataMultiWin.UpdateMultiWinMem();
+					eepromDataMultiWin.UpdateMultiWinMem();
 				}
 				else
 				{
-					this.dataGridViewEEPROM.Visible = true;
-					int num37 = (int)PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].EEMemAddressIncrement;
+					dataGridViewEEPROM.Visible = true;
+					int num37 = PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].EEMemAddressIncrement;
 					int num38 = num37;
 					int num39;
 					int num40;
@@ -1481,48 +1507,48 @@ namespace PICkit2V3
 					if (num37 == 1 && PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].BlankValue != 4095U)
 					{
 						num39 = 17;
-						this.dataGridViewEEPROM.Columns[0].Width = (int)(32f * FormPICkit2.ScalefactW);
+						dataGridViewEEPROM.Columns[0].Width = (int)(32f * ScalefactW);
 						num40 = 16;
-						width2 = (int)(21f * FormPICkit2.ScalefactW);
+						width2 = (int)(21f * ScalefactW);
 					}
 					else
 					{
 						num39 = 9;
-						this.dataGridViewEEPROM.Columns[0].Width = (int)(40f * FormPICkit2.ScalefactW);
+						dataGridViewEEPROM.Columns[0].Width = (int)(40f * ScalefactW);
 						num40 = 8;
-						width2 = (int)(41f * FormPICkit2.ScalefactW);
+						width2 = (int)(41f * ScalefactW);
 					}
-					if (this.dataGridViewEEPROM.ColumnCount != num39)
+					if (dataGridViewEEPROM.ColumnCount != num39)
 					{
-						this.dataGridViewEEPROM.Rows.Clear();
-						this.dataGridViewEEPROM.ColumnCount = num39;
+						dataGridViewEEPROM.Rows.Clear();
+						dataGridViewEEPROM.ColumnCount = num39;
 					}
-					this.dataGridViewEEPROM.Columns[0].ReadOnly = true;
-					for (int num41 = 1; num41 < this.dataGridViewEEPROM.ColumnCount; num41++)
+					dataGridViewEEPROM.Columns[0].ReadOnly = true;
+					for (int num41 = 1; num41 < dataGridViewEEPROM.ColumnCount; num41++)
 					{
-						this.dataGridViewEEPROM.Columns[num41].Width = width2;
+						dataGridViewEEPROM.Columns[num41].Width = width2;
 					}
 					int num42;
 					int num43;
-					if (this.comboBoxEE.SelectedIndex == 0)
+					if (comboBoxEE.SelectedIndex == 0)
 					{
 						num42 = num40;
-						num43 = (int)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].EEMem / num42;
+						num43 = PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].EEMem / num42;
 						num37 *= num40;
 						num42 = num40;
 					}
 					else
 					{
 						num42 = num40 / 2;
-						num43 = (int)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].EEMem / num42;
+						num43 = PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].EEMem / num42;
 						num37 *= num40 / 2;
 					}
-					if (this.dataGridViewEEPROM.RowCount != num43)
+					if (dataGridViewEEPROM.RowCount != num43)
 					{
-						this.dataGridViewEEPROM.Rows.Clear();
-						this.dataGridViewEEPROM.RowCount = num43;
+						dataGridViewEEPROM.Rows.Clear();
+						dataGridViewEEPROM.RowCount = num43;
 					}
-					int num44 = this.dataGridViewEEPROM.RowCount * num37 - 1;
+					int num44 = dataGridViewEEPROM.RowCount * num37 - 1;
 					string format3 = "{0:X2}";
 					if (num44 > 255)
 					{
@@ -1534,10 +1560,10 @@ namespace PICkit2V3
 					}
 					int num45 = 0;
 					int num46 = 0;
-					while (num45 < this.dataGridViewEEPROM.RowCount)
+					while (num45 < dataGridViewEEPROM.RowCount)
 					{
-						this.dataGridViewEEPROM[0, num45].Value = string.Format(format3, num46);
-						this.dataGridViewEEPROM[0, num45].Style.BackColor = SystemColors.ControlLight;
+						dataGridViewEEPROM[0, num45].Value = string.Format(format3, num46);
+						dataGridViewEEPROM[0, num45].Style.BackColor = SystemColors.ControlLight;
 						num46 += num37;
 						num45++;
 					}
@@ -1555,35 +1581,35 @@ namespace PICkit2V3
 					}
 					for (int num47 = 0; num47 < num42; num47++)
 					{
-						this.dataGridViewEEPROM.Columns[num47 + 1].ReadOnly = false;
+						dataGridViewEEPROM.Columns[num47 + 1].ReadOnly = false;
 					}
 					int num48 = 0;
 					int num49 = 0;
-					while (num48 < this.dataGridViewEEPROM.RowCount)
+					while (num48 < dataGridViewEEPROM.RowCount)
 					{
 						for (int num50 = 0; num50 < num42; num50++)
 						{
-							this.dataGridViewEEPROM[num50 + 1, num48].ToolTipText = string.Format(format3, num49 * num38);
-							this.dataGridViewEEPROM[num50 + 1, num48].Value = string.Format(format4, PICkitFunctions.DeviceBuffers.EEPromMemory[num49++]);
+							dataGridViewEEPROM[num50 + 1, num48].ToolTipText = string.Format(format3, num49 * num38);
+							dataGridViewEEPROM[num50 + 1, num48].Value = string.Format(format4, PICkitFunctions.DeviceBuffers.EEPromMemory[num49++]);
 						}
 						num48++;
 					}
-					if (this.comboBoxEE.SelectedIndex >= 1)
+					if (comboBoxEE.SelectedIndex >= 1)
 					{
 						for (int num51 = 0; num51 < num42; num51++)
 						{
-							this.dataGridViewEEPROM.Columns[num51 + num42 + 1].ReadOnly = true;
+							dataGridViewEEPROM.Columns[num51 + num42 + 1].ReadOnly = true;
 						}
-						if (this.comboBoxEE.SelectedIndex == 1)
+						if (comboBoxEE.SelectedIndex == 1)
 						{
 							int num52 = 0;
 							int num53 = 0;
-							while (num52 < this.dataGridViewEEPROM.RowCount)
+							while (num52 < dataGridViewEEPROM.RowCount)
 							{
 								for (int num54 = 0; num54 < num42; num54++)
 								{
-									this.dataGridViewEEPROM[num54 + num42 + 1, num52].ToolTipText = string.Format(format3, num53 * num38);
-									this.dataGridViewEEPROM[num54 + num42 + 1, num52].Value = Utilities.ConvertIntASCII((int)PICkitFunctions.DeviceBuffers.EEPromMemory[num53++], numBytes2);
+									dataGridViewEEPROM[num54 + num42 + 1, num52].ToolTipText = string.Format(format3, num53 * num38);
+									dataGridViewEEPROM[num54 + num42 + 1, num52].Value = Utilities.ConvertIntASCII((int)PICkitFunctions.DeviceBuffers.EEPromMemory[num53++], numBytes2);
 								}
 								num52++;
 							}
@@ -1592,126 +1618,125 @@ namespace PICkit2V3
 						{
 							int num55 = 0;
 							int num56 = 0;
-							while (num55 < this.dataGridViewEEPROM.RowCount)
+							while (num55 < dataGridViewEEPROM.RowCount)
 							{
 								for (int num57 = 0; num57 < num42; num57++)
 								{
-									this.dataGridViewEEPROM[num57 + num42 + 1, num55].ToolTipText = string.Format(format3, num56 * num38);
-									this.dataGridViewEEPROM[num57 + num42 + 1, num55].Value = Utilities.ConvertIntASCIIReverse((int)PICkitFunctions.DeviceBuffers.EEPromMemory[num56++], numBytes2);
+									dataGridViewEEPROM[num57 + num42 + 1, num55].ToolTipText = string.Format(format3, num56 * num38);
+									dataGridViewEEPROM[num57 + num42 + 1, num55].Value = Utilities.ConvertIntASCIIReverse((int)PICkitFunctions.DeviceBuffers.EEPromMemory[num56++], numBytes2);
 								}
 								num55++;
 							}
 						}
 					}
-					if (this.dataGridViewEEPROM.FirstDisplayedCell != null && !this.eeMemJustEdited)
+					if (dataGridViewEEPROM.FirstDisplayedCell != null && !eeMemJustEdited)
 					{
-						int rowIndex2 = this.dataGridViewEEPROM.FirstDisplayedCell.RowIndex;
-						this.dataGridViewEEPROM.MultiSelect = false;
-						this.dataGridViewEEPROM[0, rowIndex2].Selected = true;
-						this.dataGridViewEEPROM[0, rowIndex2].Selected = false;
-						this.dataGridViewEEPROM.MultiSelect = true;
+						int rowIndex2 = dataGridViewEEPROM.FirstDisplayedCell.RowIndex;
+						dataGridViewEEPROM.MultiSelect = false;
+						dataGridViewEEPROM[0, rowIndex2].Selected = true;
+						dataGridViewEEPROM[0, rowIndex2].Selected = false;
+						dataGridViewEEPROM.MultiSelect = true;
 					}
-					else if (this.dataGridViewEEPROM.FirstDisplayedCell == null)
+					else if (dataGridViewEEPROM.FirstDisplayedCell == null)
 					{
-						this.dataGridViewEEPROM.MultiSelect = false;
-						this.dataGridViewEEPROM[0, 0].Selected = true;
-						this.dataGridViewEEPROM[0, 0].Selected = false;
-						this.dataGridViewEEPROM.MultiSelect = true;
+						dataGridViewEEPROM.MultiSelect = false;
+						dataGridViewEEPROM[0, 0].Selected = true;
+						dataGridViewEEPROM[0, 0].Selected = false;
+						dataGridViewEEPROM.MultiSelect = true;
 					}
-					this.eeMemJustEdited = false;
+					eeMemJustEdited = false;
 				}
 			}
 			else if (PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].EEMem == 0)
 			{
-				this.dataGridViewEEPROM.Visible = false;
-				this.comboBoxEE.Enabled = false;
-				this.checkBoxEEMem.Checked = false;
-				this.checkBoxEEDATAMemoryEnabledAlt.Checked = false;
-				this.checkBoxEEMem.Enabled = false;
-				this.checkBoxEEDATAMemoryEnabledAlt.Enabled = false;
-				this.enableDataProtectStripMenuItem.Enabled = false;
-				this.enableDataProtectStripMenuItem.Checked = false;
-				this.checkBoxProgMemEnabled.Checked = true;
-				this.checkBoxProgMemEnabledAlt.Checked = true;
-				this.checkBoxProgMemEnabled.Enabled = false;
-				this.checkBoxProgMemEnabledAlt.Enabled = false;
-				this.eepromDataMultiWin.Hide();
-				this.toolStripMenuItemShowEEPROMData.Enabled = false;
+				dataGridViewEEPROM.Visible = false;
+				comboBoxEE.Enabled = false;
+				checkBoxEEMem.Checked = false;
+				checkBoxEEDATAMemoryEnabledAlt.Checked = false;
+				checkBoxEEMem.Enabled = false;
+				checkBoxEEDATAMemoryEnabledAlt.Enabled = false;
+				enableDataProtectStripMenuItem.Enabled = false;
+				enableDataProtectStripMenuItem.Checked = false;
+				checkBoxProgMemEnabled.Checked = true;
+				checkBoxProgMemEnabledAlt.Checked = true;
+				checkBoxProgMemEnabled.Enabled = false;
+				checkBoxProgMemEnabledAlt.Enabled = false;
+				eepromDataMultiWin.Hide();
+				toolStripMenuItemShowEEPROMData.Enabled = false;
 			}
-			if (PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].CPMask != 0 && (PICkitFunctions.DeviceBuffers.ConfigWords[(int)(PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].CPConfig - 1)] & (uint)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].CPMask) != (uint)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].CPMask)
+			if (PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].CPMask != 0 && (PICkitFunctions.DeviceBuffers.ConfigWords[PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].CPConfig - 1] & PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].CPMask) != PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].CPMask)
 			{
-				this.enableCodeProtectToolStripMenuItem.Checked = true;
-				this.enableCodeProtectToolStripMenuItem.Enabled = false;
+				enableCodeProtectToolStripMenuItem.Checked = true;
+				enableCodeProtectToolStripMenuItem.Enabled = false;
 				if (PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].EEMem > 0 && PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].DPMask == 0)
 				{
-					this.enableDataProtectStripMenuItem.Checked = true;
-					this.enableDataProtectStripMenuItem.Enabled = false;
+					enableDataProtectStripMenuItem.Checked = true;
+					enableDataProtectStripMenuItem.Enabled = false;
 				}
 			}
-			if (PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].EEMem > 0 && (PICkitFunctions.DeviceBuffers.ConfigWords[(int)(PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].CPConfig - 1)] & (uint)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].DPMask) != (uint)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].DPMask)
+			if (PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].EEMem > 0 && (PICkitFunctions.DeviceBuffers.ConfigWords[PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].CPConfig - 1] & PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].DPMask) != PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].DPMask)
 			{
-				this.enableDataProtectStripMenuItem.Checked = true;
-				this.enableDataProtectStripMenuItem.Enabled = false;
+				enableDataProtectStripMenuItem.Checked = true;
+				enableDataProtectStripMenuItem.Enabled = false;
 			}
-			if (this.enableCodeProtectToolStripMenuItem.Checked || this.enableDataProtectStripMenuItem.Checked)
+			if (enableCodeProtectToolStripMenuItem.Checked || enableDataProtectStripMenuItem.Checked)
 			{
-				this.labelCodeProtect.Visible = true;
-				if (this.enableCodeProtectToolStripMenuItem.Checked && this.enableDataProtectStripMenuItem.Checked)
+				labelCodeProtect.Visible = true;
+				if (enableCodeProtectToolStripMenuItem.Checked && enableDataProtectStripMenuItem.Checked)
 				{
-					this.labelCodeProtect.Text = "All Protect";
+					labelCodeProtect.Text = "All Protect";
 				}
-				else if (this.enableCodeProtectToolStripMenuItem.Checked)
+				else if (enableCodeProtectToolStripMenuItem.Checked)
 				{
-					this.labelCodeProtect.Text = "Code Protect";
+					labelCodeProtect.Text = "Code Protect";
 				}
 				else
 				{
-					this.labelCodeProtect.Text = "Data Protect";
+					labelCodeProtect.Text = "Data Protect";
 				}
 			}
 			else
 			{
-				this.labelCodeProtect.Visible = false;
+				labelCodeProtect.Visible = false;
 			}
-			if (!this.checkBoxProgMemEnabled.Checked)
+			if (!checkBoxProgMemEnabled.Checked)
 			{
-				this.displayEEProgInfo.Text = "Write and Read EEPROM data only.";
-				this.displayEEProgInfo.Visible = true;
-				this.eepromDataMultiWin.DisplayEETextOn("Write and Read EEPROM data only.");
+				displayEEProgInfo.Text = "Write and Read EEPROM data only.";
+				displayEEProgInfo.Visible = true;
+				eepromDataMultiWin.DisplayEETextOn("Write and Read EEPROM data only.");
 			}
-			else if (!this.checkBoxEEMem.Checked && this.checkBoxEEMem.Enabled)
+			else if (!checkBoxEEMem.Checked && checkBoxEEMem.Enabled)
 			{
 				if (PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ProgMemEraseScript != 0)
 				{
-					this.displayEEProgInfo.Text = "Preserve device EEPROM data on write.";
-					this.eepromDataMultiWin.DisplayEETextOn("Preserve device EEPROM data on write.");
+					displayEEProgInfo.Text = "Preserve device EEPROM data on write.";
+					eepromDataMultiWin.DisplayEETextOn("Preserve device EEPROM data on write.");
 				}
 				else
 				{
-					this.displayEEProgInfo.Text = "Read/Restore device EEPROM on write.";
-					this.eepromDataMultiWin.DisplayEETextOn("Read/Restore device EEPROM on write.");
+					displayEEProgInfo.Text = "Read/Restore device EEPROM on write.";
+					eepromDataMultiWin.DisplayEETextOn("Read/Restore device EEPROM on write.");
 				}
-				this.displayEEProgInfo.Visible = true;
+				displayEEProgInfo.Visible = true;
 			}
 			else
 			{
-				this.displayEEProgInfo.Visible = false;
-				this.eepromDataMultiWin.DisplayEETextOff();
+				displayEEProgInfo.Visible = false;
+				eepromDataMultiWin.DisplayEETextOff();
 			}
-			if (FormPICkit2.TestMemoryEnabled && FormPICkit2.TestMemoryOpen)
+			if (TestMemoryEnabled && TestMemoryOpen)
 			{
-				FormPICkit2.formTestMem.UpdateTestMemForm();
+				formTestMem.UpdateTestMemForm();
 				if (updateMemories)
 				{
-					FormPICkit2.formTestMem.UpdateTestMemoryGrid();
+					formTestMem.UpdateTestMemoryGrid();
 				}
 			}
 		}
 
-		// Token: 0x060000C8 RID: 200 RVA: 0x00029498 File Offset: 0x00028498
 		private void progMemViewChanged(object sender, EventArgs e)
 		{
-			this.updateGUI(true);
+			updateGUI(true);
 		}
 
 		// Token: 0x060000C9 RID: 201 RVA: 0x000294A4 File Offset: 0x000284A4
@@ -1819,32 +1844,30 @@ namespace PICkit2V3
 			base.Close();
 		}
 
-		// Token: 0x060000CF RID: 207 RVA: 0x0002973C File Offset: 0x0002873C
-		private void menuFileImportHex(object sender, EventArgs e)
+		private void MenuFileImportHex(object sender, EventArgs e)
 		{
 			if (PICkitFunctions.FamilyIsKeeloq())
 			{
-				this.openHexFileDialog.Filter = "HEX files|*.hex;*.num|All files|*.*";
+				openHexFileDialog.Filter = "HEX files|*.hex;*.num|All files|*.*";
 			}
 			else if (PICkitFunctions.FamilyIsEEPROM())
 			{
-				this.openHexFileDialog.Filter = "HEX or BIN files|*.hex;*.bin|All files|*.*";
+				openHexFileDialog.Filter = "HEX or BIN files|*.hex;*.bin|All files|*.*";
 			}
 			else
 			{
-				this.openHexFileDialog.Filter = "HEX files|*.hex|All files|*.*";
+				openHexFileDialog.Filter = "HEX files|*.hex|All files|*.*";
 			}
-			this.openHexFileDialog.ShowDialog();
-			this.updateGUI(true);
+			openHexFileDialog.ShowDialog();
+			updateGUI(true);
 		}
 
-		// Token: 0x060000D0 RID: 208 RVA: 0x0002979E File Offset: 0x0002879E
-		private void importHexFile(object sender, CancelEventArgs e)
+		private void ImportHexFile(object sender, CancelEventArgs e)
 		{
-			this.importHexFileGo();
+			ImportHexFileGo();
 		}
 
-		private bool importHexFileGo()
+		private bool ImportHexFileGo()
 		{
 			int activePart = PICkitFunctions.ActivePart;
 			bool flag = deviceVerification;
@@ -2674,7 +2697,7 @@ namespace PICkit2V3
 					displayStatusWindow.Text = "Reloading Hex File\n";
 					Update();
 					Thread.Sleep(300);
-					if (!importHexFileGo())
+					if (!ImportHexFileGo())
 					{
 						displayStatusWindow.Text = "Error Loading Hex File: Write aborted.\n";
 						statusWindowColor = Constants.StatusColor.red;
@@ -5520,32 +5543,32 @@ namespace PICkit2V3
 
 		private void hex1Click(object sender, EventArgs e)
 		{
-			hexImportFromHistory(hex1);
+			HexImportFromHistory(hex1);
 		}
 
 		private void hex2Click(object sender, EventArgs e)
 		{
-			hexImportFromHistory(hex2);
+			HexImportFromHistory(hex2);
 		}
 
 		// Token: 0x06000104 RID: 260 RVA: 0x0003121F File Offset: 0x0003021F
 		private void hex3Click(object sender, EventArgs e)
 		{
-			this.hexImportFromHistory(this.hex3);
+			this.HexImportFromHistory(this.hex3);
 		}
 
 		// Token: 0x06000105 RID: 261 RVA: 0x0003122D File Offset: 0x0003022D
 		private void hex4Click(object sender, EventArgs e)
 		{
-			this.hexImportFromHistory(this.hex4);
+			this.HexImportFromHistory(this.hex4);
 		}
 
-		private void hexImportFromHistory(string filename)
+		private void HexImportFromHistory(string filename)
 		{
 			if (importFileToolStripMenuItem.Enabled && filename.Length > 3)
 			{
 				openHexFileDialog.FileName = filename;
-				importHexFileGo();
+				ImportHexFileGo();
 				updateGUI(true);
 			}
 		}
@@ -5950,7 +5973,7 @@ namespace PICkit2V3
 					this.displayStatusWindow.Text = "Reloading Hex File\n";
 					base.Update();
 					Thread.Sleep(300);
-					if (!this.importHexFileGo())
+					if (!this.ImportHexFileGo())
 					{
 						this.displayStatusWindow.Text = "Error Loading Hex File: Write aborted.\n";
 						FormPICkit2.statusWindowColor = Constants.StatusColor.red;

@@ -430,7 +430,7 @@ namespace PICkit2V3
 		private void buttonSave_Click(object sender, EventArgs e)
 		{
 			this.saveChanges = true;
-			FormPICkit2.ConfigsEdited = true;
+			FormPICkit2.configsEdited = true;
 			base.Close();
 		}
 

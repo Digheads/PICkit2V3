@@ -195,10 +195,10 @@ namespace PICkit2V3
 									{
 										flag2 = false;
 									}
-									if (FormPICkit2.TestMemoryEnabled && FormPICkit2.TestMemoryOpen && FormPICkit2.formTestMem.HexImportExportTM() && (long)num12 >= (long)((ulong)PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].TestMemoryStart) && PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].TestMemoryStart > 0U && FormPICkit2.TestMemoryWords > 0)
+									if (FormPICkit2.testMemoryEnabled && FormPICkit2.testMemoryOpen && FormPICkit2.formTestMem.HexImportExportTM() && (long)num12 >= (long)((ulong)PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].TestMemoryStart) && PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].TestMemoryStart > 0U && FormPICkit2.testMemoryWords > 0)
 									{
 										int num22 = (int)((long)num12 - (long)((ulong)PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].TestMemoryStart)) / progMemHexBytes;
-										if (num22 < FormPICkit2.TestMemoryWords)
+										if (num22 < FormPICkit2.testMemoryWords)
 										{
 											flag2 = false;
 											FormTestMemory.TestMemory[num22] &= num15;
@@ -531,9 +531,9 @@ namespace PICkit2V3
 					while (num4 < PICkitFunctions.DeviceBuffers.UserIDs.Length);
 				}
 			}
-			if (FormPICkit2.TestMemoryEnabled && FormPICkit2.TestMemoryOpen && FormPICkit2.formTestMem.HexImportExportTM())
+			if (FormPICkit2.testMemoryEnabled && FormPICkit2.testMemoryOpen && FormPICkit2.formTestMem.HexImportExportTM())
 			{
-				int testMemoryWords = FormPICkit2.TestMemoryWords;
+				int testMemoryWords = FormPICkit2.testMemoryWords;
 				num4 = 0;
 				if (testMemoryWords > 0)
 				{
@@ -566,7 +566,7 @@ namespace PICkit2V3
 						num2 += 16;
 						num4 += num5;
 					}
-					while (num4 < FormPICkit2.TestMemoryWords);
+					while (num4 < FormPICkit2.testMemoryWords);
 				}
 			}
 			streamWriter.WriteLine(":00000001FF");

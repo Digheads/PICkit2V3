@@ -23,7 +23,7 @@ namespace PICkit2V3
 		// Token: 0x06000223 RID: 547 RVA: 0x00040B85 File Offset: 0x0003FB85
 		private void buttonLoadDevFile_Click(object sender, EventArgs e)
 		{
-			FormPICkit2.DeviceFileName = this.listBoxDevFiles.SelectedItem.ToString();
+			FormPICkit2.deviceFileName = this.listBoxDevFiles.SelectedItem.ToString();
 			base.Close();
 		}
 	}

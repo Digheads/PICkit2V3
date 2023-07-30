@@ -12,7 +12,7 @@ namespace PICkit2V3
 		public DialogUnitSelect()
 		{
 			this.InitializeComponent();
-			base.Size = new Size(base.Size.Width, (int)(FormPICkit2.ScalefactH * (float)base.Size.Height));
+			base.Size = new Size(base.Size.Width, (int)(FormPICkit2.scalefactH * (float)base.Size.Height));
 			for (ushort num = 0; num < 8; num += 1)
 			{
 				Constants.PICkit2USB pickit2USB = PICkitFunctions.DetectPICkit2Device(num, false);

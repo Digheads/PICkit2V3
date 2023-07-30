@@ -25,16 +25,16 @@ namespace PICkit2V3
 		{
 			if (this.checkBoxDoNotShow.Checked)
 			{
-				FormPICkit2.ShowWriteEraseVDDDialog = false;
+				FormPICkit2.showWriteEraseVddDialog = false;
 			}
-			FormPICkit2.ContinueWriteErase = true;
+			FormPICkit2.continueWriteErase = true;
 			base.Close();
 		}
 
 		// Token: 0x0600021D RID: 541 RVA: 0x000404A1 File Offset: 0x0003F4A1
 		private void cancelClick(object sender, EventArgs e)
 		{
-			FormPICkit2.ContinueWriteErase = false;
+			FormPICkit2.continueWriteErase = false;
 			base.Close();
 		}
 	}

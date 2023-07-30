@@ -20,7 +20,7 @@ namespace PICkit2V3
 		// Token: 0x06000258 RID: 600 RVA: 0x00045920 File Offset: 0x00044920
 		public void UpdateIDMemoryGrid()
 		{
-			int width = (int)(53f * FormPICkit2.ScalefactW);
+			int width = (int)(53f * FormPICkit2.scalefactW);
 			this.dataGridViewIDMem.ColumnCount = 4;
 			for (int i = 0; i < this.dataGridViewIDMem.ColumnCount; i++)
 			{

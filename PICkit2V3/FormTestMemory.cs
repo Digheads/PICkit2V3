@@ -16,7 +16,7 @@ namespace PICkit2V3
 			this.ClearTestMemory();
 			this.UpdateTestMemForm();
 			this.UpdateTestMemoryGrid();
-			FormPICkit2.TestMemoryOpen = true;
+			FormPICkit2.testMemoryOpen = true;
 		}
 
 		// Token: 0x0600013F RID: 319 RVA: 0x00034814 File Offset: 0x00033814
@@ -60,7 +60,7 @@ namespace PICkit2V3
 					FormTestMemory.TestMemory[num3++] = num6;
 				}
 			}
-			while (num3 < FormPICkit2.TestMemoryWords);
+			while (num3 < FormPICkit2.testMemoryWords);
 			PICkitFunctions.RunScript(1, 1);
 		}
 
@@ -147,9 +147,9 @@ namespace PICkit2V3
 			this.dataGridTestMemory.RowCount = 512;
 			this.dataGridTestMemory[0, 0].Selected = true;
 			this.dataGridTestMemory[0, 0].Selected = false;
-			this.dataGridTestMemory.Columns[0].Width = (int)(59f * FormPICkit2.ScalefactW);
+			this.dataGridTestMemory.Columns[0].Width = (int)(59f * FormPICkit2.scalefactW);
 			this.dataGridTestMemory.Columns[0].ReadOnly = true;
-			if (FormPICkit2.TestMemoryImportExport)
+			if (FormPICkit2.testMemoryImportExport)
 			{
 				this.checkBoxTestMemImportExport.Checked = true;
 			}
@@ -158,7 +158,7 @@ namespace PICkit2V3
 		// Token: 0x06000143 RID: 323 RVA: 0x00034C6C File Offset: 0x00033C6C
 		public void UpdateTestMemForm()
 		{
-			this.textBoxTestMemSize.Text = FormPICkit2.TestMemoryWords.ToString();
+			this.textBoxTestMemSize.Text = FormPICkit2.testMemoryWords.ToString();
 			if (PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].TestMemoryStart > 0U)
 			{
 				this.textBoxBaselineConfig.Enabled = true;
@@ -200,22 +200,22 @@ namespace PICkit2V3
 			{
 				num3 = num2;
 			}
-			if (PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].UserIDWords > 0 && num3 >= num2 && num3 < num2 + FormPICkit2.TestMemoryWords)
+			if (PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].UserIDWords > 0 && num3 >= num2 && num3 < num2 + FormPICkit2.testMemoryWords)
 			{
 				flag = true;
 				num = (num3 - num2) / (int)PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].BytesPerLocation;
 			}
 			bool flag2 = false;
 			int num4 = 0;
-			if (PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigWords > 0 && (ulong)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigAddr >= (ulong)((long)num2) && (ulong)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigAddr < (ulong)((long)(num2 + FormPICkit2.TestMemoryWords)))
+			if (PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigWords > 0 && (ulong)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigAddr >= (ulong)((long)num2) && (ulong)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigAddr < (ulong)((long)(num2 + FormPICkit2.testMemoryWords)))
 			{
 				flag2 = true;
 				num4 = (int)((ulong)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigAddr - (ulong)((long)num2)) / (int)PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].BytesPerLocation;
 			}
 			int num5 = 9;
-			this.dataGridTestMemory.Columns[0].Width = (int)(51f * FormPICkit2.ScalefactW);
+			this.dataGridTestMemory.Columns[0].Width = (int)(51f * FormPICkit2.scalefactW);
 			int num6 = 8;
-			int width = (int)(35f * FormPICkit2.ScalefactW);
+			int width = (int)(35f * FormPICkit2.scalefactW);
 			int num7 = this.getTestMemAddress();
 			if (PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].TestMemoryStart == 2097152U)
 			{
@@ -232,7 +232,7 @@ namespace PICkit2V3
 			}
 			int addressIncrement = (int)PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].AddressIncrement;
 			int num8 = num6;
-			int num9 = FormPICkit2.TestMemoryWords / num8;
+			int num9 = FormPICkit2.testMemoryWords / num8;
 			int num10 = addressIncrement * num6;
 			if (this.dataGridTestMemory.RowCount != num9)
 			{
@@ -346,7 +346,7 @@ namespace PICkit2V3
 		// Token: 0x06000146 RID: 326 RVA: 0x00035631 File Offset: 0x00034631
 		private void FormTestMemory_FormClosing(object sender, FormClosingEventArgs e)
 		{
-			FormPICkit2.TestMemoryOpen = false;
+			FormPICkit2.testMemoryOpen = false;
 		}
 
 		// Token: 0x06000147 RID: 327 RVA: 0x0003563C File Offset: 0x0003463C
@@ -397,18 +397,18 @@ namespace PICkit2V3
 						p_value = "0" + this.textBoxTestMemSize.Text;
 					}
 				}
-				FormPICkit2.TestMemoryWords = Utilities.Convert_Value_To_Int(p_value);
-				if (FormPICkit2.TestMemoryWords > 1024)
+				FormPICkit2.testMemoryWords = Utilities.Convert_Value_To_Int(p_value);
+				if (FormPICkit2.testMemoryWords > 1024)
 				{
-					FormPICkit2.TestMemoryWords = 1024;
+					FormPICkit2.testMemoryWords = 1024;
 				}
-				else if (FormPICkit2.TestMemoryWords < 16)
+				else if (FormPICkit2.testMemoryWords < 16)
 				{
-					FormPICkit2.TestMemoryWords = 16;
+					FormPICkit2.testMemoryWords = 16;
 				}
-				else if (FormPICkit2.TestMemoryWords % 16 != 0)
+				else if (FormPICkit2.testMemoryWords % 16 != 0)
 				{
-					FormPICkit2.TestMemoryWords = (FormPICkit2.TestMemoryWords / 16 + 1) * 16;
+					FormPICkit2.testMemoryWords = (FormPICkit2.testMemoryWords / 16 + 1) * 16;
 					this.labelTestMemSize8.Visible = true;
 				}
 			}
@@ -435,7 +435,7 @@ namespace PICkit2V3
 				num5 = num4;
 			}
 			FormTestMemory.TestMemory[num3] = (uint)((long)num & (long)((ulong)PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].BlankValue));
-			if (PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].UserIDWords > 0 && num5 >= num4 && num5 < num4 + FormPICkit2.TestMemoryWords)
+			if (PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].UserIDWords > 0 && num5 >= num4 && num5 < num4 + FormPICkit2.testMemoryWords)
 			{
 				int num6 = (num5 - num4) / (int)PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].BytesPerLocation;
 				if (num3 >= num6 && num3 < num6 + (int)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].UserIDWords)
@@ -447,7 +447,7 @@ namespace PICkit2V3
 					}
 				}
 			}
-			if (PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigWords > 0 && (ulong)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigAddr >= (ulong)((long)num4) && (ulong)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigAddr < (ulong)((long)(num4 + FormPICkit2.TestMemoryWords)))
+			if (PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigWords > 0 && (ulong)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigAddr >= (ulong)((long)num4) && (ulong)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigAddr < (ulong)((long)(num4 + FormPICkit2.testMemoryWords)))
 			{
 				int num7 = (int)((ulong)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigAddr - (ulong)((long)num4)) / (int)PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].BytesPerLocation;
 				if (num3 >= num7 && num3 < num7 + (int)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigWords)
@@ -487,7 +487,7 @@ namespace PICkit2V3
 		// Token: 0x0600014F RID: 335 RVA: 0x00035B6C File Offset: 0x00034B6C
 		private void checkBoxTestMemImportExport_CheckedChanged(object sender, EventArgs e)
 		{
-			FormPICkit2.TestMemoryImportExport = this.checkBoxTestMemImportExport.Checked;
+			FormPICkit2.testMemoryImportExport = this.checkBoxTestMemImportExport.Checked;
 		}
 
 		// Token: 0x06000150 RID: 336 RVA: 0x00035B7E File Offset: 0x00034B7E

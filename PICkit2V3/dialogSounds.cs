@@ -13,23 +13,23 @@ namespace PICkit2V3
 		public dialogSounds()
 		{
 			this.InitializeComponent();
-			this.checkBoxSuccess.Checked = FormPICkit2.PlaySuccessWav;
-			this.checkBoxWarning.Checked = FormPICkit2.PlayWarningWav;
-			this.checkBoxError.Checked = FormPICkit2.PlayErrorWav;
-			this.textBoxSuccessFile.Text = FormPICkit2.SuccessWavFile;
-			this.textBoxWarningFile.Text = FormPICkit2.WarningWavFile;
-			this.textBoxErrorFile.Text = FormPICkit2.ErrorWavFile;
+			this.checkBoxSuccess.Checked = FormPICkit2.playSuccessWav;
+			this.checkBoxWarning.Checked = FormPICkit2.playWarningWav;
+			this.checkBoxError.Checked = FormPICkit2.playErrorWav;
+			this.textBoxSuccessFile.Text = FormPICkit2.successWavFile;
+			this.textBoxWarningFile.Text = FormPICkit2.warningWavFile;
+			this.textBoxErrorFile.Text = FormPICkit2.errorWavFile;
 		}
 
 		// Token: 0x06000092 RID: 146 RVA: 0x00010BC4 File Offset: 0x0000FBC4
 		private void buttonOK_Click(object sender, EventArgs e)
 		{
-			FormPICkit2.PlaySuccessWav = this.checkBoxSuccess.Checked;
-			FormPICkit2.PlayWarningWav = this.checkBoxWarning.Checked;
-			FormPICkit2.PlayErrorWav = this.checkBoxError.Checked;
-			FormPICkit2.SuccessWavFile = this.textBoxSuccessFile.Text;
-			FormPICkit2.WarningWavFile = this.textBoxWarningFile.Text;
-			FormPICkit2.ErrorWavFile = this.textBoxErrorFile.Text;
+			FormPICkit2.playSuccessWav = this.checkBoxSuccess.Checked;
+			FormPICkit2.playWarningWav = this.checkBoxWarning.Checked;
+			FormPICkit2.playErrorWav = this.checkBoxError.Checked;
+			FormPICkit2.successWavFile = this.textBoxSuccessFile.Text;
+			FormPICkit2.warningWavFile = this.textBoxWarningFile.Text;
+			FormPICkit2.errorWavFile = this.textBoxErrorFile.Text;
 			base.Close();
 		}
 

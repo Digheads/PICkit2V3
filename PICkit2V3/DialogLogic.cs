@@ -1473,7 +1473,7 @@ namespace PICkit2V3
 		{
 			try
 			{
-				Process.Start(FormPICkit2.HomeDirectory + "\\Logic Tool User Guide.pdf");
+				Process.Start(FormPICkit2.homeDirectory + "\\Logic Tool User Guide.pdf");
 			}
 			catch
 			{

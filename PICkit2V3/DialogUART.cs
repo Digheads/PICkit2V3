@@ -738,7 +738,7 @@ namespace PICkit2V3
 		{
 			try
 			{
-				Process.Start(FormPICkit2.HomeDirectory + "\\PICkit2 User Guide 51553E.pdf");
+				Process.Start(FormPICkit2.homeDirectory + "\\PICkit2 User Guide 51553E.pdf");
 			}
 			catch
 			{

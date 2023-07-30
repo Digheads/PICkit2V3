@@ -84,7 +84,7 @@ namespace PICkit2V3
 				num2 = 38;
 				this.addrFormat = "{0:X4}";
 			}
-			num2 = (int)((float)num2 * FormPICkit2.ScalefactW);
+			num2 = (int)((float)num2 * FormPICkit2.scalefactW);
 			int num3 = 24;
 			int num4 = 16;
 			this.asciiBytes = 1;
@@ -123,8 +123,8 @@ namespace PICkit2V3
 				num5 = (float)num4 / ((float)num4 + (float)num3);
 				num3 += num4;
 			}
-			num3 = (int)((float)num3 * FormPICkit2.ScalefactW);
-			int num6 = this.dataGridProgramMemory.Size.Width - num2 - (int)(20f * FormPICkit2.ScalefactW);
+			num3 = (int)((float)num3 * FormPICkit2.scalefactW);
+			int num6 = this.dataGridProgramMemory.Size.Width - num2 - (int)(20f * FormPICkit2.scalefactW);
 			int num7 = num6 / num3;
 			for (int i = 1; i <= 256; i *= 2)
 			{

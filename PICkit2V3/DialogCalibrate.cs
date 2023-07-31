@@ -69,7 +69,7 @@ namespace PICkit2V3
 				textBoxVDD.Focus();
 				textBoxVDD.SelectAll();
 				PICkitFunctions.SetVoltageCals(256, 0, 128);
-				PICkitFunctions.SetVDDVoltage(4f, 3.4f);
+				PICkitFunctions.SetVddVoltage(4f, 3.4f);
 				PICkitFunctions.VddOn();
 				return;
 			}
@@ -147,11 +147,11 @@ namespace PICkit2V3
 			}
 			float num4 = 256f * num3;
 			PICkitFunctions.SetVoltageCals((ushort)num4, 0, 128);
-			PICkitFunctions.SetVDDVoltage(3f, 2f);
+			PICkitFunctions.SetVddVoltage(3f, 2f);
 			Thread.Sleep(150);
 			PICkitFunctions.ReadPICkitVoltages(ref num, ref num2);
 			float num5 = num;
-			PICkitFunctions.SetVDDVoltage(4f, 2.7f);
+			PICkitFunctions.SetVddVoltage(4f, 2.7f);
 			Thread.Sleep(150);
 			PICkitFunctions.ReadPICkitVoltages(ref num, ref num2);
 			float num6 = (3f - 4f * num5 / num) * (PICkitFunctions.CalculateVddCPP(4f) >> 6);
@@ -218,7 +218,7 @@ namespace PICkit2V3
 			buttonClearCal.Text = "Unit Not Calibrated";
 		}
 
-		private void buttonClearUnitID_Click(object sender, EventArgs e)
+		private void ButtonClearUnitID_Click(object sender, EventArgs e)
 		{
 			PICkitFunctions.UnitIDWrite("");
 			buttonClearUnitID.Enabled = false;

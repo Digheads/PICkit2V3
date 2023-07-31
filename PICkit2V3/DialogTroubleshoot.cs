@@ -147,7 +147,7 @@ namespace PICkit2V3
 			this.labelVDDLow.Visible = false;
 			this.labelReadVDD.Text = "";
 			float voltage = (float)this.numericUpDown1.Value;
-			if (PICkitFunctions.SetVDDVoltage(voltage, 0.45f))
+			if (PICkitFunctions.SetVddVoltage(voltage, 0.45f))
 			{
 				PICkitFunctions.ForcePICkitPowered();
 				if (PICkitFunctions.VddOn())
@@ -224,7 +224,7 @@ namespace PICkit2V3
 			}
 			else
 			{
-				PICkitFunctions.SetVDDVoltage((float)this.numericUpDown1.Value, 0.85f);
+				PICkitFunctions.SetVddVoltage((float)this.numericUpDown1.Value, 0.85f);
 				PICkitFunctions.VddOn();
 			}
 			float num3;
@@ -329,7 +329,7 @@ namespace PICkit2V3
 			}
 			else
 			{
-				PICkitFunctions.SetVDDVoltage((float)this.numericUpDown1.Value, 0.85f);
+				PICkitFunctions.SetVddVoltage((float)this.numericUpDown1.Value, 0.85f);
 				PICkitFunctions.VddOn();
 				Thread.Sleep(50);
 			}

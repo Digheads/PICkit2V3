@@ -65,13 +65,13 @@ namespace PICkit2V3
 			PartialEnableGUIControls();
 			PICkitFunctions.ExitUARTMode();
 			PICkitFunctions.VddOff();
-			PICkitFunctions.SetVDDVoltage(3.3f, 0.85f);
+			PICkitFunctions.SetVddVoltage(3.3f, 0.85f);
 			if (autoDetectToolStripMenuItem.Checked)
 				LookForPoweredTarget(false);
 			if (searchOnStartup && PICkitFunctions.DetectDevice(16777215, true, chkBoxVddOn.Checked))
 			{
 				SetGUIVoltageLimits(true);
-				PICkitFunctions.SetVDDVoltage((float)numUpDnVdd.Value, 0.85f);
+				PICkitFunctions.SetVddVoltage((float)numUpDnVdd.Value, 0.85f);
 				displayStatusWindow.Text += "\nPIC Device Found.";
 				FullEnableGUIControls();
 			}
@@ -109,7 +109,7 @@ namespace PICkit2V3
 				if (num < (float)numUpDnVdd.Minimum)
 					num = (float)numUpDnVdd.Minimum;
 				numUpDnVdd.Value = (decimal)num;
-				PICkitFunctions.SetVDDVoltage((float)numUpDnVdd.Value, 0.85f);
+				PICkitFunctions.SetVddVoltage((float)numUpDnVdd.Value, 0.85f);
 			}
 			CheckForPowerErrors();
 			if (testMemoryEnabled)
@@ -1623,7 +1623,7 @@ namespace PICkit2V3
 						return;
 					}
 					chkBoxVddOn.Checked = true;
-					PICkitFunctions.SetVDDVoltage((float)numUpDnVdd.Value, 0.85f);
+					PICkitFunctions.SetVddVoltage((float)numUpDnVdd.Value, 0.85f);
 					PICkitFunctions.VddOn();
 					if (CheckForPowerErrors())
 					{
@@ -1642,7 +1642,7 @@ namespace PICkit2V3
 		private void GUIChangeVdd(object sender, EventArgs e)
 		{
 			if (DetectPICkit2(false, false))
-				PICkitFunctions.SetVDDVoltage((float)numUpDnVdd.Value, 0.85f);
+				PICkitFunctions.SetVddVoltage((float)numUpDnVdd.Value, 0.85f);
 		}
 
 		private void PICkitFormClosing(object sender, FormClosingEventArgs e)
@@ -1842,7 +1842,7 @@ namespace PICkit2V3
 			statusGroupBox.Update();
 			if (PICkitFunctions.LearnMode)
 			{
-				PICkitFunctions.SetVDDVoltage((float)numUpDnVdd.Value, 0.85f);
+				PICkitFunctions.SetVddVoltage((float)numUpDnVdd.Value, 0.85f);
 				return true;
 			}
 			if (!DetectPICkit2(false, false))
@@ -1905,7 +1905,7 @@ namespace PICkit2V3
 			else
 			{
 				PICkitFunctions.SetMCLRTemp(true);
-				PICkitFunctions.SetVDDVoltage((float)numUpDnVdd.Value, 0.85f);
+				PICkitFunctions.SetVddVoltage((float)numUpDnVdd.Value, 0.85f);
 				PICkitFunctions.VddOn();
 				PICkitFunctions.RunScript(0, 1);
 				Thread.Sleep(300);
@@ -1917,7 +1917,7 @@ namespace PICkit2V3
 					return false;
 				}
 			}
-			PICkitFunctions.SetVDDVoltage((float)numUpDnVdd.Value, 0.85f);
+			PICkitFunctions.SetVddVoltage((float)numUpDnVdd.Value, 0.85f);
 			if (!checkBoxEEMem.Enabled && PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].EEMem > 0)
 				checkBoxEEMem.Checked = true;
 			return true;
@@ -3249,14 +3249,14 @@ namespace PICkit2V3
 			if (!PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].PartDetect)
 			{
 				SetGUIVoltageLimits(true);
-				PICkitFunctions.SetVDDVoltage((float)numUpDnVdd.Value, 0.85f);
+				PICkitFunctions.SetVddVoltage((float)numUpDnVdd.Value, 0.85f);
 				displayStatusWindow.Text += "\n[Parts in this family are not auto-detect.]";
 				FullEnableGUIControls();
 			}
 			else if (PICkitFunctions.DetectDevice(16777215, true, chkBoxVddOn.Checked))
 			{
 				SetGUIVoltageLimits(true);
-				PICkitFunctions.SetVDDVoltage((float)numUpDnVdd.Value, 0.85f);
+				PICkitFunctions.SetVddVoltage((float)numUpDnVdd.Value, 0.85f);
 				displayStatusWindow.Text += "\nPIC Device Found.";
 				FullEnableGUIControls();
 			}
@@ -4164,30 +4164,30 @@ namespace PICkit2V3
 				text = "Y";
 			streamWriter.WriteLine("UAEC: " + text);
 			text = "N";
-			if (logicWindow.getModeAnalyzer())
+			if (logicWindow.GetModeAnalyzer())
 				text = "Y";
 			streamWriter.WriteLine("LTAM: " + text);
-			text = string.Format("LTZM: {0:G}", logicWindow.getZoom());
+			text = string.Format("LTZM: {0:G}", logicWindow.GetZoom());
 			streamWriter.WriteLine(text);
-			text = string.Format("LTT1: {0:G}", logicWindow.getCh1Trigger());
+			text = string.Format("LTT1: {0:G}", logicWindow.GetCh1Trigger());
 			streamWriter.WriteLine(text);
-			text = string.Format("LTT2: {0:G}", logicWindow.getCh2Trigger());
+			text = string.Format("LTT2: {0:G}", logicWindow.GetCh2Trigger());
 			streamWriter.WriteLine(text);
-			text = string.Format("LTT3: {0:G}", logicWindow.getCh3Trigger());
+			text = string.Format("LTT3: {0:G}", logicWindow.GetCh3Trigger());
 			streamWriter.WriteLine(text);
-			text = string.Format("LTTC: {0:G}", logicWindow.getTrigCount());
+			text = string.Format("LTTC: {0:G}", logicWindow.GetTrigCount());
 			streamWriter.WriteLine(text);
-			text = string.Format("LTSR: {0:G}", logicWindow.getSampleRate());
+			text = string.Format("LTSR: {0:G}", logicWindow.GetSampleRate());
 			streamWriter.WriteLine(text);
-			text = string.Format("LTTP: {0:G}", logicWindow.getTriggerPosition());
+			text = string.Format("LTTP: {0:G}", logicWindow.GetTriggerPosition());
 			streamWriter.WriteLine(text);
 			text = "N";
-			if (logicWindow.getCursorsEnabled())
+			if (logicWindow.GetCursorsEnabled())
 				text = "Y";
 			streamWriter.WriteLine("LTCE: " + text);
-			text = string.Format("LTCX: {0:G}", logicWindow.getXCursorPos());
+			text = string.Format("LTCX: {0:G}", logicWindow.GetXCursorPos());
 			streamWriter.WriteLine(text);
-			text = string.Format("LTCY: {0:G}", logicWindow.getYCursorPos());
+			text = string.Format("LTCY: {0:G}", logicWindow.GetYCursorPos());
 			streamWriter.WriteLine(text);
 			text = "0";
 			if (ptgMemory > 0 && ptgMemory <= 5)
@@ -4563,14 +4563,14 @@ namespace PICkit2V3
 							break;
 						case "LTAM:":
 							if (string.Compare(text.Substring(6, 1), "Y") == 0)
-								logicWindow.setModeAnalyzer();
+								logicWindow.SetModeAnalyzer();
 							break;
 						case "LTZM:":
 						{
 							int num3 = int.Parse(text.Substring(6, text.Length - 6));
 							if (num3 > 3)
 								num3 = 3;
-							logicWindow.setZoom(num3);
+							logicWindow.SetZoom(num3);
 							break;
 						}
 						case "LTT1:":
@@ -4578,7 +4578,7 @@ namespace PICkit2V3
 							int num3 = int.Parse(text.Substring(6, text.Length - 6));
 							if (num3 > 5)
 								num3 = 5;
-							logicWindow.setCh1Trigger(num3);
+							logicWindow.SetCh1Trigger(num3);
 							break;
 						}
 						case "LTT2:":
@@ -4586,7 +4586,7 @@ namespace PICkit2V3
 							int num3 = int.Parse(text.Substring(6, text.Length - 6));
 							if (num3 > 5)
 								num3 = 5;
-							logicWindow.setCh2Trigger(num3);
+							logicWindow.SetCh2Trigger(num3);
 							break;
 						}
 						case "LTT3:":
@@ -4594,7 +4594,7 @@ namespace PICkit2V3
 							int num3 = int.Parse(text.Substring(6, text.Length - 6));
 							if (num3 > 5)
 								num3 = 5;
-							logicWindow.setCh3Trigger(num3);
+							logicWindow.SetCh3Trigger(num3);
 							break;
 						}
 						case "LTTC:":
@@ -4604,7 +4604,7 @@ namespace PICkit2V3
 								num3 = 256;
 							if (num3 < 1)
 								num3 = 1;
-							logicWindow.setTrigCount(num3);
+							logicWindow.SetTrigCount(num3);
 							break;
 						}
 						case "LTSR:":
@@ -4612,7 +4612,7 @@ namespace PICkit2V3
 							int num3 = int.Parse(text.Substring(6, text.Length - 6));
 							if (num3 > 7)
 								num3 = 7;
-							logicWindow.setSampleRate(num3);
+							logicWindow.SetSampleRate(num3);
 							break;
 						}
 						case "LTTP:":
@@ -4620,19 +4620,19 @@ namespace PICkit2V3
 							int num3 = int.Parse(text.Substring(6, text.Length - 6));
 							if (num3 > 5)
 								num3 = 5;
-							logicWindow.setTriggerPosition(num3);
+							logicWindow.SetTriggerPosition(num3);
 							break;
 						}
 						case "LTCE:":
 							if (string.Compare(text.Substring(6, 1), "Y") == 0)
-								logicWindow.setCursorsEnabled(true);
+								logicWindow.SetCursorsEnabled(true);
 							break;
 						case "LTCX:":
 						{
 							int num3 = int.Parse(text.Substring(6, text.Length - 6));
 							if (num3 > 4095)
 								num3 = 4095;
-							logicWindow.setXCursorPos(num3);
+							logicWindow.SetXCursorPos(num3);
 							break;
 						}
 						case "LTCY:":
@@ -4640,7 +4640,7 @@ namespace PICkit2V3
 							int num3 = int.Parse(text.Substring(6, text.Length - 6));
 							if (num3 > 4095)
 								num3 = 4095;
-							logicWindow.setYCursorPos(num3);
+							logicWindow.SetYCursorPos(num3);
 							break;
 						}
 						case "PTGM:":
@@ -5450,7 +5450,7 @@ namespace PICkit2V3
 			timerButton.Enabled = false;
             DialogPK2Go dialogPK2Go = new DialogPK2Go
             {
-                VDDVolts = (float)numUpDnVdd.Value
+                vddVolts = (float)numUpDnVdd.Value
             };
             if (multiWindow)
 				dialogPK2Go.dataSource = ShortenHex(displayDataSource.Text);
@@ -5836,8 +5836,8 @@ namespace PICkit2V3
 		private void LabelConfig_Click(object sender, EventArgs e)
 		{
 			DialogConfigEdit dialogConfigEdit = new DialogConfigEdit();
-			dialogConfigEdit.ScalefactW = scalefactW;
-			dialogConfigEdit.ScalefactH = scalefactH;
+			dialogConfigEdit.scalefactW = scalefactW;
+			dialogConfigEdit.scalefactH = scalefactH;
 			if (as0BitValueToolStripMenuItem.Checked)
 				dialogConfigEdit.SetDisplayMask(0);
 			else if (as1BitValueToolStripMenuItem.Checked)

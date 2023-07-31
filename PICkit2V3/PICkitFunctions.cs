@@ -845,7 +845,7 @@ namespace PICkit2V3
 			if (vdd > 2.3f)
 			{
 				PICkitFunctions.targetSelfPowered = true;
-				PICkitFunctions.SetVDDVoltage(vdd, 0.85f);
+				PICkitFunctions.SetVddVoltage(vdd, 0.85f);
 				return Constants.PICkit2PWR.selfpowered;
 			}
 			PICkitFunctions.targetSelfPowered = false;
@@ -868,7 +868,7 @@ namespace PICkit2V3
 		}
 
 		// Token: 0x06000188 RID: 392 RVA: 0x00037308 File Offset: 0x00036308
-		public static bool SetVDDVoltage(float voltage, float threshold)
+		public static bool SetVddVoltage(float voltage, float threshold)
 		{
 			if (voltage < 2.5f)
 			{
@@ -1361,7 +1361,7 @@ namespace PICkit2V3
 			{
 				if (!PICkitFunctions.targetSelfPowered)
 				{
-					PICkitFunctions.SetVDDVoltage(3.3f, 0.85f);
+					PICkitFunctions.SetVddVoltage(3.3f, 0.85f);
 				}
 				for (int i = 0; i < PICkitFunctions.DevFile.Families.Length; i++)
 				{
@@ -1372,7 +1372,7 @@ namespace PICkit2V3
 				}
 				return false;
 			}
-			PICkitFunctions.SetVDDVoltage(PICkitFunctions.vddLastSet, 0.85f);
+			PICkitFunctions.SetVddVoltage(PICkitFunctions.vddLastSet, 0.85f);
 			return !PICkitFunctions.DevFile.Families[familyIndex].PartDetect || PICkitFunctions.searchDevice(familyIndex, resetOnNotFound, keepVddOn);
 		}
 

@@ -1,259 +1,244 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 
 namespace PICkit2V3
 {
-	// Token: 0x0200000E RID: 14
 	public partial class DialogConfigEdit : Form
 	{
-		// Token: 0x060000A2 RID: 162 RVA: 0x0001EC78 File Offset: 0x0001DC78
 		public DialogConfigEdit()
 		{
-			this.InitializeComponent();
-			for (int i = 0; i < (int)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigWords; i++)
-			{
-				this.configSaves[i] = PICkitFunctions.DeviceBuffers.ConfigWords[i];
-			}
-			this.configWords[0].configPanel = this.panel1;
-			this.configWords[0].name = this.labelName1;
-			this.configWords[0].addr = this.labelAdr1;
-			this.configWords[0].value = this.labelVal1;
-			this.configWords[0].bits = new TextBox[16];
-			this.configWords[0].bits[0] = this.textBox1_0;
-			this.configWords[0].bits[1] = this.textBox1_1;
-			this.configWords[0].bits[2] = this.textBox1_2;
-			this.configWords[0].bits[3] = this.textBox1_3;
-			this.configWords[0].bits[4] = this.textBox1_4;
-			this.configWords[0].bits[5] = this.textBox1_5;
-			this.configWords[0].bits[6] = this.textBox1_6;
-			this.configWords[0].bits[7] = this.textBox1_7;
-			this.configWords[0].bits[8] = this.textBox1_8;
-			this.configWords[0].bits[9] = this.textBox1_9;
-			this.configWords[0].bits[10] = this.textBox1_10;
-			this.configWords[0].bits[11] = this.textBox1_11;
-			this.configWords[0].bits[12] = this.textBox1_12;
-			this.configWords[0].bits[13] = this.textBox1_13;
-			this.configWords[0].bits[14] = this.textBox1_14;
-			this.configWords[0].bits[15] = this.textBox1_15;
-			this.configWords[1].configPanel = this.panel2;
-			this.configWords[1].name = this.labelName2;
-			this.configWords[1].addr = this.labelAdr2;
-			this.configWords[1].value = this.labelVal2;
-			this.configWords[1].bits = new TextBox[16];
-			this.configWords[1].bits[0] = this.textBox2_0;
-			this.configWords[1].bits[1] = this.textBox2_1;
-			this.configWords[1].bits[2] = this.textBox2_2;
-			this.configWords[1].bits[3] = this.textBox2_3;
-			this.configWords[1].bits[4] = this.textBox2_4;
-			this.configWords[1].bits[5] = this.textBox2_5;
-			this.configWords[1].bits[6] = this.textBox2_6;
-			this.configWords[1].bits[7] = this.textBox2_7;
-			this.configWords[1].bits[8] = this.textBox2_8;
-			this.configWords[1].bits[9] = this.textBox2_9;
-			this.configWords[1].bits[10] = this.textBox2_10;
-			this.configWords[1].bits[11] = this.textBox2_11;
-			this.configWords[1].bits[12] = this.textBox2_12;
-			this.configWords[1].bits[13] = this.textBox2_13;
-			this.configWords[1].bits[14] = this.textBox2_14;
-			this.configWords[1].bits[15] = this.textBox2_15;
-			this.configWords[2].configPanel = this.panel3;
-			this.configWords[2].name = this.labelName3;
-			this.configWords[2].addr = this.labelAdr3;
-			this.configWords[2].value = this.labelVal3;
-			this.configWords[2].bits = new TextBox[16];
-			this.configWords[2].bits[0] = this.textBox3_0;
-			this.configWords[2].bits[1] = this.textBox3_1;
-			this.configWords[2].bits[2] = this.textBox3_2;
-			this.configWords[2].bits[3] = this.textBox3_3;
-			this.configWords[2].bits[4] = this.textBox3_4;
-			this.configWords[2].bits[5] = this.textBox3_5;
-			this.configWords[2].bits[6] = this.textBox3_6;
-			this.configWords[2].bits[7] = this.textBox3_7;
-			this.configWords[2].bits[8] = this.textBox3_8;
-			this.configWords[2].bits[9] = this.textBox3_9;
-			this.configWords[2].bits[10] = this.textBox3_10;
-			this.configWords[2].bits[11] = this.textBox3_11;
-			this.configWords[2].bits[12] = this.textBox3_12;
-			this.configWords[2].bits[13] = this.textBox3_13;
-			this.configWords[2].bits[14] = this.textBox3_14;
-			this.configWords[2].bits[15] = this.textBox3_15;
-			this.configWords[3].configPanel = this.panel4;
-			this.configWords[3].name = this.labelName4;
-			this.configWords[3].addr = this.labelAdr4;
-			this.configWords[3].value = this.labelVal4;
-			this.configWords[3].bits = new TextBox[16];
-			this.configWords[3].bits[0] = this.textBox4_0;
-			this.configWords[3].bits[1] = this.textBox4_1;
-			this.configWords[3].bits[2] = this.textBox4_2;
-			this.configWords[3].bits[3] = this.textBox4_3;
-			this.configWords[3].bits[4] = this.textBox4_4;
-			this.configWords[3].bits[5] = this.textBox4_5;
-			this.configWords[3].bits[6] = this.textBox4_6;
-			this.configWords[3].bits[7] = this.textBox4_7;
-			this.configWords[3].bits[8] = this.textBox4_8;
-			this.configWords[3].bits[9] = this.textBox4_9;
-			this.configWords[3].bits[10] = this.textBox4_10;
-			this.configWords[3].bits[11] = this.textBox4_11;
-			this.configWords[3].bits[12] = this.textBox4_12;
-			this.configWords[3].bits[13] = this.textBox4_13;
-			this.configWords[3].bits[14] = this.textBox4_14;
-			this.configWords[3].bits[15] = this.textBox4_15;
-			this.configWords[4].configPanel = this.panel5;
-			this.configWords[4].name = this.labelName5;
-			this.configWords[4].addr = this.labelAdr5;
-			this.configWords[4].value = this.labelVal5;
-			this.configWords[4].bits = new TextBox[16];
-			this.configWords[4].bits[0] = this.textBox5_0;
-			this.configWords[4].bits[1] = this.textBox5_1;
-			this.configWords[4].bits[2] = this.textBox5_2;
-			this.configWords[4].bits[3] = this.textBox5_3;
-			this.configWords[4].bits[4] = this.textBox5_4;
-			this.configWords[4].bits[5] = this.textBox5_5;
-			this.configWords[4].bits[6] = this.textBox5_6;
-			this.configWords[4].bits[7] = this.textBox5_7;
-			this.configWords[4].bits[8] = this.textBox5_8;
-			this.configWords[4].bits[9] = this.textBox5_9;
-			this.configWords[4].bits[10] = this.textBox5_10;
-			this.configWords[4].bits[11] = this.textBox5_11;
-			this.configWords[4].bits[12] = this.textBox5_12;
-			this.configWords[4].bits[13] = this.textBox5_13;
-			this.configWords[4].bits[14] = this.textBox5_14;
-			this.configWords[4].bits[15] = this.textBox5_15;
-			this.configWords[5].configPanel = this.panel6;
-			this.configWords[5].name = this.labelName6;
-			this.configWords[5].addr = this.labelAdr6;
-			this.configWords[5].value = this.labelVal6;
-			this.configWords[5].bits = new TextBox[16];
-			this.configWords[5].bits[0] = this.textBox6_0;
-			this.configWords[5].bits[1] = this.textBox6_1;
-			this.configWords[5].bits[2] = this.textBox6_2;
-			this.configWords[5].bits[3] = this.textBox6_3;
-			this.configWords[5].bits[4] = this.textBox6_4;
-			this.configWords[5].bits[5] = this.textBox6_5;
-			this.configWords[5].bits[6] = this.textBox6_6;
-			this.configWords[5].bits[7] = this.textBox6_7;
-			this.configWords[5].bits[8] = this.textBox6_8;
-			this.configWords[5].bits[9] = this.textBox6_9;
-			this.configWords[5].bits[10] = this.textBox6_10;
-			this.configWords[5].bits[11] = this.textBox6_11;
-			this.configWords[5].bits[12] = this.textBox6_12;
-			this.configWords[5].bits[13] = this.textBox6_13;
-			this.configWords[5].bits[14] = this.textBox6_14;
-			this.configWords[5].bits[15] = this.textBox6_15;
-			this.configWords[6].configPanel = this.panel7;
-			this.configWords[6].name = this.labelName7;
-			this.configWords[6].addr = this.labelAdr7;
-			this.configWords[6].value = this.labelVal7;
-			this.configWords[6].bits = new TextBox[16];
-			this.configWords[6].bits[0] = this.textBox7_0;
-			this.configWords[6].bits[1] = this.textBox7_1;
-			this.configWords[6].bits[2] = this.textBox7_2;
-			this.configWords[6].bits[3] = this.textBox7_3;
-			this.configWords[6].bits[4] = this.textBox7_4;
-			this.configWords[6].bits[5] = this.textBox7_5;
-			this.configWords[6].bits[6] = this.textBox7_6;
-			this.configWords[6].bits[7] = this.textBox7_7;
-			this.configWords[6].bits[8] = this.textBox7_8;
-			this.configWords[6].bits[9] = this.textBox7_9;
-			this.configWords[6].bits[10] = this.textBox7_10;
-			this.configWords[6].bits[11] = this.textBox7_11;
-			this.configWords[6].bits[12] = this.textBox7_12;
-			this.configWords[6].bits[13] = this.textBox7_13;
-			this.configWords[6].bits[14] = this.textBox7_14;
-			this.configWords[6].bits[15] = this.textBox7_15;
-			this.configWords[7].configPanel = this.panel8;
-			this.configWords[7].name = this.labelName8;
-			this.configWords[7].addr = this.labelAdr8;
-			this.configWords[7].value = this.labelVal8;
-			this.configWords[7].bits = new TextBox[16];
-			this.configWords[7].bits[0] = this.textBox8_0;
-			this.configWords[7].bits[1] = this.textBox8_1;
-			this.configWords[7].bits[2] = this.textBox8_2;
-			this.configWords[7].bits[3] = this.textBox8_3;
-			this.configWords[7].bits[4] = this.textBox8_4;
-			this.configWords[7].bits[5] = this.textBox8_5;
-			this.configWords[7].bits[6] = this.textBox8_6;
-			this.configWords[7].bits[7] = this.textBox8_7;
-			this.configWords[7].bits[8] = this.textBox8_8;
-			this.configWords[7].bits[9] = this.textBox8_9;
-			this.configWords[7].bits[10] = this.textBox8_10;
-			this.configWords[7].bits[11] = this.textBox8_11;
-			this.configWords[7].bits[12] = this.textBox8_12;
-			this.configWords[7].bits[13] = this.textBox8_13;
-			this.configWords[7].bits[14] = this.textBox8_14;
-			this.configWords[7].bits[15] = this.textBox8_15;
-			this.configWords[8].configPanel = this.panel9;
-			this.configWords[8].name = this.labelName9;
-			this.configWords[8].addr = this.labelAdr9;
-			this.configWords[8].value = this.labelVal9;
-			this.configWords[8].bits = new TextBox[16];
-			this.configWords[8].bits[0] = this.textBox9_0;
-			this.configWords[8].bits[1] = this.textBox9_1;
-			this.configWords[8].bits[2] = this.textBox9_2;
-			this.configWords[8].bits[3] = this.textBox9_3;
-			this.configWords[8].bits[4] = this.textBox9_4;
-			this.configWords[8].bits[5] = this.textBox9_5;
-			this.configWords[8].bits[6] = this.textBox9_6;
-			this.configWords[8].bits[7] = this.textBox9_7;
-			this.configWords[8].bits[8] = this.textBox9_8;
-			this.configWords[8].bits[9] = this.textBox9_9;
-			this.configWords[8].bits[10] = this.textBox9_10;
-			this.configWords[8].bits[11] = this.textBox9_11;
-			this.configWords[8].bits[12] = this.textBox9_12;
-			this.configWords[8].bits[13] = this.textBox9_13;
-			this.configWords[8].bits[14] = this.textBox9_14;
-			this.configWords[8].bits[15] = this.textBox9_15;
+			InitializeComponent();
+			for (int i = 0; i < PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigWords; i++)
+				configSaves[i] = PICkitFunctions.DeviceBuffers.ConfigWords[i];
+			configWords[0].configPanel = panel1;
+			configWords[0].name = labelName1;
+			configWords[0].addr = labelAdr1;
+			configWords[0].value = labelVal1;
+			configWords[0].bits = new TextBox[16];
+			configWords[0].bits[0] = textBox1_0;
+			configWords[0].bits[1] = textBox1_1;
+			configWords[0].bits[2] = textBox1_2;
+			configWords[0].bits[3] = textBox1_3;
+			configWords[0].bits[4] = textBox1_4;
+			configWords[0].bits[5] = textBox1_5;
+			configWords[0].bits[6] = textBox1_6;
+			configWords[0].bits[7] = textBox1_7;
+			configWords[0].bits[8] = textBox1_8;
+			configWords[0].bits[9] = textBox1_9;
+			configWords[0].bits[10] = textBox1_10;
+			configWords[0].bits[11] = textBox1_11;
+			configWords[0].bits[12] = textBox1_12;
+			configWords[0].bits[13] = textBox1_13;
+			configWords[0].bits[14] = textBox1_14;
+			configWords[0].bits[15] = textBox1_15;
+			configWords[1].configPanel = panel2;
+			configWords[1].name = labelName2;
+			configWords[1].addr = labelAdr2;
+			configWords[1].value = labelVal2;
+			configWords[1].bits = new TextBox[16];
+			configWords[1].bits[0] = textBox2_0;
+			configWords[1].bits[1] = textBox2_1;
+			configWords[1].bits[2] = textBox2_2;
+			configWords[1].bits[3] = textBox2_3;
+			configWords[1].bits[4] = textBox2_4;
+			configWords[1].bits[5] = textBox2_5;
+			configWords[1].bits[6] = textBox2_6;
+			configWords[1].bits[7] = textBox2_7;
+			configWords[1].bits[8] = textBox2_8;
+			configWords[1].bits[9] = textBox2_9;
+			configWords[1].bits[10] = textBox2_10;
+			configWords[1].bits[11] = textBox2_11;
+			configWords[1].bits[12] = textBox2_12;
+			configWords[1].bits[13] = textBox2_13;
+			configWords[1].bits[14] = textBox2_14;
+			configWords[1].bits[15] = textBox2_15;
+			configWords[2].configPanel = panel3;
+			configWords[2].name = labelName3;
+			configWords[2].addr = labelAdr3;
+			configWords[2].value = labelVal3;
+			configWords[2].bits = new TextBox[16];
+			configWords[2].bits[0] = textBox3_0;
+			configWords[2].bits[1] = textBox3_1;
+			configWords[2].bits[2] = textBox3_2;
+			configWords[2].bits[3] = textBox3_3;
+			configWords[2].bits[4] = textBox3_4;
+			configWords[2].bits[5] = textBox3_5;
+			configWords[2].bits[6] = textBox3_6;
+			configWords[2].bits[7] = textBox3_7;
+			configWords[2].bits[8] = textBox3_8;
+			configWords[2].bits[9] = textBox3_9;
+			configWords[2].bits[10] = textBox3_10;
+			configWords[2].bits[11] = textBox3_11;
+			configWords[2].bits[12] = textBox3_12;
+			configWords[2].bits[13] = textBox3_13;
+			configWords[2].bits[14] = textBox3_14;
+			configWords[2].bits[15] = textBox3_15;
+			configWords[3].configPanel = panel4;
+			configWords[3].name = labelName4;
+			configWords[3].addr = labelAdr4;
+			configWords[3].value = labelVal4;
+			configWords[3].bits = new TextBox[16];
+			configWords[3].bits[0] = textBox4_0;
+			configWords[3].bits[1] = textBox4_1;
+			configWords[3].bits[2] = textBox4_2;
+			configWords[3].bits[3] = textBox4_3;
+			configWords[3].bits[4] = textBox4_4;
+			configWords[3].bits[5] = textBox4_5;
+			configWords[3].bits[6] = textBox4_6;
+			configWords[3].bits[7] = textBox4_7;
+			configWords[3].bits[8] = textBox4_8;
+			configWords[3].bits[9] = textBox4_9;
+			configWords[3].bits[10] = textBox4_10;
+			configWords[3].bits[11] = textBox4_11;
+			configWords[3].bits[12] = textBox4_12;
+			configWords[3].bits[13] = textBox4_13;
+			configWords[3].bits[14] = textBox4_14;
+			configWords[3].bits[15] = textBox4_15;
+			configWords[4].configPanel = panel5;
+			configWords[4].name = labelName5;
+			configWords[4].addr = labelAdr5;
+			configWords[4].value = labelVal5;
+			configWords[4].bits = new TextBox[16];
+			configWords[4].bits[0] = textBox5_0;
+			configWords[4].bits[1] = textBox5_1;
+			configWords[4].bits[2] = textBox5_2;
+			configWords[4].bits[3] = textBox5_3;
+			configWords[4].bits[4] = textBox5_4;
+			configWords[4].bits[5] = textBox5_5;
+			configWords[4].bits[6] = textBox5_6;
+			configWords[4].bits[7] = textBox5_7;
+			configWords[4].bits[8] = textBox5_8;
+			configWords[4].bits[9] = textBox5_9;
+			configWords[4].bits[10] = textBox5_10;
+			configWords[4].bits[11] = textBox5_11;
+			configWords[4].bits[12] = textBox5_12;
+			configWords[4].bits[13] = textBox5_13;
+			configWords[4].bits[14] = textBox5_14;
+			configWords[4].bits[15] = textBox5_15;
+			configWords[5].configPanel = panel6;
+			configWords[5].name = labelName6;
+			configWords[5].addr = labelAdr6;
+			configWords[5].value = labelVal6;
+			configWords[5].bits = new TextBox[16];
+			configWords[5].bits[0] = textBox6_0;
+			configWords[5].bits[1] = textBox6_1;
+			configWords[5].bits[2] = textBox6_2;
+			configWords[5].bits[3] = textBox6_3;
+			configWords[5].bits[4] = textBox6_4;
+			configWords[5].bits[5] = textBox6_5;
+			configWords[5].bits[6] = textBox6_6;
+			configWords[5].bits[7] = textBox6_7;
+			configWords[5].bits[8] = textBox6_8;
+			configWords[5].bits[9] = textBox6_9;
+			configWords[5].bits[10] = textBox6_10;
+			configWords[5].bits[11] = textBox6_11;
+			configWords[5].bits[12] = textBox6_12;
+			configWords[5].bits[13] = textBox6_13;
+			configWords[5].bits[14] = textBox6_14;
+			configWords[5].bits[15] = textBox6_15;
+			configWords[6].configPanel = panel7;
+			configWords[6].name = labelName7;
+			configWords[6].addr = labelAdr7;
+			configWords[6].value = labelVal7;
+			configWords[6].bits = new TextBox[16];
+			configWords[6].bits[0] = textBox7_0;
+			configWords[6].bits[1] = textBox7_1;
+			configWords[6].bits[2] = textBox7_2;
+			configWords[6].bits[3] = textBox7_3;
+			configWords[6].bits[4] = textBox7_4;
+			configWords[6].bits[5] = textBox7_5;
+			configWords[6].bits[6] = textBox7_6;
+			configWords[6].bits[7] = textBox7_7;
+			configWords[6].bits[8] = textBox7_8;
+			configWords[6].bits[9] = textBox7_9;
+			configWords[6].bits[10] = textBox7_10;
+			configWords[6].bits[11] = textBox7_11;
+			configWords[6].bits[12] = textBox7_12;
+			configWords[6].bits[13] = textBox7_13;
+			configWords[6].bits[14] = textBox7_14;
+			configWords[6].bits[15] = textBox7_15;
+			configWords[7].configPanel = panel8;
+			configWords[7].name = labelName8;
+			configWords[7].addr = labelAdr8;
+			configWords[7].value = labelVal8;
+			configWords[7].bits = new TextBox[16];
+			configWords[7].bits[0] = textBox8_0;
+			configWords[7].bits[1] = textBox8_1;
+			configWords[7].bits[2] = textBox8_2;
+			configWords[7].bits[3] = textBox8_3;
+			configWords[7].bits[4] = textBox8_4;
+			configWords[7].bits[5] = textBox8_5;
+			configWords[7].bits[6] = textBox8_6;
+			configWords[7].bits[7] = textBox8_7;
+			configWords[7].bits[8] = textBox8_8;
+			configWords[7].bits[9] = textBox8_9;
+			configWords[7].bits[10] = textBox8_10;
+			configWords[7].bits[11] = textBox8_11;
+			configWords[7].bits[12] = textBox8_12;
+			configWords[7].bits[13] = textBox8_13;
+			configWords[7].bits[14] = textBox8_14;
+			configWords[7].bits[15] = textBox8_15;
+			configWords[8].configPanel = panel9;
+			configWords[8].name = labelName9;
+			configWords[8].addr = labelAdr9;
+			configWords[8].value = labelVal9;
+			configWords[8].bits = new TextBox[16];
+			configWords[8].bits[0] = textBox9_0;
+			configWords[8].bits[1] = textBox9_1;
+			configWords[8].bits[2] = textBox9_2;
+			configWords[8].bits[3] = textBox9_3;
+			configWords[8].bits[4] = textBox9_4;
+			configWords[8].bits[5] = textBox9_5;
+			configWords[8].bits[6] = textBox9_6;
+			configWords[8].bits[7] = textBox9_7;
+			configWords[8].bits[8] = textBox9_8;
+			configWords[8].bits[9] = textBox9_9;
+			configWords[8].bits[10] = textBox9_10;
+			configWords[8].bits[11] = textBox9_11;
+			configWords[8].bits[12] = textBox9_12;
+			configWords[8].bits[13] = textBox9_13;
+			configWords[8].bits[14] = textBox9_14;
+			configWords[8].bits[15] = textBox9_15;
 			int num = 0;
 			for (int j = 0; j < 9; j++)
 			{
 				for (int k = 0; k < 16; k++)
-				{
-					this.configWords[j].bits[k].Tag = num++;
-				}
+					configWords[j].bits[k].Tag = num++;
 			}
 		}
 
-		// Token: 0x060000A3 RID: 163 RVA: 0x0001FF9A File Offset: 0x0001EF9A
 		public void SetDisplayMask(int option)
 		{
-			this.displayMask = option;
-			this.redraw();
+			displayMask = option;
+			Redraw();
 		}
 
-		// Token: 0x060000A4 RID: 164 RVA: 0x0001FFAC File Offset: 0x0001EFAC
-		private void redraw()
+		private void Redraw()
 		{
-			int num = (int)(9 - PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigWords);
-			num *= (int)(48f * this.ScalefactH);
-			num -= (int)(24f * this.ScalefactH);
-			base.Size = new Size(base.Size.Width, base.Size.Height - num);
+			int num = 9 - PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigWords;
+			num *= (int)(48 * scalefactH);
+			num -= (int)(24 * scalefactH);
+			Size = new Size(Size.Width, Size.Height - num);
 			string[] array = new string[9];
 			for (int i = 1; i <= array.Length; i++)
-			{
 				array[i - 1] = string.Format("CONFIG{0:G}", i);
-			}
-			int num2 = (int)(PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigAddr / 2U);
+			int num2 = (int)(PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigAddr / 2);
 			int num3 = 1;
 			if (PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigWords == 1)
-			{
 				array[0] = "CONFIG";
-			}
-			if (PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].BlankValue == 65535U)
+			if (PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].BlankValue == 65535)
 			{
 				num2 = (int)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigAddr;
 				num3 = 2;
 			}
-			else if (PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].BlankValue == 16777215U)
+			else if (PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].BlankValue == 16777215)
 			{
 				if (PICkitFunctions.FamilyIsPIC24FJ())
 				{
-					for (int j = 1; j <= (int)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigWords; j++)
-					{
-						array[(int)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigWords - j] = string.Format("CW{0:G}", j);
-					}
-					num2 = (int)(PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigAddr / 2U);
+					for (int j = 1; j <= PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigWords; j++)
+						array[PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigWords - j] = string.Format("CW{0:G}", j);
+					num2 = (int)(PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigAddr / 2);
 					num3 = 2;
 				}
 				else if (PICkitFunctions.FamilyIsPIC24H() || PICkitFunctions.FamilyIsdsPIC33F() || PICkitFunctions.FamilyIsdsPIC30SMPS() || PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigWords == 9)
@@ -267,7 +252,7 @@ namespace PICkit2V3
 					array[6] = "FPOR";
 					array[7] = "FICD";
 					array[8] = "FDS";
-					num2 = (int)(PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigAddr / 2U);
+					num2 = (int)(PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigAddr / 2);
 					num3 = 2;
 				}
 				else
@@ -279,7 +264,7 @@ namespace PICkit2V3
 					array[4] = "FSS";
 					array[5] = "FGS";
 					array[6] = "FICD";
-					num2 = (int)(PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigAddr / 2U);
+					num2 = (int)(PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigAddr / 2);
 					num3 = 2;
 				}
 			}
@@ -296,181 +281,128 @@ namespace PICkit2V3
 			}
 			for (int k = 0; k < 9; k++)
 			{
-				if (k < (int)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigWords)
+				if (k < PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigWords)
 				{
 					ushort num4 = PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigMasks[k];
-					this.configWords[k].name.Text = array[k];
-					this.configWords[k].addr.Text = string.Format("{0:X}", num2 + k * num3);
+					configWords[k].name.Text = array[k];
+					configWords[k].addr.Text = string.Format("{0:X}", num2 + k * num3);
 					ushort num5 = (ushort)PICkitFunctions.DeviceBuffers.ConfigWords[k];
-					if (this.displayMask == 0)
-					{
+					if (displayMask == 0)
 						num5 &= PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigMasks[k];
-					}
-					else if (this.displayMask == 1)
-					{
+					else if (displayMask == 1)
 						num5 |= (ushort)~PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigMasks[k];
-					}
 					num5 &= (ushort)PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].BlankValue;
-					this.configWords[k].value.Text = string.Format("{0:X4}", num5);
+					configWords[k].value.Text = string.Format("{0:X4}", num5);
 					ushort num6 = 1;
 					for (int l = 0; l < 16; l++)
 					{
 						if ((PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigMasks[k] & num6) > 0)
 						{
-							if ((PICkitFunctions.DeviceBuffers.ConfigWords[k] & (uint)num6) > 0U)
-							{
-								this.configWords[k].bits[l].Text = "1";
-							}
+							if ((PICkitFunctions.DeviceBuffers.ConfigWords[k] & num6) > 0)
+								configWords[k].bits[l].Text = "1";
 							else
-							{
-								this.configWords[k].bits[l].Text = "0";
-							}
+								configWords[k].bits[l].Text = "0";
 						}
 						else
 						{
-							this.configWords[k].bits[l].Text = "-";
-							this.configWords[k].bits[l].BackColor = SystemColors.Control;
-							this.configWords[k].bits[l].Enabled = false;
+							configWords[k].bits[l].Text = "-";
+							configWords[k].bits[l].BackColor = SystemColors.Control;
+							configWords[k].bits[l].Enabled = false;
 						}
 						num6 = (ushort)(num6 << 1);
 					}
 					if (PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigMasks[k] == 0)
-					{
-						this.configWords[k].configPanel.Enabled = false;
-					}
+						configWords[k].configPanel.Enabled = false;
 				}
 				else
-				{
-					this.configWords[k].configPanel.Visible = false;
-				}
+					configWords[k].configPanel.Visible = false;
 			}
 		}
 
-		// Token: 0x060000A5 RID: 165 RVA: 0x00020550 File Offset: 0x0001F550
-		private void textBox1_15_Click(object sender, EventArgs e)
+		private void TextBox1_15_Click(object sender, EventArgs e)
 		{
 			int num = (int)((TextBox)sender).Tag;
 			int num2 = num / 16;
 			num %= 16;
 			uint num3 = 1U;
 			num3 <<= num;
-			if (this.configWords[num2].bits[num].Text == "1")
+			if (configWords[num2].bits[num].Text == "1")
 			{
-				this.configWords[num2].bits[num].Text = "0";
+				configWords[num2].bits[num].Text = "0";
 				PICkitFunctions.DeviceBuffers.ConfigWords[num2] &= ~num3;
 			}
 			else
 			{
-				this.configWords[num2].bits[num].Text = "1";
+				configWords[num2].bits[num].Text = "1";
 				PICkitFunctions.DeviceBuffers.ConfigWords[num2] |= num3;
 			}
-			if (this.configWords[num2].bits[num].ForeColor == Color.Crimson)
-			{
-				this.configWords[num2].bits[num].ForeColor = SystemColors.WindowText;
-			}
+			if (configWords[num2].bits[num].ForeColor == Color.Crimson)
+				configWords[num2].bits[num].ForeColor = SystemColors.WindowText;
 			else
-			{
-				this.configWords[num2].bits[num].ForeColor = Color.Crimson;
-			}
+				configWords[num2].bits[num].ForeColor = Color.Crimson;
 			ushort num4 = (ushort)PICkitFunctions.DeviceBuffers.ConfigWords[num2];
-			if (this.displayMask == 0)
-			{
+			if (displayMask == 0)
 				num4 &= PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigMasks[num2];
-			}
-			else if (this.displayMask == 1)
-			{
+			else if (displayMask == 1)
 				num4 |= (ushort)~PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigMasks[num2];
-			}
 			num4 &= (ushort)PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].BlankValue;
-			this.configWords[num2].value.Text = string.Format("{0:X4}", num4);
-			this.configWords[num2].value.ForeColor = SystemColors.ActiveCaption;
+			configWords[num2].value.Text = string.Format("{0:X4}", num4);
+			configWords[num2].value.ForeColor = SystemColors.ActiveCaption;
 			for (int i = 0; i < 16; i++)
 			{
-				if (this.configWords[num2].bits[i].ForeColor == Color.Crimson)
+				if (configWords[num2].bits[i].ForeColor == Color.Crimson)
 				{
-					this.configWords[num2].value.ForeColor = Color.Crimson;
+					configWords[num2].value.ForeColor = Color.Crimson;
 					return;
 				}
 			}
 		}
 
-		// Token: 0x060000A6 RID: 166 RVA: 0x00020790 File Offset: 0x0001F790
 		private void DialogConfigEdit_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			bool flag = false;
-			for (int i = 0; i < (int)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigWords; i++)
+			for (int i = 0; i < PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigWords; i++)
 			{
-				if (this.configWords[i].value.ForeColor == Color.Crimson)
+				if (configWords[i].value.ForeColor == Color.Crimson)
 				{
 					flag = true;
 					break;
 				}
 			}
-			if (flag && !this.saveChanges)
+			if (flag && !saveChanges)
 			{
 				if (MessageBox.Show("Are you sure you wish to exit\nwithout saving your Configuration edits?\n\nClick 'OK' to exit without saving your changes.", "Exit without Saving?", MessageBoxButtons.OKCancel) == DialogResult.Cancel)
-				{
 					e.Cancel = true;
-				}
-				for (int j = 0; j < (int)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigWords; j++)
-				{
+				for (int j = 0; j < PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigWords; j++)
 					PICkitFunctions.DeviceBuffers.ConfigWords[j] = this.configSaves[j];
-				}
 			}
 		}
 
-		// Token: 0x060000A7 RID: 167 RVA: 0x00020846 File Offset: 0x0001F846
-		private void buttonCancel_Click(object sender, EventArgs e)
+		private void ButtonCancel_Click(object sender, EventArgs e)
 		{
-			this.saveChanges = false;
-			base.Close();
+			saveChanges = false;
+			Close();
 		}
 
-		// Token: 0x060000A8 RID: 168 RVA: 0x00020855 File Offset: 0x0001F855
-		private void buttonSave_Click(object sender, EventArgs e)
+		private void ButtonSave_Click(object sender, EventArgs e)
 		{
-			this.saveChanges = true;
+			saveChanges = true;
 			FormPICkit2.configsEdited = true;
-			base.Close();
+			Close();
 		}
 
-		// Token: 0x040000DD RID: 221
-		private const int K_MAXCONFIGS = 9;
-
-		// Token: 0x04000232 RID: 562
-		public float ScalefactW = 1f;
-
-		// Token: 0x04000233 RID: 563
-		public float ScalefactH = 1f;
-
-		// Token: 0x04000234 RID: 564
+        public float scalefactW = 1f;
+		public float scalefactH = 1f;
 		private int displayMask;
-
-		// Token: 0x04000235 RID: 565
-		private DialogConfigEdit.config[] configWords = new DialogConfigEdit.config[9];
-
-		// Token: 0x04000236 RID: 566
-		private uint[] configSaves = new uint[9];
-
-		// Token: 0x04000237 RID: 567
+		private readonly Config[] configWords = new Config[9];
+		private readonly uint[] configSaves = new uint[9];
 		private bool saveChanges;
-
-		// Token: 0x0200000F RID: 15
-		private struct config
+		private struct Config
 		{
-			// Token: 0x04000238 RID: 568
 			public Panel configPanel;
-
-			// Token: 0x04000239 RID: 569
 			public Label name;
-
-			// Token: 0x0400023A RID: 570
 			public Label addr;
-
-			// Token: 0x0400023B RID: 571
 			public Label value;
-
-			// Token: 0x0400023C RID: 572
 			public TextBox[] bits;
 		}
 	}

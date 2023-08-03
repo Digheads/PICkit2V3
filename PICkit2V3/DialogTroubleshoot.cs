@@ -1,18 +1,14 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 
 namespace PICkit2V3
 {
-	// Token: 0x02000009 RID: 9
 	public partial class DialogTroubleshoot : Form
 	{
-		// Token: 0x0600005C RID: 92 RVA: 0x000082B0 File Offset: 0x000072B0
 		public DialogTroubleshoot()
 		{
-			this.InitializeComponent();
+			InitializeComponent();
 			PICkitFunctions.VddOff();
 			PICkitFunctions.SendScript(new byte[]
 			{
@@ -21,83 +17,85 @@ namespace PICkit2V3
 			});
 		}
 
-		// Token: 0x0600005D RID: 93 RVA: 0x000082E9 File Offset: 0x000072E9
-		private void buttonCancel_Click(object sender, EventArgs e)
+		private void ButtonCancel_Click(object sender, EventArgs e)
 		{
-			base.Close();
+			Close();
 		}
 
-		// Token: 0x0600005E RID: 94 RVA: 0x000082F4 File Offset: 0x000072F4
-		private void buttonNext_Click(object sender, EventArgs e)
+		private void ButtonNext_Click(object sender, EventArgs e)
 		{
-			if (this.panelIntro.Visible)
+			if (panelIntro.Visible)
 			{
-				this.panelIntro.Visible = false;
-				this.buttonBack.Enabled = true;
-				this.testVDD();
+				panelIntro.Visible = false;
+				buttonBack.Enabled = true;
+				TestVDD();
 				return;
 			}
-			if (this.panelStep1VDDTest.Visible)
-			{
-				PICkitFunctions.VddOff();
-				this.panelStep1VDDTest.Visible = false;
-				this.panelCautionVDD.Visible = true;
-				return;
-			}
-			if (this.panelStep1VDDExt.Visible)
-			{
-				PICkitFunctions.VddOff();
-				this.panelStep1VDDExt.Visible = false;
-				this.panelStep2VPP.Visible = true;
-				this.testVPP_Enter();
-				return;
-			}
-			if (this.panelCautionVDD.Visible)
-			{
-				this.panelCautionVDD.Visible = false;
-				this.panelStep2VPP.Visible = true;
-				this.testVPP_Enter();
-				return;
-			}
-			if (this.panelStep2VPP.Visible)
-			{
-				this.panelStep2VPP.Visible = false;
-				this.panelPGCPGD.Visible = true;
-				this.buttonNext.Enabled = false;
-				this.testPGCPGDEnter();
-			}
-		}
 
-		// Token: 0x0600005F RID: 95 RVA: 0x000083F0 File Offset: 0x000073F0
-		private void buttonBack_Click(object sender, EventArgs e)
-		{
-			if (this.panelStep1VDDExt.Visible || this.panelStep1VDDTest.Visible)
+			if (panelStep1VDDTest.Visible)
 			{
 				PICkitFunctions.VddOff();
-				this.panelIntro.Visible = true;
-				this.buttonBack.Enabled = false;
-				this.panelStep1VDDTest.Visible = false;
-				this.panelStep1VDDExt.Visible = false;
+				panelStep1VDDTest.Visible = false;
+				panelCautionVDD.Visible = true;
 				return;
 			}
-			if (this.panelCautionVDD.Visible || this.panelStep2VPP.Visible)
+
+			if (panelStep1VDDExt.Visible)
 			{
-				this.panelCautionVDD.Visible = false;
-				this.panelStep2VPP.Visible = false;
-				this.testVDD();
+				PICkitFunctions.VddOff();
+				panelStep1VDDExt.Visible = false;
+				panelStep2VPP.Visible = true;
+				TestVPP_Enter();
 				return;
 			}
-			if (this.panelPGCPGD.Visible)
+
+			if (panelCautionVDD.Visible)
 			{
-				this.panelPGCPGD.Visible = false;
-				this.panelStep2VPP.Visible = true;
-				this.buttonNext.Enabled = true;
-				this.testVPP_Enter();
+				panelCautionVDD.Visible = false;
+				panelStep2VPP.Visible = true;
+				TestVPP_Enter();
+				return;
+			}
+
+			if (panelStep2VPP.Visible)
+			{
+				panelStep2VPP.Visible = false;
+				panelPGCPGD.Visible = true;
+				buttonNext.Enabled = false;
+				TestPGCPGDEnter();
 			}
 		}
 
-		// Token: 0x06000060 RID: 96 RVA: 0x000084C0 File Offset: 0x000074C0
-		private void testVDD()
+		private void ButtonBack_Click(object sender, EventArgs e)
+		{
+			if (panelStep1VDDExt.Visible || panelStep1VDDTest.Visible)
+			{
+				PICkitFunctions.VddOff();
+				panelIntro.Visible = true;
+				buttonBack.Enabled = false;
+				panelStep1VDDTest.Visible = false;
+				panelStep1VDDExt.Visible = false;
+				return;
+			}
+
+			if (panelCautionVDD.Visible || panelStep2VPP.Visible)
+			{
+				panelCautionVDD.Visible = false;
+				panelStep2VPP.Visible = false;
+				TestVDD();
+				return;
+			}
+
+			if (panelPGCPGD.Visible)
+			{
+				panelPGCPGD.Visible = false;
+				panelStep2VPP.Visible = true;
+				buttonNext.Enabled = true;
+				TestVPP_Enter();
+			}
+		}
+
+		private void TestVDD()
 		{
 			float num = 0f;
 			float num2 = 0f;
@@ -109,44 +107,44 @@ namespace PICkit2V3
 				253
 			});
 			Thread.Sleep(250);
+
 			if (PICkitFunctions.CheckTargetPower(ref num, ref num2) == Constants.PICkit2PWR.selfpowered)
 			{
-				this.panelStep1VDDExt.Visible = true;
-				this.labelVoltageOnVDD.Text = "An external voltage was detected\non the VDD pin at " + string.Format("{0:0.0} Volts.", num);
+				panelStep1VDDExt.Visible = true;
+				labelVoltageOnVDD.Text = "An external voltage was detected\non the VDD pin at " + string.Format("{0:0.0} Volts.", num);
 				return;
 			}
-			this.panelStep1VDDExt.Visible = false;
-			this.panelStep1VDDTest.Visible = true;
-			this.labelGood.Visible = false;
-			this.labelVDDShort.Visible = false;
-			this.labelVDDLow.Visible = false;
-			this.labelReadVDD.Text = "";
-			this.numericUpDown1.Maximum = (decimal)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].VddMax;
-			this.numericUpDown1.Minimum = (decimal)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].VddMin;
-			if ((float)this.numericUpDown1.Maximum > 4.5f)
+			panelStep1VDDExt.Visible = false;
+			panelStep1VDDTest.Visible = true;
+			labelGood.Visible = false;
+			labelVDDShort.Visible = false;
+			labelVDDLow.Visible = false;
+			labelReadVDD.Text = "";
+			numericUpDown1.Maximum = (decimal)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].VddMax;
+			numericUpDown1.Minimum = (decimal)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].VddMin;
+
+			if ((float)numericUpDown1.Maximum > 4.5f)
 			{
-				this.numericUpDown1.Value = 4.5m;
+				numericUpDown1.Value = 4.5m;
 				return;
 			}
-			this.numericUpDown1.Value = this.numericUpDown1.Maximum;
+			numericUpDown1.Value = numericUpDown1.Maximum;
 		}
 
-		// Token: 0x06000061 RID: 97 RVA: 0x00008634 File Offset: 0x00007634
-		private void buttonStep1Recheck_Click(object sender, EventArgs e)
+		private void ButtonStep1Recheck_Click(object sender, EventArgs e)
 		{
-			this.testVDD();
+			TestVDD();
 		}
 
-		// Token: 0x06000062 RID: 98 RVA: 0x0000863C File Offset: 0x0000763C
-		private void buttonVDDOn_Click(object sender, EventArgs e)
+		private void ButtonVDDOn_Click(object sender, EventArgs e)
 		{
 			float num = 0f;
 			float num2 = 0f;
-			this.labelGood.Visible = false;
-			this.labelVDDShort.Visible = false;
-			this.labelVDDLow.Visible = false;
-			this.labelReadVDD.Text = "";
-			float voltage = (float)this.numericUpDown1.Value;
+			labelGood.Visible = false;
+			labelVDDShort.Visible = false;
+			labelVDDLow.Visible = false;
+			labelReadVDD.Text = "";
+			float voltage = (float)numericUpDown1.Value;
 			if (PICkitFunctions.SetVddVoltage(voltage, 0.45f))
 			{
 				PICkitFunctions.ForcePICkitPowered();
@@ -154,31 +152,32 @@ namespace PICkit2V3
 				{
 					if (PICkitFunctions.PowerStatus() != Constants.PICkit2PWR.vdd_on)
 					{
-						this.labelVDDShort.Visible = true;
-						this.labelReadVDD.Text = "Short!";
+						labelVDDShort.Visible = true;
+						labelReadVDD.Text = "Short!";
 						return;
 					}
+
 					if (PICkitFunctions.ReadPICkitVoltages(ref num, ref num2))
 					{
-						this.labelReadVDD.Text = string.Format("{0:0.0} V", num);
-						float num3 = (float)this.numericUpDown1.Value;
+						labelReadVDD.Text = string.Format("{0:0.0} V", num);
+						float num3 = (float)numericUpDown1.Value;
 						if (num3 > 4.6f)
 						{
 							num3 = 4.6f;
 						}
+
 						if (num3 - num > 0.2f)
 						{
-							this.labelVDDLow.Visible = true;
+							labelVDDLow.Visible = true;
 							return;
 						}
-						this.labelGood.Visible = true;
+						labelGood.Visible = true;
 					}
 				}
 			}
 		}
 
-		// Token: 0x06000063 RID: 99 RVA: 0x00008748 File Offset: 0x00007748
-		private void testVPP_Enter()
+		private void TestVPP_Enter()
 		{
 			PICkitFunctions.VddOff();
 			PICkitFunctions.SendScript(new byte[]
@@ -186,56 +185,48 @@ namespace PICkit2V3
 				243,
 				3
 			});
-			this.timerPGxToggle.Enabled = false;
-			this.buttonCancel.Text = "Cancel";
+			timerPGxToggle.Enabled = false;
+			buttonCancel.Text = "Cancel";
 			if (PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].Vpp < 1f)
-			{
-				this.labelStep2FamilyVPP.Text = "1) VPP for this family: " + string.Format("{0:0.0}V (=VDD)", this.numericUpDown1.Value);
-			}
+				labelStep2FamilyVPP.Text = "1) VPP for this family: " + string.Format("{0:0.0}V (=VDD)", numericUpDown1.Value);
 			else
-			{
-				this.labelStep2FamilyVPP.Text = "1) VPP for this family: " + string.Format("{0:0.0} Volts.", PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].Vpp);
-			}
-			this.labelReadVPP.Text = "";
-			this.labelVPPLow.Visible = false;
-			this.labelVPPMCLR.Visible = false;
-			this.labelVPPMCLROff.Visible = false;
-			this.labelVPPPass.Visible = false;
-			this.labelVPPShort.Visible = false;
-			this.labelVPPVDDShort.Visible = false;
+				labelStep2FamilyVPP.Text = "1) VPP for this family: " + string.Format("{0:0.0} Volts.", PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].Vpp);
+			
+			labelReadVPP.Text = "";
+			labelVPPLow.Visible = false;
+			labelVPPMCLR.Visible = false;
+			labelVPPMCLROff.Visible = false;
+			labelVPPPass.Visible = false;
+			labelVPPShort.Visible = false;
+			labelVPPVDDShort.Visible = false;
 		}
 
-		// Token: 0x06000064 RID: 100 RVA: 0x00008878 File Offset: 0x00007878
-		private void buttonTestVPP_Click(object sender, EventArgs e)
+		private void ButtonTestVPP_Click(object sender, EventArgs e)
 		{
 			float num = 0f;
 			float num2 = 0f;
-			this.labelVPPLow.Visible = false;
-			this.labelVPPMCLR.Visible = false;
-			this.labelVPPMCLROff.Visible = false;
-			this.labelVPPPass.Visible = false;
-			this.labelVPPShort.Visible = false;
-			this.labelVPPVDDShort.Visible = false;
-			this.labelReadVPP.Text = "";
+			labelVPPLow.Visible = false;
+			labelVPPMCLR.Visible = false;
+			labelVPPMCLROff.Visible = false;
+			labelVPPPass.Visible = false;
+			labelVPPShort.Visible = false;
+			labelVPPVDDShort.Visible = false;
+			labelReadVPP.Text = "";
 			Thread.Sleep(250);
 			if (PICkitFunctions.CheckTargetPower(ref num, ref num2) == Constants.PICkit2PWR.selfpowered)
-			{
 				PICkitFunctions.VddOff();
-			}
 			else
 			{
-				PICkitFunctions.SetVddVoltage((float)this.numericUpDown1.Value, 0.85f);
+				PICkitFunctions.SetVddVoltage((float)numericUpDown1.Value, 0.85f);
 				PICkitFunctions.VddOn();
 			}
+
 			float num3;
-			if (PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].Vpp > 1f)
-			{
+			if (PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].Vpp > 1)
 				num3 = PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].Vpp;
-			}
 			else
-			{
-				num3 = (float)this.numericUpDown1.Value;
-			}
+				num3 = (float)numericUpDown1.Value;
+
 			PICkitFunctions.SetVppVoltage(num3, 0.5f);
 			PICkitFunctions.SendScript(new byte[]
 			{
@@ -251,37 +242,38 @@ namespace PICkit2V3
 			Constants.PICkit2PWR pickit2PWR = PICkitFunctions.PowerStatus();
 			if (pickit2PWR == Constants.PICkit2PWR.vdderror || pickit2PWR == Constants.PICkit2PWR.vddvpperrors)
 			{
-				this.labelVPPVDDShort.Visible = true;
+				labelVPPVDDShort.Visible = true;
 				return;
 			}
+
 			if (pickit2PWR == Constants.PICkit2PWR.vpperror)
 			{
-				this.labelVPPShort.Visible = true;
-				this.labelReadVPP.Text = "Short!";
+				labelVPPShort.Visible = true;
+				labelReadVPP.Text = "Short!";
 				return;
 			}
+
 			if (pickit2PWR != Constants.PICkit2PWR.no_response && PICkitFunctions.ReadPICkitVoltages(ref num, ref num2))
 			{
-				this.labelReadVPP.Text = string.Format("{0:0.0} V", num2);
+				labelReadVPP.Text = string.Format("{0:0.0} V", num2);
 				if (num3 - num2 > 0.3f)
 				{
-					this.labelVPPLow.Visible = true;
+					labelVPPLow.Visible = true;
 					return;
 				}
-				this.labelVPPPass.Visible = true;
+				labelVPPPass.Visible = true;
 			}
 		}
 
-		// Token: 0x06000065 RID: 101 RVA: 0x00008A58 File Offset: 0x00007A58
-		private void buttonMCLR_Click(object sender, EventArgs e)
+		private void ButtonMCLR_Click(object sender, EventArgs e)
 		{
-			this.labelVPPLow.Visible = false;
-			this.labelVPPMCLR.Visible = true;
-			this.labelVPPMCLROff.Visible = false;
-			this.labelVPPPass.Visible = false;
-			this.labelVPPShort.Visible = false;
-			this.labelVPPVDDShort.Visible = false;
-			this.labelReadVPP.Text = "/MCLR On";
+			labelVPPLow.Visible = false;
+			labelVPPMCLR.Visible = true;
+			labelVPPMCLROff.Visible = false;
+			labelVPPPass.Visible = false;
+			labelVPPShort.Visible = false;
+			labelVPPVDDShort.Visible = false;
+			labelReadVPP.Text = "/MCLR On";
 			PICkitFunctions.SendScript(new byte[]
 			{
 				250,
@@ -290,16 +282,15 @@ namespace PICkit2V3
 			});
 		}
 
-		// Token: 0x06000066 RID: 102 RVA: 0x00008AE4 File Offset: 0x00007AE4
-		private void buttonMCLROff_Click(object sender, EventArgs e)
+		private void ButtonMCLROff_Click(object sender, EventArgs e)
 		{
-			this.labelVPPLow.Visible = false;
-			this.labelVPPMCLR.Visible = false;
-			this.labelVPPMCLROff.Visible = true;
-			this.labelVPPPass.Visible = false;
-			this.labelVPPShort.Visible = false;
-			this.labelVPPVDDShort.Visible = false;
-			this.labelReadVPP.Text = "/MCLR Off";
+			labelVPPLow.Visible = false;
+			labelVPPMCLR.Visible = false;
+			labelVPPMCLROff.Visible = true;
+			labelVPPPass.Visible = false;
+			labelVPPShort.Visible = false;
+			labelVPPVDDShort.Visible = false;
+			labelReadVPP.Text = "/MCLR Off";
 			PICkitFunctions.SendScript(new byte[]
 			{
 				250,
@@ -308,11 +299,10 @@ namespace PICkit2V3
 			});
 		}
 
-		// Token: 0x06000067 RID: 103 RVA: 0x00008B70 File Offset: 0x00007B70
-		private void testPGCPGDEnter()
+		private void TestPGCPGDEnter()
 		{
-			float num = 0f;
-			float num2 = 0f;
+			float num = 0;
+			float num2 = 0;
 			byte[] array = new byte[]
 			{
 				250,
@@ -321,127 +311,110 @@ namespace PICkit2V3
 			};
 			PICkitFunctions.SendScript(array);
 			PICkitFunctions.VddOff();
-			this.buttonCancel.Text = "Finished";
+			buttonCancel.Text = "Finished";
 			Thread.Sleep(200);
 			if (PICkitFunctions.CheckTargetPower(ref num, ref num2) == Constants.PICkit2PWR.selfpowered)
-			{
 				PICkitFunctions.VddOff();
-			}
 			else
 			{
-				PICkitFunctions.SetVddVoltage((float)this.numericUpDown1.Value, 0.85f);
+				PICkitFunctions.SetVddVoltage((float)numericUpDown1.Value, 0.85f);
 				PICkitFunctions.VddOn();
 				Thread.Sleep(50);
 			}
+
 			Constants.PICkit2PWR pickit2PWR = PICkitFunctions.PowerStatus();
 			if (pickit2PWR == Constants.PICkit2PWR.vdderror || pickit2PWR == Constants.PICkit2PWR.vddvpperrors)
 			{
-				this.radioButtonPGCHigh.Enabled = false;
-				this.radioButtonPGCLow.Enabled = false;
-				this.radioButtonPGDHigh.Enabled = false;
-				this.radioButtonPGDLow.Enabled = false;
-				this.radioButtonPGCToggle.Enabled = false;
-				this.radioButtonPGDToggle.Enabled = false;
-				this.labelPGxOScope.Visible = false;
-				this.labelPGxVDDShort.Visible = true;
+				radioButtonPGCHigh.Enabled = false;
+				radioButtonPGCLow.Enabled = false;
+				radioButtonPGDHigh.Enabled = false;
+				radioButtonPGDLow.Enabled = false;
+				radioButtonPGCToggle.Enabled = false;
+				radioButtonPGDToggle.Enabled = false;
+				labelPGxOScope.Visible = false;
+				labelPGxVDDShort.Visible = true;
 				return;
 			}
+
 			if (pickit2PWR == Constants.PICkit2PWR.vpperror)
 			{
-				this.radioButtonPGCHigh.Enabled = false;
-				this.radioButtonPGCLow.Enabled = false;
-				this.radioButtonPGDHigh.Enabled = false;
-				this.radioButtonPGDLow.Enabled = false;
-				this.radioButtonPGCToggle.Enabled = false;
-				this.radioButtonPGDToggle.Enabled = false;
-				this.labelPGxOScope.Visible = false;
-				this.labelPGxVDDShort.Visible = true;
+				radioButtonPGCHigh.Enabled = false;
+				radioButtonPGCLow.Enabled = false;
+				radioButtonPGDHigh.Enabled = false;
+				radioButtonPGDLow.Enabled = false;
+				radioButtonPGCToggle.Enabled = false;
+				radioButtonPGDToggle.Enabled = false;
+				labelPGxOScope.Visible = false;
+				labelPGxVDDShort.Visible = true;
 				return;
 			}
 			if (pickit2PWR != Constants.PICkit2PWR.no_response)
 			{
-				this.radioButtonPGCHigh.Enabled = true;
-				this.radioButtonPGCLow.Enabled = true;
-				this.radioButtonPGDHigh.Enabled = true;
-				this.radioButtonPGDLow.Enabled = true;
-				this.radioButtonPGCToggle.Enabled = true;
-				this.radioButtonPGDToggle.Enabled = true;
-				this.labelPGxOScope.Visible = true;
-				this.labelPGxVDDShort.Visible = false;
+				radioButtonPGCHigh.Enabled = true;
+				radioButtonPGCLow.Enabled = true;
+				radioButtonPGDHigh.Enabled = true;
+				radioButtonPGDLow.Enabled = true;
+				radioButtonPGCToggle.Enabled = true;
+				radioButtonPGDToggle.Enabled = true;
+				labelPGxOScope.Visible = true;
+				labelPGxVDDShort.Visible = false;
 				array[0] = 243;
 				array[1] = 0;
 				array[2] = 244;
 				PICkitFunctions.SendScript(array);
-				this.radioButtonPGDToggle.Checked = false;
-				this.radioButtonPGCToggle.Checked = false;
-				this.radioButtonPGCHigh.Checked = false;
-				this.radioButtonPGCLow.Checked = true;
-				this.radioButtonPGDHigh.Checked = false;
-				this.radioButtonPGDLow.Checked = true;
+				radioButtonPGDToggle.Checked = false;
+				radioButtonPGCToggle.Checked = false;
+				radioButtonPGCHigh.Checked = false;
+				radioButtonPGCLow.Checked = true;
+				radioButtonPGDHigh.Checked = false;
+				radioButtonPGDLow.Checked = true;
 			}
 		}
 
-		// Token: 0x06000068 RID: 104 RVA: 0x00008DAC File Offset: 0x00007DAC
-		private void radioButtonPGCHigh_CheckedChanged(object sender, EventArgs e)
+		private void RadioButtonPGCHigh_CheckedChanged(object sender, EventArgs e)
 		{
 			byte[] array = new byte[2];
-			if (this.radioButtonPGDToggle.Checked || this.radioButtonPGCToggle.Checked)
-			{
+			if (radioButtonPGDToggle.Checked || radioButtonPGCToggle.Checked)
 				return;
-			}
-			this.timerPGxToggle.Enabled = false;
+
+			timerPGxToggle.Enabled = false;
 			array[0] = 243;
-			if (this.radioButtonPGCHigh.Checked && this.radioButtonPGDHigh.Checked)
-			{
+			if (radioButtonPGCHigh.Checked && radioButtonPGDHigh.Checked)
 				array[1] = 12;
-			}
-			else if (this.radioButtonPGCHigh.Checked)
-			{
+			else if (radioButtonPGCHigh.Checked)
 				array[1] = 4;
-			}
-			else if (this.radioButtonPGDHigh.Checked)
-			{
+			else if (radioButtonPGDHigh.Checked)
 				array[1] = 8;
-			}
 			else
-			{
 				array[1] = 0;
-			}
 			PICkitFunctions.SendScript(array);
 		}
 
-		// Token: 0x06000069 RID: 105 RVA: 0x00008E41 File Offset: 0x00007E41
-		private void radioButtonPGDToggle_Click(object sender, EventArgs e)
+		private void RadioButtonPGDToggle_Click(object sender, EventArgs e)
 		{
-			this.PGxToggle();
+			PGxToggle();
 		}
 
-		// Token: 0x0600006A RID: 106 RVA: 0x00008E49 File Offset: 0x00007E49
-		private void timerPGxToggle_Tick(object sender, EventArgs e)
+		private void TimerPGxToggle_Tick(object sender, EventArgs e)
 		{
-			this.PGxToggle();
+			PGxToggle();
 		}
 
-		// Token: 0x0600006B RID: 107 RVA: 0x00008E54 File Offset: 0x00007E54
 		private void PGxToggle()
 		{
-			this.timerPGxToggle.Enabled = false;
+			timerPGxToggle.Enabled = false;
 			byte b = 0;
 			byte b2 = 0;
-			if (this.radioButtonPGDToggle.Checked)
-			{
+			if (radioButtonPGDToggle.Checked)
 				b |= 8;
-			}
-			if (this.radioButtonPGCToggle.Checked)
-			{
+			if (radioButtonPGCToggle.Checked)
 				b |= 4;
-			}
-			if (this.radioButtonPGCHigh.Checked)
+			if (radioButtonPGCHigh.Checked)
 			{
 				b |= 4;
 				b2 |= 4;
 			}
-			if (this.radioButtonPGDHigh.Checked)
+			if (radioButtonPGDHigh.Checked)
 			{
 				b |= 8;
 				b2 |= 8;
@@ -466,13 +439,12 @@ namespace PICkit2V3
 				10,
 				244
 			});
-			this.timerPGxToggle.Enabled = true;
+			timerPGxToggle.Enabled = true;
 		}
 
-		// Token: 0x0600006C RID: 108 RVA: 0x00008F54 File Offset: 0x00007F54
-		private void trblshtingFormClosing(object sender, FormClosingEventArgs e)
+		private void TrblshtingFormClosing(object sender, FormClosingEventArgs e)
 		{
-			this.timerPGxToggle.Enabled = false;
+			timerPGxToggle.Enabled = false;
 			PICkitFunctions.SendScript(new byte[]
 			{
 				250,

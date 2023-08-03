@@ -1,71 +1,63 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Drawing;
 using System.Media;
 using System.Windows.Forms;
 
 namespace PICkit2V3
 {
-	// Token: 0x0200000C RID: 12
-	public partial class dialogSounds : Form
+	public partial class DialogSounds : Form
 	{
-		// Token: 0x06000091 RID: 145 RVA: 0x00010B40 File Offset: 0x0000FB40
-		public dialogSounds()
+		public DialogSounds()
 		{
-			this.InitializeComponent();
-			this.checkBoxSuccess.Checked = FormPICkit2.playSuccessWav;
-			this.checkBoxWarning.Checked = FormPICkit2.playWarningWav;
-			this.checkBoxError.Checked = FormPICkit2.playErrorWav;
-			this.textBoxSuccessFile.Text = FormPICkit2.successWavFile;
-			this.textBoxWarningFile.Text = FormPICkit2.warningWavFile;
-			this.textBoxErrorFile.Text = FormPICkit2.errorWavFile;
+			InitializeComponent();
+			checkBoxSuccess.Checked = FormPICkit2.playSuccessWav;
+			checkBoxWarning.Checked = FormPICkit2.playWarningWav;
+			checkBoxError.Checked = FormPICkit2.playErrorWav;
+			textBoxSuccessFile.Text = FormPICkit2.successWavFile;
+			textBoxWarningFile.Text = FormPICkit2.warningWavFile;
+			textBoxErrorFile.Text = FormPICkit2.errorWavFile;
 		}
 
-		// Token: 0x06000092 RID: 146 RVA: 0x00010BC4 File Offset: 0x0000FBC4
-		private void buttonOK_Click(object sender, EventArgs e)
+		private void ButtonOK_Click(object sender, EventArgs e)
 		{
-			FormPICkit2.playSuccessWav = this.checkBoxSuccess.Checked;
-			FormPICkit2.playWarningWav = this.checkBoxWarning.Checked;
-			FormPICkit2.playErrorWav = this.checkBoxError.Checked;
-			FormPICkit2.successWavFile = this.textBoxSuccessFile.Text;
-			FormPICkit2.warningWavFile = this.textBoxWarningFile.Text;
-			FormPICkit2.errorWavFile = this.textBoxErrorFile.Text;
-			base.Close();
+			FormPICkit2.playSuccessWav = checkBoxSuccess.Checked;
+			FormPICkit2.playWarningWav = checkBoxWarning.Checked;
+			FormPICkit2.playErrorWav = checkBoxError.Checked;
+			FormPICkit2.successWavFile = textBoxSuccessFile.Text;
+			FormPICkit2.warningWavFile = textBoxWarningFile.Text;
+			FormPICkit2.errorWavFile = textBoxErrorFile.Text;
+			Close();
 		}
 
-		// Token: 0x06000093 RID: 147 RVA: 0x00010C37 File Offset: 0x0000FC37
-		private void buttonSuccessBrowse_Click(object sender, EventArgs e)
+		private void ButtonSuccessBrowse_Click(object sender, EventArgs e)
 		{
-			this.destSoundTextBox = this.textBoxSuccessFile;
-			this.openFileDialogWAV.FileName = this.textBoxSuccessFile.Text;
-			this.openFileDialogWAV.ShowDialog();
+			destSoundTextBox = textBoxSuccessFile;
+			openFileDialogWAV.FileName = textBoxSuccessFile.Text;
+			openFileDialogWAV.ShowDialog();
 		}
 
-		// Token: 0x06000094 RID: 148 RVA: 0x00010C67 File Offset: 0x0000FC67
-		private void button1_Click(object sender, EventArgs e)
+		private void Button1_Click(object sender, EventArgs e)
 		{
-			this.destSoundTextBox = this.textBoxWarningFile;
-			this.openFileDialogWAV.FileName = this.textBoxWarningFile.Text;
-			this.openFileDialogWAV.ShowDialog();
+			destSoundTextBox = textBoxWarningFile;
+			openFileDialogWAV.FileName = textBoxWarningFile.Text;
+			openFileDialogWAV.ShowDialog();
 		}
 
-		// Token: 0x06000095 RID: 149 RVA: 0x00010C97 File Offset: 0x0000FC97
-		private void buttonErrorBrowse_Click(object sender, EventArgs e)
+		private void ButtonErrorBrowse_Click(object sender, EventArgs e)
 		{
-			this.destSoundTextBox = this.textBoxErrorFile;
-			this.openFileDialogWAV.FileName = this.textBoxErrorFile.Text;
-			this.openFileDialogWAV.ShowDialog();
+			destSoundTextBox = textBoxErrorFile;
+			openFileDialogWAV.FileName = textBoxErrorFile.Text;
+			openFileDialogWAV.ShowDialog();
 		}
 
-		// Token: 0x06000096 RID: 150 RVA: 0x00010CC8 File Offset: 0x0000FCC8
-		private void checkBoxSuccess_CheckedChanged(object sender, EventArgs e)
+		private void CheckBoxSuccess_CheckedChanged(object sender, EventArgs e)
 		{
-			if (this.checkBoxSuccess.Checked)
+			if (checkBoxSuccess.Checked)
 			{
 				try
 				{
-					this.wavPlayer.SoundLocation = this.textBoxSuccessFile.Text;
-					this.wavPlayer.Play();
+					wavPlayer.SoundLocation = textBoxSuccessFile.Text;
+					wavPlayer.Play();
 				}
 				catch
 				{
@@ -73,15 +65,14 @@ namespace PICkit2V3
 			}
 		}
 
-		// Token: 0x06000097 RID: 151 RVA: 0x00010D18 File Offset: 0x0000FD18
-		private void checkBoxWarning_CheckedChanged(object sender, EventArgs e)
+		private void CheckBoxWarning_CheckedChanged(object sender, EventArgs e)
 		{
-			if (this.checkBoxWarning.Checked)
+			if (checkBoxWarning.Checked)
 			{
 				try
 				{
-					this.wavPlayer.SoundLocation = this.textBoxWarningFile.Text;
-					this.wavPlayer.Play();
+					wavPlayer.SoundLocation = textBoxWarningFile.Text;
+					wavPlayer.Play();
 				}
 				catch
 				{
@@ -89,15 +80,14 @@ namespace PICkit2V3
 			}
 		}
 
-		// Token: 0x06000098 RID: 152 RVA: 0x00010D68 File Offset: 0x0000FD68
-		private void checkBoxError_CheckedChanged(object sender, EventArgs e)
+		private void CheckBoxError_CheckedChanged(object sender, EventArgs e)
 		{
-			if (this.checkBoxError.Checked)
+			if (checkBoxError.Checked)
 			{
 				try
 				{
-					this.wavPlayer.SoundLocation = this.textBoxErrorFile.Text;
-					this.wavPlayer.Play();
+					wavPlayer.SoundLocation = textBoxErrorFile.Text;
+					wavPlayer.Play();
 				}
 				catch
 				{
@@ -105,16 +95,12 @@ namespace PICkit2V3
 			}
 		}
 
-		// Token: 0x06000099 RID: 153 RVA: 0x00010DB8 File Offset: 0x0000FDB8
-		private void openFileDialogWAV_FileOk(object sender, CancelEventArgs e)
+		private void OpenFileDialogWAV_FileOk(object sender, CancelEventArgs e)
 		{
-			this.destSoundTextBox.Text = this.openFileDialogWAV.FileName;
+			destSoundTextBox.Text = openFileDialogWAV.FileName;
 		}
 
-		// Token: 0x040000D6 RID: 214
-		private SoundPlayer wavPlayer = new SoundPlayer();
-
-		// Token: 0x040000D7 RID: 215
+		private readonly SoundPlayer wavPlayer = new SoundPlayer();
 		private TextBox destSoundTextBox;
 	}
 }

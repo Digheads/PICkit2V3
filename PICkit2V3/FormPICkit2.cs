@@ -5804,7 +5804,7 @@ namespace PICkit2V3
 
 		private void ToolStripMenuItemSounds_Click(object sender, EventArgs e)
 		{
-			dialogSounds dialogSounds = new dialogSounds();
+			DialogSounds dialogSounds = new DialogSounds();
 			dialogSounds.ShowDialog();
 			UpdateAlertSoundCheck();
 		}

@@ -183,7 +183,7 @@ namespace PICkit2V3
 
 		private void UpdateDisplay()
 		{
-			Bitmap bitmap = DrawSampleData(lastZoomLevel, lastTrigPos, firstSample);
+			Bitmap bitmap = DrawSampleData(lastZoomLevel, lastTrigPos);
 			pictureBoxDisplay.Width = bitmap.Width;
 			if (!checkBoxCursors.Checked)
 				pictureBoxDisplay.Image = bitmap;
@@ -213,7 +213,7 @@ namespace PICkit2V3
 			labelTimeScale.Text = string.Format("{0:G} ", num) + str + " / Div";
 		}
 
-		private Bitmap DrawSampleData(int zoom, int triggerPos, int startPos)
+		private Bitmap DrawSampleData(int zoom, int triggerPos)
 		{
 			int num = 100;
 			int num2 = 1;
@@ -751,14 +751,14 @@ namespace PICkit2V3
 			array[num++] = (byte)(postTrigCount - 1 & 255);
 			array[num++] = (byte)(postTrigCount - 1 >> 8 & 255);
 			array[num++] = sampleFactors[comboBoxSampleRate.SelectedIndex];
-			PICkitFunctions.writeUSB(array);
+			PICkitFunctions.WriteUSB(array);
 			timerRun.Enabled = true;
 		}
 
 		private void TimerRun_Tick(object sender, EventArgs e)
 		{
 			timerRun.Enabled = false;
-			bool flag = PICkitFunctions.readUSB();
+			bool flag = PICkitFunctions.ReadUSB();
 			Thread.Sleep(250);
 			RemoveOwnedForm(trigDialog);
 			trigDialog.Close();
@@ -780,7 +780,7 @@ namespace PICkit2V3
 			array2[num2++] = 185;
 			array2[num2++] = 0;
 			array2[num2++] = 6;
-			PICkitFunctions.writeUSB(array2);
+			PICkitFunctions.WriteUSB(array2);
 			PICkitFunctions.UploadDataNoLen();
 			Array.Copy(PICkitFunctions.Usb_read_array, 1, array, 0, 64);
 			PICkitFunctions.UploadDataNoLen();
@@ -789,7 +789,7 @@ namespace PICkit2V3
 			array2[num2++] = 185;
 			array2[num2++] = 128;
 			array2[num2++] = 6;
-			PICkitFunctions.writeUSB(array2);
+			PICkitFunctions.WriteUSB(array2);
 			PICkitFunctions.UploadDataNoLen();
 			Array.Copy(PICkitFunctions.Usb_read_array, 1, array, 128, 64);
 			PICkitFunctions.UploadDataNoLen();
@@ -798,7 +798,7 @@ namespace PICkit2V3
 			array2[num2++] = 185;
 			array2[num2++] = 0;
 			array2[num2++] = 7;
-			PICkitFunctions.writeUSB(array2);
+			PICkitFunctions.WriteUSB(array2);
 			PICkitFunctions.UploadDataNoLen();
 			Array.Copy(PICkitFunctions.Usb_read_array, 1, array, 256, 64);
 			PICkitFunctions.UploadDataNoLen();
@@ -807,7 +807,7 @@ namespace PICkit2V3
 			array2[num2++] = 185;
 			array2[num2++] = 128;
 			array2[num2++] = 7;
-			PICkitFunctions.writeUSB(array2);
+			PICkitFunctions.WriteUSB(array2);
 			PICkitFunctions.UploadDataNoLen();
 			Array.Copy(PICkitFunctions.Usb_read_array, 1, array, 384, 64);
 			PICkitFunctions.UploadDataNoLen();
@@ -1094,7 +1094,7 @@ namespace PICkit2V3
 				array[num3++] = 1;
 				array[num3++] = 232;
 				array[num3++] = 20;
-				return PICkitFunctions.writeUSB(array);
+				return PICkitFunctions.WriteUSB(array);
 			}
 			return false;
 		}
@@ -1112,7 +1112,7 @@ namespace PICkit2V3
 			array[num++] = 3;
 			array[num++] = 207;
 			array[num++] = 1;
-			return PICkitFunctions.writeUSB(array);
+			return PICkitFunctions.WriteUSB(array);
 		}
 
 		private bool UpdateOutputs()
@@ -1155,7 +1155,7 @@ namespace PICkit2V3
 			array[num++] = b;
 			array[num++] = 207;
 			array[num++] = b2;
-			return PICkitFunctions.writeUSB(array);
+			return PICkitFunctions.WriteUSB(array);
 		}
 
 		public void DialogLogic_KeyPress(object sender, KeyPressEventArgs e)
@@ -1212,8 +1212,8 @@ namespace PICkit2V3
 			array[num++] = 220;
 			array[num++] = 206;
 			array[num++] = 170;
-			PICkitFunctions.writeUSB(array);
-			PICkitFunctions.readUSB();
+			PICkitFunctions.WriteUSB(array);
+			PICkitFunctions.ReadUSB();
 
 			if ((PICkitFunctions.Usb_read_array[2] & 2) > 0)
 				UpdateInputBox(textBoxPin4In, "1");
@@ -1270,7 +1270,6 @@ namespace PICkit2V3
         private int lastSampleRate;
         private int lastTrigPos = 50;
         private int lastTrigDelay;
-        private readonly int firstSample;
         private readonly float[] sampleRates = new float[]
         {
             1E-06f,

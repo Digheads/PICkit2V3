@@ -146,7 +146,7 @@
     <Compile Include="DialogVDDErase.Designer.cs">
       <DependentUpon>DialogVDDErase.cs</DependentUpon>
     </Compile>
-    <Compile Include="dsPIC33_PE.cs" />
+    <Compile Include="DSPIC33_PE.cs" />
     <Compile Include="FormMultiWinEEData.cs">
       <SubType>Form</SubType>
     </Compile>

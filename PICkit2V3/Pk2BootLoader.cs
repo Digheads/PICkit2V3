@@ -1,14 +1,11 @@
-﻿using System;
-using System.Globalization;
+﻿using System.Globalization;
 using System.IO;
 using System.Threading;
 
 namespace PICkit2V3
 {
-	// Token: 0x02000044 RID: 68
 	internal class Pk2BootLoader
 	{
-		// Token: 0x060002A7 RID: 679 RVA: 0x0004EC88 File Offset: 0x0004DC88
 		public static bool ReadHexAndDownload(string fileName, ref ushort pk2num)
 		{
 			bool result;
@@ -21,7 +18,6 @@ namespace PICkit2V3
 				if (text != null)
 				{
 					PICkitFunctions.EnterBootloader();
-					PICkitFunctions.ResetPk2Number();
 					Thread.Sleep(3000);
 					pk2num = 0;
 					int i;
@@ -30,14 +26,10 @@ namespace PICkit2V3
 						if (PICkitFunctions.DetectPICkit2Device(pk2num, true) == Constants.PICkit2USB.bootloader)
 						{
 							if (PICkitFunctions.VerifyBootloaderMode())
-							{
 								break;
-							}
 						}
 						else
-						{
 							pk2num += 1;
-						}
 						Thread.Sleep(500);
 					}
 					if (i == 10)
@@ -63,7 +55,7 @@ namespace PICkit2V3
 								array[j] = byte.MaxValue;
 							}
 						}
-						flag = ((num2 & 16) == 16);
+						flag = (num2 & 16) == 16;
 						if (num3 == 0 && num2 >= 8192 && num2 < 32736)
 						{
 							if (!flag)
@@ -110,7 +102,6 @@ namespace PICkit2V3
 			return result;
 		}
 
-		// Token: 0x060002A8 RID: 680 RVA: 0x0004EEBC File Offset: 0x0004DEBC
 		public static bool ReadHexAndVerify(string fileName)
 		{
 			bool result;

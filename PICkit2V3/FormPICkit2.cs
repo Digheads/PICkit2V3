@@ -40,13 +40,13 @@ namespace PICkit2V3
 			PIC32MXFunctions.UpdateStatusWinText = new DelegateStatusWin(StatusWinWr);
 			PIC32MXFunctions.ResetStatusBar = new DelegateResetStatusBar(ResetStatusBar);
 			PIC32MXFunctions.StepStatusBar = new DelegateStepStatusBar(StepStatusBar);
-			dsPIC33_PE.UpdateStatusWinText = new DelegateStatusWin(StatusWinWr);
-			dsPIC33_PE.ResetStatusBar = new DelegateResetStatusBar(ResetStatusBar);
-			dsPIC33_PE.StepStatusBar = new DelegateStepStatusBar(StepStatusBar);
+			DSPIC33_PE.UpdateStatusWinText = new DelegateStatusWin(StatusWinWr);
+			DSPIC33_PE.ResetStatusBar = new DelegateResetStatusBar(ResetStatusBar);
+			DSPIC33_PE.StepStatusBar = new DelegateStepStatusBar(StepStatusBar);
 			PIC24F_PE.UpdateStatusWinText = new DelegateStatusWin(StatusWinWr);
 			PIC24F_PE.ResetStatusBar = new DelegateResetStatusBar(ResetStatusBar);
 			PIC24F_PE.StepStatusBar = new DelegateStepStatusBar(StepStatusBar);
-			uartWindow.VddCallback = new DelegateVddCallback(SetVddState);
+			uartWindow.vddCallback = new DelegateVddCallback(SetVddState);
 			logicWindow.VddCallback = new DelegateVddCallback(SetVddState);
 			if (!DetectPICkit2(true, true))
 			{
@@ -839,7 +839,7 @@ namespace PICkit2V3
 					{
 						displayUserIDs.Visible = false;
 						buttonShowIDMem.Visible = true;
-						if (DialogUserIDs.IDMemOpen)
+						if (DialogUserIDs.idMemOpen)
 							dialogIDMemory.UpdateIDMemoryGrid();
 					}
 				}
@@ -1877,7 +1877,7 @@ namespace PICkit2V3
 			}
 			else if (PICkitFunctions.DevFile.Families[family].DeviceIDMask > 0 && deviceVerification)
 			{
-				if (!PICkitFunctions.VerifyDeviceID(false, chkBoxVddOn.Checked))
+				if (!PICkitFunctions.VerifyDeviceID(chkBoxVddOn.Checked))
 				{
 					statusWindowColor = Constants.StatusColor.yellow;
 					if (PICkitFunctions.LastDeviceID == 0 || PICkitFunctions.LastDeviceID == PICkitFunctions.DevFile.Families[family].DeviceIDMask)
@@ -1961,7 +1961,7 @@ namespace PICkit2V3
 				Update();
 				if (UseProgExec33())
 				{
-					if (!dsPIC33_PE.PE33Read(displayStatusWindow.Text))
+					if (!DSPIC33_PE.PE33Read(displayStatusWindow.Text))
 					{
 						statusWindowColor = Constants.StatusColor.red;
 						ConditionalVddOff();
@@ -2553,7 +2553,7 @@ namespace PICkit2V3
 					progressBar1.Maximum = num3 / num5;
 					if (UseProgExec33())
 					{
-						if (!dsPIC33_PE.PE33Write(num3, displayStatusWindow.Text))
+						if (!DSPIC33_PE.PE33Write(num3, displayStatusWindow.Text))
 						{
 							statusWindowColor = Constants.StatusColor.red;
 							ConditionalVddOff();
@@ -2913,7 +2913,7 @@ namespace PICkit2V3
 				Update();
 				if (UseProgExec33())
 				{
-					if (!dsPIC33_PE.PE33BlankCheck(displayStatusWindow.Text))
+					if (!DSPIC33_PE.PE33BlankCheck(displayStatusWindow.Text))
 					{
 						ConditionalVddOff();
 						displayStatusWindow.Text = "Program Memory is not blank.";
@@ -3315,7 +3315,7 @@ namespace PICkit2V3
 					Update();
 					if (UseProgExec33())
 					{
-						if (!dsPIC33_PE.PE33VerifyCRC(displayStatusWindow.Text))
+						if (!DSPIC33_PE.PE33VerifyCRC(displayStatusWindow.Text))
 						{
 							if (!writeVerify)
 								displayStatusWindow.Text = "Verification of Program Memory failed.\n";
@@ -3668,7 +3668,6 @@ namespace PICkit2V3
 			Update();
 			PICkitFunctions.BL_Reset();
 			Thread.Sleep(5000);
-			PICkitFunctions.ResetPk2Number();
 			if (!DetectPICkit2(true, true))
 			{
 				return;
@@ -4842,10 +4841,12 @@ namespace PICkit2V3
 
 		private void OpenTestMemory()
 		{
-			formTestMem = new FormTestMemory();
-			formTestMem.UpdateMainFormGUI = new DelegateUpdateGUI(this.ExtCallUpdateGUI);
-			formTestMem.CallMainFormEraseWrCal = new DelegateWriteCal(this.ExtCallCalEraseWrite);
-			formTestMem.Show();
+            formTestMem = new FormTestMemory
+            {
+                UpdateMainFormGUI = new DelegateUpdateGUI(ExtCallUpdateGUI),
+                CallMainFormEraseWrCal = new DelegateWriteCal(ExtCallCalEraseWrite)
+            };
+            formTestMem.Show();
 		}
 
 		private void CheckBoxAutoImportWrite_Click(object sender, EventArgs e)
@@ -4979,7 +4980,7 @@ namespace PICkit2V3
 
 		private void ButtonShowIDMem_Click(object sender, EventArgs e)
 		{
-			if (!DialogUserIDs.IDMemOpen)
+			if (!DialogUserIDs.idMemOpen)
 			{
 				dialogIDMemory = new DialogUserIDs();
 				dialogIDMemory.Show();
@@ -5835,10 +5836,12 @@ namespace PICkit2V3
 
 		private void LabelConfig_Click(object sender, EventArgs e)
 		{
-			DialogConfigEdit dialogConfigEdit = new DialogConfigEdit();
-			dialogConfigEdit.scalefactW = scalefactW;
-			dialogConfigEdit.scalefactH = scalefactH;
-			if (as0BitValueToolStripMenuItem.Checked)
+            DialogConfigEdit dialogConfigEdit = new DialogConfigEdit
+            {
+                scalefactW = scalefactW,
+                scalefactH = scalefactH
+            };
+            if (as0BitValueToolStripMenuItem.Checked)
 				dialogConfigEdit.SetDisplayMask(0);
 			else if (as1BitValueToolStripMenuItem.Checked)
 				dialogConfigEdit.SetDisplayMask(1);

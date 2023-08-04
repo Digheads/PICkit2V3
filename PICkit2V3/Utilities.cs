@@ -1,12 +1,9 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 
 namespace PICkit2V3
 {
-	// Token: 0x02000002 RID: 2
 	public class Utilities
 	{
-		// Token: 0x06000001 RID: 1 RVA: 0x00002100 File Offset: 0x00001100
 		public static int Convert_Value_To_Int(string p_value)
 		{
 			uint[] array = new uint[]
@@ -185,7 +182,6 @@ namespace PICkit2V3
 			return num;
 		}
 
-		// Token: 0x06000002 RID: 2 RVA: 0x00002324 File Offset: 0x00001324
 		public static string ConvertIntASCII(int toConvert, int numBytes)
 		{
 			byte[] array = new byte[numBytes];
@@ -201,7 +197,6 @@ namespace PICkit2V3
 			return Encoding.ASCII.GetString(array);
 		}
 
-		// Token: 0x06000003 RID: 3 RVA: 0x00002374 File Offset: 0x00001374
 		public static string ConvertIntASCIIReverse(int toConvert, int numBytes)
 		{
 			numBytes += numBytes - 1;

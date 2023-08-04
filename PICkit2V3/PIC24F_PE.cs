@@ -2,14 +2,12 @@
 
 namespace PICkit2V3
 {
-	// Token: 0x02000042 RID: 66
 	public class PIC24F_PE
 	{
-		// Token: 0x06000260 RID: 608 RVA: 0x00045E60 File Offset: 0x00044E60
 		public static bool DownloadPE()
 		{
 			PICkitFunctions.RunScript(0, 1);
-			PICkitFunctions.ExecuteScript((int)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].DebugWriteVectorScript);
+			PICkitFunctions.ExecuteScript(PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].DebugWriteVectorScript);
 			if (PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ProgMemWrPrepScript != 0)
 			{
 				PICkitFunctions.DownloadAddress3(8388608);
@@ -24,16 +22,15 @@ namespace PICkit2V3
 				{
 					k = 0;
 					if (j == 0)
-					{
 						array[k++] = 167;
-					}
+
 					array[k++] = 168;
 					array[k++] = 48;
 					for (int l = 0; l < 16; l++)
 					{
-						array[k++] = (byte)(PIC24F_PE.PIC24_PE_Code[num] & 255U);
-						array[k++] = (byte)(PIC24F_PE.PIC24_PE_Code[num] >> 8 & 255U);
-						array[k++] = (byte)(PIC24F_PE.PIC24_PE_Code[num] >> 16 & 255U);
+						array[k++] = (byte)(PIC24F_PE.pic24_PE_Code[num] & 255U);
+						array[k++] = (byte)(PIC24F_PE.pic24_PE_Code[num] >> 8 & 255U);
+						array[k++] = (byte)(PIC24F_PE.pic24_PE_Code[num] >> 16 & 255U);
 						num++;
 					}
 					while (k < 64)
@@ -41,7 +38,7 @@ namespace PICkit2V3
 						array[k] = 173;
 						k++;
 					}
-					PICkitFunctions.writeUSB(array);
+					PICkitFunctions.WriteUSB(array);
 				}
 				k = 0;
 				array[k++] = 166;
@@ -102,7 +99,7 @@ namespace PICkit2V3
 					array[k] = 173;
 					k++;
 				}
-				PICkitFunctions.writeUSB(array);
+				PICkitFunctions.WriteUSB(array);
 			}
 			if (PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ProgMemWrPrepScript != 0)
 			{
@@ -114,16 +111,16 @@ namespace PICkit2V3
 			for (int m = 0; m < 16; m++)
 			{
 				PICkitFunctions.RunScriptUploadNoLen(3, 1);
-				Array.Copy(PICkitFunctions.Usb_read_array, 1L, array2, 0L, 64L);
+				Array.Copy(PICkitFunctions.Usb_read_array, 1, array2, 0, 64);
 				PICkitFunctions.UploadDataNoLen();
-				Array.Copy(PICkitFunctions.Usb_read_array, 1L, array2, 64L, 64L);
+				Array.Copy(PICkitFunctions.Usb_read_array, 1, array2, 64, 64);
 				int num2 = 0;
 				for (int n = 0; n < 32; n++)
 				{
-					uint num3 = (uint)array2[num2++];
-					num3 |= (uint)((uint)array2[num2++] << 8);
-					num3 |= (uint)((uint)array2[num2++] << 16);
-					if (num3 != PIC24F_PE.PIC24_PE_Code[num++])
+					uint num3 = array2[num2++];
+					num3 |= (uint)array2[num2++] << 8;
+					num3 |= (uint)array2[num2++] << 16;
+					if (num3 != pic24_PE_Code[num++])
 					{
 						PICkitFunctions.RunScript(1, 1);
 						return false;
@@ -134,7 +131,6 @@ namespace PICkit2V3
 			return true;
 		}
 
-		// Token: 0x06000261 RID: 609 RVA: 0x000462D8 File Offset: 0x000452D8
 		public static bool PE_Connect()
 		{
 			PICkitFunctions.RunScript(0, 1);
@@ -145,18 +141,18 @@ namespace PICkit2V3
 			}
 			byte[] array = new byte[128];
 			PICkitFunctions.RunScriptUploadNoLen(3, 1);
-			Array.Copy(PICkitFunctions.Usb_read_array, 1L, array, 0L, 64L);
+			Array.Copy(PICkitFunctions.Usb_read_array, 1, array, 0, 64);
 			PICkitFunctions.UploadDataNoLen();
-			Array.Copy(PICkitFunctions.Usb_read_array, 1L, array, 64L, 64L);
-			int num = (int)array[72];
-			num |= (int)array[73] << 8;
+			Array.Copy(PICkitFunctions.Usb_read_array, 1, array, 64, 64);
+			int num = array[72];
+			num |= array[73] << 8;
 			if (num != 155)
 			{
 				PICkitFunctions.RunScript(1, 1);
 				return false;
 			}
-			num = (int)array[75];
-			num |= (int)array[76] << 8;
+			num = array[75];
+			num |= array[76] << 8;
 			if (num != 38)
 			{
 				PICkitFunctions.RunScript(1, 1);
@@ -201,7 +197,7 @@ namespace PICkit2V3
 				array2[i] = 173;
 				i++;
 			}
-			PICkitFunctions.writeUSB(array2);
+			PICkitFunctions.WriteUSB(array2);
 			i = 0;
 			array2[i++] = 166;
 			array2[i++] = 12;
@@ -223,8 +219,8 @@ namespace PICkit2V3
 				array2[i] = 173;
 				i++;
 			}
-			PICkitFunctions.writeUSB(array2);
-			if (!PICkitFunctions.readUSB())
+			PICkitFunctions.WriteUSB(array2);
+			if (!PICkitFunctions.ReadUSB())
 			{
 				PICkitFunctions.RunScript(1, 1);
 				return false;
@@ -262,8 +258,8 @@ namespace PICkit2V3
 				array2[i] = 173;
 				i++;
 			}
-			PICkitFunctions.writeUSB(array2);
-			if (!PICkitFunctions.readUSB())
+			PICkitFunctions.WriteUSB(array2);
+			if (!PICkitFunctions.ReadUSB())
 			{
 				PICkitFunctions.RunScript(1, 1);
 				return false;
@@ -273,7 +269,7 @@ namespace PICkit2V3
 				PICkitFunctions.RunScript(1, 1);
 				return false;
 			}
-			if (PICkitFunctions.Usb_read_array[2] != 216 || PIC24F_PE.BitReverseTable[(int)PICkitFunctions.Usb_read_array[3]] != 38 || PICkitFunctions.Usb_read_array[4] != 0 || PICkitFunctions.Usb_read_array[5] != 64)
+			if (PICkitFunctions.Usb_read_array[2] != 216 || bitReverseTable[PICkitFunctions.Usb_read_array[3]] != 38 || PICkitFunctions.Usb_read_array[4] != 0 || PICkitFunctions.Usb_read_array[5] != 64)
 			{
 				PICkitFunctions.RunScript(1, 1);
 				return false;
@@ -281,57 +277,50 @@ namespace PICkit2V3
 			return true;
 		}
 
-		// Token: 0x06000262 RID: 610 RVA: 0x00046768 File Offset: 0x00045768
 		public static bool PE_DownloadAndConnect()
 		{
-			PIC24F_PE.ICSPSpeedRestore = PICkitFunctions.LastICSPSpeed;
+			icspSpeedRestore = PICkitFunctions.LastICSPSpeed;
 			if (PICkitFunctions.LastICSPSpeed < 2)
-			{
 				PICkitFunctions.SetProgrammingSpeed(2);
-			}
-			if (!PIC24F_PE.PE_Connect())
+
+			if (!PE_Connect())
 			{
-				PIC24F_PE.UpdateStatusWinText("Downloading Programming Executive...");
-				if (!PIC24F_PE.DownloadPE())
+				UpdateStatusWinText("Downloading Programming Executive...");
+				if (!DownloadPE())
 				{
-					PIC24F_PE.UpdateStatusWinText("Downloading Programming Executive...FAILED!");
-					PIC24F_PE.restoreICSPSpeed();
+					UpdateStatusWinText("Downloading Programming Executive...FAILED!");
+					RestoreICSPSpeed();
 					return false;
 				}
-				if (!PIC24F_PE.PE_Connect())
+				if (!PE_Connect())
 				{
-					PIC24F_PE.UpdateStatusWinText("Downloading Programming Executive...FAILED!");
-					PIC24F_PE.restoreICSPSpeed();
+					UpdateStatusWinText("Downloading Programming Executive...FAILED!");
+					RestoreICSPSpeed();
 					return false;
 				}
 			}
 			return true;
 		}
 
-		// Token: 0x06000263 RID: 611 RVA: 0x000467DF File Offset: 0x000457DF
-		private static void restoreICSPSpeed()
+		private static void RestoreICSPSpeed()
 		{
-			if (PIC24F_PE.ICSPSpeedRestore != PICkitFunctions.LastICSPSpeed)
-			{
-				PICkitFunctions.SetProgrammingSpeed(PIC24F_PE.ICSPSpeedRestore);
-			}
+			if (icspSpeedRestore != PICkitFunctions.LastICSPSpeed)
+				PICkitFunctions.SetProgrammingSpeed(icspSpeedRestore);
 		}
 
-		// Token: 0x06000264 RID: 612 RVA: 0x000467F8 File Offset: 0x000457F8
 		public static bool PE24FBlankCheck(string saveText)
 		{
-			if (!PIC24F_PE.PE_DownloadAndConnect())
-			{
+			if (!PE_DownloadAndConnect())
 				return false;
-			}
-			PIC24F_PE.UpdateStatusWinText(saveText);
-			int num = (int)(PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ProgramMem - (uint)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigWords);
+
+			UpdateStatusWinText(saveText);
+			int num = (int)(PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ProgramMem - PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigWords);
 			byte[] array = new byte[128];
 			byte bytesPerLocation = PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].BytesPerLocation;
 			int num2 = 32;
 			int num3 = 0;
 			byte[] array2 = new byte[64];
-			PIC24F_PE.ResetStatusBar((int)((ulong)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ProgramMem / (ulong)((long)num2)));
+			ResetStatusBar((int)(PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ProgramMem / num2));
 			uint num4 = PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].BlankValue;
 			for (;;)
 			{
@@ -347,15 +336,15 @@ namespace PICkit2V3
 				array2[i++] = 242;
 				array2[i++] = 0;
 				array2[i++] = 242;
-				array2[i++] = PIC24F_PE.BitReverseTable[num2];
+				array2[i++] = bitReverseTable[num2];
 				array2[i++] = 242;
 				array2[i++] = 0;
 				array2[i++] = 242;
-				array2[i++] = PIC24F_PE.BitReverseTable[num3 >> 15 & 255];
+				array2[i++] = bitReverseTable[num3 >> 15 & 255];
 				array2[i++] = 242;
-				array2[i++] = PIC24F_PE.BitReverseTable[num3 >> 7 & 255];
+				array2[i++] = bitReverseTable[num3 >> 7 & 255];
 				array2[i++] = 242;
-				array2[i++] = PIC24F_PE.BitReverseTable[num3 << 1 & 255];
+				array2[i++] = bitReverseTable[num3 << 1 & 255];
 				array2[i++] = 243;
 				array2[i++] = 2;
 				array2[i++] = 231;
@@ -378,83 +367,73 @@ namespace PICkit2V3
 					array2[i] = 173;
 					i++;
 				}
-				PICkitFunctions.writeUSB(array2);
+				PICkitFunctions.WriteUSB(array2);
 				PICkitFunctions.GetUpload();
-				Array.Copy(PICkitFunctions.Usb_read_array, 1L, array, 0L, 64L);
+				Array.Copy(PICkitFunctions.Usb_read_array, 1, array, 0, 64);
 				PICkitFunctions.GetUpload();
-				Array.Copy(PICkitFunctions.Usb_read_array, 1L, array, 64L, 64L);
+				Array.Copy(PICkitFunctions.Usb_read_array, 1, array, 64, 64);
 				int num5 = 0;
 				for (int j = 0; j < num2; j += 2)
 				{
-					uint num6 = (uint)((uint)PIC24F_PE.BitReverseTable[(int)array[num5++]] << 8);
-					num6 |= (uint)PIC24F_PE.BitReverseTable[(int)array[num5++]];
-					uint num7 = (uint)((uint)PIC24F_PE.BitReverseTable[(int)array[num5++]] << 16);
-					num6 |= (uint)((uint)PIC24F_PE.BitReverseTable[(int)array[num5++]] << 16);
-					num7 |= (uint)((uint)PIC24F_PE.BitReverseTable[(int)array[num5++]] << 8);
-					num7 |= (uint)PIC24F_PE.BitReverseTable[(int)array[num5++]];
+					uint num6 = (uint)bitReverseTable[array[num5++]] << 8;
+					num6 |= bitReverseTable[array[num5++]];
+					uint num7 = (uint)bitReverseTable[array[num5++]] << 16;
+					num6 |= (uint)bitReverseTable[array[num5++]] << 16;
+					num7 |= (uint)bitReverseTable[array[num5++]] << 8;
+					num7 |= bitReverseTable[array[num5++]];
 					if (num3 >= num)
-					{
-						num4 = (16711680U | (uint)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigBlank[num3 - num]);
-					}
+						num4 = 16711680U | (uint)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigBlank[num3 - num];
+
 					if (num4 != num6)
-					{
 						goto Block_4;
-					}
+
 					num3++;
 					if (num3 >= num)
-					{
-						num4 = (16711680U | (uint)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigBlank[num3 - num]);
-					}
+						num4 = 16711680U | (uint)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigBlank[num3 - num];
+
 					if (num4 != num7)
-					{
 						goto Block_6;
-					}
+
 					num3++;
-					if ((long)num3 >= (long)((ulong)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ProgramMem))
-					{
+					if (num3 >= PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ProgramMem)
 						break;
-					}
 				}
-				PIC24F_PE.StepStatusBar();
-				if ((long)num3 >= (long)((ulong)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ProgramMem))
-				{
+				StepStatusBar();
+				if (num3 >= PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ProgramMem)
 					goto Block_8;
-				}
 			}
 			Block_4:
 			string text = "Program Memory is not blank starting at address\n";
-			text += string.Format("0x{0:X6}", num3 * (int)PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].AddressIncrement);
-			PIC24F_PE.UpdateStatusWinText(text);
+			text += string.Format("0x{0:X6}", num3 * PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].AddressIncrement);
+			UpdateStatusWinText(text);
 			PICkitFunctions.RunScript(1, 1);
-			PIC24F_PE.restoreICSPSpeed();
+			RestoreICSPSpeed();
 			return false;
 			Block_6:
 			string text2 = "Program Memory is not blank starting at address\n";
 			text2 += string.Format("0x{0:X6}", num3 * (int)PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].AddressIncrement);
-			PIC24F_PE.UpdateStatusWinText(text2);
+			UpdateStatusWinText(text2);
 			PICkitFunctions.RunScript(1, 1);
-			PIC24F_PE.restoreICSPSpeed();
+			RestoreICSPSpeed();
 			return false;
 			Block_8:
 			PICkitFunctions.RunScript(1, 1);
-			PIC24F_PE.restoreICSPSpeed();
+			RestoreICSPSpeed();
 			return true;
 		}
 
-		// Token: 0x06000265 RID: 613 RVA: 0x00046D3C File Offset: 0x00045D3C
 		public static bool PE24FRead(string saveText)
 		{
-			if (!PIC24F_PE.PE_DownloadAndConnect())
-			{
+			if (!PE_DownloadAndConnect())
 				return false;
-			}
-			PIC24F_PE.UpdateStatusWinText(saveText);
+
+			UpdateStatusWinText(saveText);
 			byte[] array = new byte[128];
 			byte bytesPerLocation = PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].BytesPerLocation;
 			int num = 32;
 			int num2 = 0;
 			byte[] array2 = new byte[64];
-			PIC24F_PE.ResetStatusBar((int)((ulong)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ProgramMem / (ulong)((long)num)));
+			ResetStatusBar((int)(PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ProgramMem / num));
 			do
 			{
 				int i = 0;
@@ -469,15 +448,15 @@ namespace PICkit2V3
 				array2[i++] = 242;
 				array2[i++] = 0;
 				array2[i++] = 242;
-				array2[i++] = PIC24F_PE.BitReverseTable[num];
+				array2[i++] = bitReverseTable[num];
 				array2[i++] = 242;
 				array2[i++] = 0;
 				array2[i++] = 242;
-				array2[i++] = PIC24F_PE.BitReverseTable[num2 >> 15 & 255];
+				array2[i++] = bitReverseTable[num2 >> 15 & 255];
 				array2[i++] = 242;
-				array2[i++] = PIC24F_PE.BitReverseTable[num2 >> 7 & 255];
+				array2[i++] = bitReverseTable[num2 >> 7 & 255];
 				array2[i++] = 242;
-				array2[i++] = PIC24F_PE.BitReverseTable[num2 << 1 & 255];
+				array2[i++] = bitReverseTable[num2 << 1 & 255];
 				array2[i++] = 243;
 				array2[i++] = 2;
 				array2[i++] = 231;
@@ -500,73 +479,68 @@ namespace PICkit2V3
 					array2[i] = 173;
 					i++;
 				}
-				PICkitFunctions.writeUSB(array2);
+				PICkitFunctions.WriteUSB(array2);
 				PICkitFunctions.GetUpload();
-				Array.Copy(PICkitFunctions.Usb_read_array, 1L, array, 0L, 64L);
+				Array.Copy(PICkitFunctions.Usb_read_array, 1, array, 0, 64);
 				PICkitFunctions.GetUpload();
-				Array.Copy(PICkitFunctions.Usb_read_array, 1L, array, 64L, 64L);
+				Array.Copy(PICkitFunctions.Usb_read_array, 1, array, 64, 64);
 				int num3 = 0;
 				for (int j = 0; j < num; j += 2)
 				{
-					uint num4 = (uint)((uint)PIC24F_PE.BitReverseTable[(int)array[num3++]] << 8);
-					num4 |= (uint)PIC24F_PE.BitReverseTable[(int)array[num3++]];
-					uint num5 = (uint)((uint)PIC24F_PE.BitReverseTable[(int)array[num3++]] << 16);
-					num4 |= (uint)((uint)PIC24F_PE.BitReverseTable[(int)array[num3++]] << 16);
-					num5 |= (uint)((uint)PIC24F_PE.BitReverseTable[(int)array[num3++]] << 8);
-					num5 |= (uint)PIC24F_PE.BitReverseTable[(int)array[num3++]];
+					uint num4 = (uint)bitReverseTable[array[num3++]] << 8;
+					num4 |= bitReverseTable[array[num3++]];
+					uint num5 = (uint)bitReverseTable[array[num3++]] << 16;
+					num4 |= (uint)bitReverseTable[array[num3++]] << 16;
+					num5 |= (uint)bitReverseTable[array[num3++]] << 8;
+					num5 |= bitReverseTable[array[num3++]];
 					PICkitFunctions.DeviceBuffers.ProgramMemory[num2++] = num4;
 					PICkitFunctions.DeviceBuffers.ProgramMemory[num2++] = num5;
-					if ((long)num2 >= (long)((ulong)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ProgramMem))
-					{
+					if (num2 >= PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ProgramMem)
 						break;
-					}
 				}
-				PIC24F_PE.StepStatusBar();
+				StepStatusBar();
 			}
-			while ((long)num2 < (long)((ulong)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ProgramMem));
+			while (num2 < PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ProgramMem);
 			PICkitFunctions.RunScript(1, 1);
-			PIC24F_PE.restoreICSPSpeed();
+			RestoreICSPSpeed();
 			return true;
 		}
 
-		// Token: 0x06000266 RID: 614 RVA: 0x00047134 File Offset: 0x00046134
 		public static bool PE24FWrite(int endOfBuffer, string saveText, bool writeVerify)
 		{
-			if (!PIC24F_PE.PE_DownloadAndConnect())
+			if (!PE_DownloadAndConnect())
 			{
-				PIC24F_PE.PEGoodOnWrite = false;
+				peGoodOnWrite = false;
 				return false;
 			}
-			PIC24F_PE.PEGoodOnWrite = true;
-			PIC24F_PE.UpdateStatusWinText(saveText);
-			if ((long)endOfBuffer == (long)((ulong)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ProgramMem))
+			peGoodOnWrite = true;
+			UpdateStatusWinText(saveText);
+			if (endOfBuffer == PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ProgramMem)
 			{
-				for (int i = (int)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigWords; i > 0; i--)
-				{
-					PICkitFunctions.DeviceBuffers.ProgramMemory[endOfBuffer - i] &= (16711680U | (uint)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigBlank[(int)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigWords - i]);
-				}
+				for (int i = PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigWords; i > 0; i--)
+					PICkitFunctions.DeviceBuffers.ProgramMemory[endOfBuffer - i] &= 16711680U | PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigBlank[PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ConfigWords - i];
 			}
 			byte[] array = new byte[256];
 			int num = 64;
 			int num2 = 0;
-			PIC24F_PE.ResetStatusBar(endOfBuffer / num);
+			ResetStatusBar(endOfBuffer / num);
 			for (;;)
 			{
 				int num3 = 0;
 				for (int j = 0; j < num; j += 2)
 				{
 					uint num4 = PICkitFunctions.DeviceBuffers.ProgramMemory[num2++];
-					array[num3 + 1] = PIC24F_PE.BitReverseTable[(int)((UIntPtr)(num4 & 255U))];
+					array[num3 + 1] = bitReverseTable[(int)(num4 & 255U)];
 					num4 >>= 8;
-					array[num3] = PIC24F_PE.BitReverseTable[(int)((UIntPtr)(num4 & 255U))];
+					array[num3] = bitReverseTable[(int)(num4 & 255U)];
 					num4 >>= 8;
-					array[num3 + 3] = PIC24F_PE.BitReverseTable[(int)((UIntPtr)(num4 & 255U))];
+					array[num3 + 3] = bitReverseTable[(int)(num4 & 255U)];
 					num4 = PICkitFunctions.DeviceBuffers.ProgramMemory[num2++];
-					array[num3 + 5] = PIC24F_PE.BitReverseTable[(int)((UIntPtr)(num4 & 255U))];
+					array[num3 + 5] = bitReverseTable[(int)(num4 & 255U)];
 					num4 >>= 8;
-					array[num3 + 4] = PIC24F_PE.BitReverseTable[(int)((UIntPtr)(num4 & 255U))];
+					array[num3 + 4] = bitReverseTable[(int)(num4 & 255U)];
 					num4 >>= 8;
-					array[num3 + 2] = PIC24F_PE.BitReverseTable[(int)((UIntPtr)(num4 & 255U))];
+					array[num3 + 2] = bitReverseTable[(int)(num4 & 255U)];
 					num3 += 6;
 				}
 				for (int k = PICkitFunctions.DataClrAndDownload(array, 0); k < num3; k = PICkitFunctions.DataDownload(array, k, num3))
@@ -585,11 +559,11 @@ namespace PICkit2V3
 				array2[l++] = 242;
 				array2[l++] = 0;
 				array2[l++] = 242;
-				array2[l++] = PIC24F_PE.BitReverseTable[num2 - 64 >> 15 & 255];
+				array2[l++] = bitReverseTable[num2 - 64 >> 15 & 255];
 				array2[l++] = 242;
-				array2[l++] = PIC24F_PE.BitReverseTable[num2 - 64 >> 7 & 255];
+				array2[l++] = bitReverseTable[num2 - 64 >> 7 & 255];
 				array2[l++] = 242;
-				array2[l++] = PIC24F_PE.BitReverseTable[num2 - 64 << 1 & 255];
+				array2[l++] = bitReverseTable[num2 - 64 << 1 & 255];
 				array2[l++] = 241;
 				array2[l++] = 241;
 				array2[l++] = 241;
@@ -611,67 +585,59 @@ namespace PICkit2V3
 					array2[l] = 173;
 					l++;
 				}
-				PICkitFunctions.writeUSB(array2);
-				if (!PICkitFunctions.readUSB())
-				{
+				PICkitFunctions.WriteUSB(array2);
+				if (!PICkitFunctions.ReadUSB())
 					break;
-				}
+
 				if (PICkitFunctions.Usb_read_array[1] != 4)
-				{
 					goto Block_7;
-				}
-				if (PIC24F_PE.BitReverseTable[(int)PICkitFunctions.Usb_read_array[2]] != 21 || PICkitFunctions.Usb_read_array[3] != 0 || PICkitFunctions.Usb_read_array[4] != 0 || PIC24F_PE.BitReverseTable[(int)PICkitFunctions.Usb_read_array[5]] != 2)
-				{
+
+				if (bitReverseTable[PICkitFunctions.Usb_read_array[2]] != 21 || PICkitFunctions.Usb_read_array[3] != 0 || PICkitFunctions.Usb_read_array[4] != 0 || bitReverseTable[PICkitFunctions.Usb_read_array[5]] != 2)
 					goto IL_45D;
-				}
-				PIC24F_PE.StepStatusBar();
+
+				StepStatusBar();
 				if (num2 >= endOfBuffer)
-				{
 					goto Block_11;
-				}
 			}
-			PIC24F_PE.UpdateStatusWinText("Programming Executive Error during Write.");
+			UpdateStatusWinText("Programming Executive Error during Write.");
 			PICkitFunctions.RunScript(1, 1);
-			PIC24F_PE.restoreICSPSpeed();
+			RestoreICSPSpeed();
 			return false;
 			Block_7:
-			PIC24F_PE.UpdateStatusWinText("Programming Executive Error during Write.");
+			UpdateStatusWinText("Programming Executive Error during Write.");
 			PICkitFunctions.RunScript(1, 1);
-			PIC24F_PE.restoreICSPSpeed();
+			RestoreICSPSpeed();
 			return false;
 			IL_45D:
-			PIC24F_PE.UpdateStatusWinText("Programming Executive Error during Write.");
+			UpdateStatusWinText("Programming Executive Error during Write.");
 			PICkitFunctions.RunScript(1, 1);
-			PIC24F_PE.restoreICSPSpeed();
+			RestoreICSPSpeed();
 			return false;
 			Block_11:
 			if (!writeVerify)
 			{
 				PICkitFunctions.RunScript(1, 1);
-				PIC24F_PE.restoreICSPSpeed();
+				RestoreICSPSpeed();
 			}
 			return true;
 		}
 
-		// Token: 0x06000267 RID: 615 RVA: 0x000475E0 File Offset: 0x000465E0
 		public static bool PE24FVerify(string saveText, bool writeVerify, int lastLocation)
 		{
-			if ((!writeVerify || !PIC24F_PE.PEGoodOnWrite) && !PIC24F_PE.PE_DownloadAndConnect())
-			{
+			if ((!writeVerify || !peGoodOnWrite) && !PE_DownloadAndConnect())
 				return false;
-			}
-			PIC24F_PE.PEGoodOnWrite = false;
+
+			peGoodOnWrite = false;
 			if (!writeVerify)
-			{
 				lastLocation = (int)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ProgramMem;
-			}
-			PIC24F_PE.UpdateStatusWinText(saveText);
+
+			UpdateStatusWinText(saveText);
 			byte[] array = new byte[128];
 			byte bytesPerLocation = PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].BytesPerLocation;
 			int num = 32;
 			int num2 = 0;
 			byte[] array2 = new byte[64];
-			PIC24F_PE.ResetStatusBar(lastLocation / num);
+			ResetStatusBar(lastLocation / num);
 			for (;;)
 			{
 				int i = 0;
@@ -686,15 +652,15 @@ namespace PICkit2V3
 				array2[i++] = 242;
 				array2[i++] = 0;
 				array2[i++] = 242;
-				array2[i++] = PIC24F_PE.BitReverseTable[num];
+				array2[i++] = bitReverseTable[num];
 				array2[i++] = 242;
 				array2[i++] = 0;
 				array2[i++] = 242;
-				array2[i++] = PIC24F_PE.BitReverseTable[num2 >> 15 & 255];
+				array2[i++] = bitReverseTable[num2 >> 15 & 255];
 				array2[i++] = 242;
-				array2[i++] = PIC24F_PE.BitReverseTable[num2 >> 7 & 255];
+				array2[i++] = bitReverseTable[num2 >> 7 & 255];
 				array2[i++] = 242;
-				array2[i++] = PIC24F_PE.BitReverseTable[num2 << 1 & 255];
+				array2[i++] = bitReverseTable[num2 << 1 & 255];
 				array2[i++] = 243;
 				array2[i++] = 2;
 				array2[i++] = 231;
@@ -717,7 +683,7 @@ namespace PICkit2V3
 					array2[i] = 173;
 					i++;
 				}
-				PICkitFunctions.writeUSB(array2);
+				PICkitFunctions.WriteUSB(array2);
 				PICkitFunctions.GetUpload();
 				Array.Copy(PICkitFunctions.Usb_read_array, 1L, array, 0L, 64L);
 				PICkitFunctions.GetUpload();
@@ -725,90 +691,61 @@ namespace PICkit2V3
 				int num3 = 0;
 				for (int j = 0; j < num; j += 2)
 				{
-					uint num4 = (uint)((uint)PIC24F_PE.BitReverseTable[(int)array[num3++]] << 8);
-					num4 |= (uint)PIC24F_PE.BitReverseTable[(int)array[num3++]];
-					uint num5 = (uint)((uint)PIC24F_PE.BitReverseTable[(int)array[num3++]] << 16);
-					num4 |= (uint)((uint)PIC24F_PE.BitReverseTable[(int)array[num3++]] << 16);
-					num5 |= (uint)((uint)PIC24F_PE.BitReverseTable[(int)array[num3++]] << 8);
-					num5 |= (uint)PIC24F_PE.BitReverseTable[(int)array[num3++]];
+					uint num4 = (uint)bitReverseTable[array[num3++]] << 8;
+					num4 |= bitReverseTable[array[num3++]];
+					uint num5 = (uint)bitReverseTable[array[num3++]] << 16;
+					num4 |= (uint)bitReverseTable[array[num3++]] << 16;
+					num5 |= (uint)bitReverseTable[array[num3++]] << 8;
+					num5 |= bitReverseTable[array[num3++]];
 					if (PICkitFunctions.DeviceBuffers.ProgramMemory[num2++] != num4)
-					{
 						goto Block_5;
-					}
+
 					if (PICkitFunctions.DeviceBuffers.ProgramMemory[num2++] != num5)
-					{
 						goto Block_7;
-					}
+
 					if (num2 >= lastLocation)
-					{
 						break;
-					}
 				}
-				PIC24F_PE.StepStatusBar();
+				StepStatusBar();
 				if (num2 >= lastLocation)
-				{
 					goto Block_10;
-				}
 			}
 			Block_5:
 			string text;
 			if (!writeVerify)
-			{
 				text = "Verification of Program Memory failed at address\n";
-			}
 			else
-			{
 				text = "Programming failed at Program Memory address\n";
-			}
-			text += string.Format("0x{0:X6}", (num2 - 1) * (int)PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].AddressIncrement);
-			PIC24F_PE.UpdateStatusWinText(text);
+
+			text += string.Format("0x{0:X6}", (num2 - 1) * PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].AddressIncrement);
+			UpdateStatusWinText(text);
 			PICkitFunctions.RunScript(1, 1);
-			PIC24F_PE.restoreICSPSpeed();
+			RestoreICSPSpeed();
 			return false;
 			Block_7:
 			string text2;
 			if (!writeVerify)
-			{
 				text2 = "Verification of Program Memory failed at address\n";
-			}
 			else
-			{
 				text2 = "Programming failed at Program Memory address\n";
-			}
-			text2 += string.Format("0x{0:X6}", (num2 - 1) * (int)PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].AddressIncrement);
-			PIC24F_PE.UpdateStatusWinText(text2);
+
+			text2 += string.Format("0x{0:X6}", (num2 - 1) * PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].AddressIncrement);
+			UpdateStatusWinText(text2);
 			PICkitFunctions.RunScript(1, 1);
-			PIC24F_PE.restoreICSPSpeed();
+			RestoreICSPSpeed();
 			return false;
 			Block_10:
 			PICkitFunctions.RunScript(1, 1);
-			PIC24F_PE.restoreICSPSpeed();
+			RestoreICSPSpeed();
 			return true;
 		}
 
-		// Token: 0x04000561 RID: 1377
-		private const int PIC24_PE_Version = 38;
-
-		// Token: 0x04000562 RID: 1378
-		private const int PIC24_PE_ID = 155;
-
-		// Token: 0x04000563 RID: 1379
-		public static DelegateStatusWin UpdateStatusWinText;
-
-		// Token: 0x04000564 RID: 1380
+        public static DelegateStatusWin UpdateStatusWinText;
 		public static DelegateResetStatusBar ResetStatusBar;
-
-		// Token: 0x04000565 RID: 1381
 		public static DelegateStepStatusBar StepStatusBar;
-
-		// Token: 0x04000566 RID: 1382
-		private static byte ICSPSpeedRestore = 0;
-
-		// Token: 0x04000567 RID: 1383
-		private static bool PEGoodOnWrite = false;
-
-		// Token: 0x04000568 RID: 1384
-		private static uint[] PIC24_PE_Code = new uint[]
+		private static byte icspSpeedRestore = 0;
+		private static bool peGoodOnWrite = false;
+		private static readonly uint[] pic24_PE_Code = new uint[]
 		{
 			262272U,
 			128U,
@@ -1324,8 +1261,7 @@ namespace PICkit2V3
 			16777215U
 		};
 
-		// Token: 0x04000569 RID: 1385
-		private static byte[] BitReverseTable = new byte[]
+		private static readonly byte[] bitReverseTable = new byte[]
 		{
 			0,
 			128,

@@ -29,7 +29,7 @@ namespace PICkit2V3
 
 		private void SetupClearButtons()
 		{
-			if (PICkitFunctions.isCalibrated())
+			if (PICkitFunctions.IsCalibrated())
 			{
 				buttonClearCal.Enabled = true;
 				buttonClearCal.Text = "Clear Calibration";

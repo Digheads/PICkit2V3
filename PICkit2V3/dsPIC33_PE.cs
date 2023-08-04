@@ -3,14 +3,12 @@ using System.Threading;
 
 namespace PICkit2V3
 {
-	// Token: 0x0200000B RID: 11
-	public class dsPIC33_PE
+	public class DSPIC33_PE
 	{
-		// Token: 0x06000082 RID: 130 RVA: 0x0000D628 File Offset: 0x0000C628
 		public static bool DownloadPE()
 		{
 			PICkitFunctions.RunScript(0, 1);
-			PICkitFunctions.ExecuteScript((int)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].DebugWriteVectorScript);
+			PICkitFunctions.ExecuteScript(PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].DebugWriteVectorScript);
 			if (PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ProgMemWrPrepScript != 0)
 			{
 				PICkitFunctions.DownloadAddress3(8388608);
@@ -26,25 +24,24 @@ namespace PICkit2V3
 				{
 					k = 0;
 					if (j == 0)
-					{
 						array[k++] = 167;
-					}
+
 					array[k++] = 168;
 					array[k++] = 48;
 					for (int l = 0; l < 16; l++)
 					{
-						array[k++] = (byte)(dsPIC33_PE.dsPIC33_PE_Code[num] & 255U);
-						array[k++] = (byte)(dsPIC33_PE.dsPIC33_PE_Code[num] >> 8 & 255U);
-						array[k++] = (byte)(dsPIC33_PE.dsPIC33_PE_Code[num] >> 16 & 255U);
+						array[k++] = (byte)(dsPIC33_PE_Code[num] & 255U);
+						array[k++] = (byte)(dsPIC33_PE_Code[num] >> 8 & 255U);
+						array[k++] = (byte)(dsPIC33_PE_Code[num] >> 16 & 255U);
 						num++;
 					}
-					num2 = dsPIC33_PE.dsPIC33_PE_Code[num - 4];
+					num2 = dsPIC33_PE_Code[num - 4];
 					while (k < 64)
 					{
 						array[k] = 173;
 						k++;
 					}
-					PICkitFunctions.writeUSB(array);
+					PICkitFunctions.WriteUSB(array);
 				}
 				k = 0;
 				array[k++] = 166;
@@ -98,7 +95,7 @@ namespace PICkit2V3
 					array[k] = 173;
 					k++;
 				}
-				PICkitFunctions.writeUSB(array);
+				PICkitFunctions.WriteUSB(array);
 				k = 0;
 				array[k++] = 166;
 				array[k++] = 0;
@@ -144,7 +141,7 @@ namespace PICkit2V3
 					array[k] = 173;
 					k++;
 				}
-				PICkitFunctions.writeUSB(array);
+				PICkitFunctions.WriteUSB(array);
 			}
 			if (PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ProgMemWrPrepScript != 0)
 			{
@@ -156,16 +153,16 @@ namespace PICkit2V3
 			for (int m = 0; m < 32; m++)
 			{
 				PICkitFunctions.RunScriptUploadNoLen(3, 1);
-				Array.Copy(PICkitFunctions.Usb_read_array, 1L, array2, 0L, 64L);
+				Array.Copy(PICkitFunctions.Usb_read_array, 1, array2, 0, 64);
 				PICkitFunctions.UploadDataNoLen();
-				Array.Copy(PICkitFunctions.Usb_read_array, 1L, array2, 64L, 64L);
+				Array.Copy(PICkitFunctions.Usb_read_array, 1, array2, 64, 64);
 				int num3 = 0;
 				for (int n = 0; n < 32; n++)
 				{
-					uint num4 = (uint)array2[num3++];
-					num4 |= (uint)((uint)array2[num3++] << 8);
-					num4 |= (uint)((uint)array2[num3++] << 16);
-					if (num4 != dsPIC33_PE.dsPIC33_PE_Code[num++])
+					uint num4 = array2[num3++];
+					num4 |= (uint)array2[num3++] << 8;
+					num4 |= (uint)array2[num3++] << 16;
+					if (num4 != dsPIC33_PE_Code[num++])
 					{
 						PICkitFunctions.RunScript(1, 1);
 						return false;
@@ -176,7 +173,6 @@ namespace PICkit2V3
 			return true;
 		}
 
-		// Token: 0x06000083 RID: 131 RVA: 0x0000DC20 File Offset: 0x0000CC20
 		public static bool PE_Connect()
 		{
 			PICkitFunctions.RunScript(0, 1);
@@ -187,18 +183,18 @@ namespace PICkit2V3
 			}
 			byte[] array = new byte[128];
 			PICkitFunctions.RunScriptUploadNoLen(3, 1);
-			Array.Copy(PICkitFunctions.Usb_read_array, 1L, array, 0L, 64L);
+			Array.Copy(PICkitFunctions.Usb_read_array, 1, array, 0, 64);
 			PICkitFunctions.UploadDataNoLen();
-			Array.Copy(PICkitFunctions.Usb_read_array, 1L, array, 64L, 64L);
-			int num = (int)array[72];
-			num |= (int)array[73] << 8;
+			Array.Copy(PICkitFunctions.Usb_read_array, 1, array, 64, 64);
+			int num = array[72];
+			num |= array[73] << 8;
 			if (num != 203)
 			{
 				PICkitFunctions.RunScript(1, 1);
 				return false;
 			}
-			num = (int)array[75];
-			num |= (int)array[76] << 8;
+			num = array[75];
+			num |= array[76] << 8;
 			if (num != 38)
 			{
 				PICkitFunctions.RunScript(1, 1);
@@ -243,7 +239,7 @@ namespace PICkit2V3
 				array2[i] = 173;
 				i++;
 			}
-			PICkitFunctions.writeUSB(array2);
+			PICkitFunctions.WriteUSB(array2);
 			i = 0;
 			array2[i++] = 166;
 			array2[i++] = 12;
@@ -265,8 +261,8 @@ namespace PICkit2V3
 				array2[i] = 173;
 				i++;
 			}
-			PICkitFunctions.writeUSB(array2);
-			if (!PICkitFunctions.readUSB())
+			PICkitFunctions.WriteUSB(array2);
+			if (!PICkitFunctions.ReadUSB())
 			{
 				PICkitFunctions.RunScript(1, 1);
 				return false;
@@ -304,8 +300,8 @@ namespace PICkit2V3
 				array2[i] = 173;
 				i++;
 			}
-			PICkitFunctions.writeUSB(array2);
-			if (!PICkitFunctions.readUSB())
+			PICkitFunctions.WriteUSB(array2);
+			if (!PICkitFunctions.ReadUSB())
 			{
 				PICkitFunctions.RunScript(1, 1);
 				return false;
@@ -315,7 +311,7 @@ namespace PICkit2V3
 				PICkitFunctions.RunScript(1, 1);
 				return false;
 			}
-			if (PICkitFunctions.Usb_read_array[2] != 216 || dsPIC33_PE.BitReverseTable[(int)PICkitFunctions.Usb_read_array[3]] != 38 || PICkitFunctions.Usb_read_array[4] != 0 || PICkitFunctions.Usb_read_array[5] != 64)
+			if (PICkitFunctions.Usb_read_array[2] != 216 || bitReverseTable[PICkitFunctions.Usb_read_array[3]] != 38 || PICkitFunctions.Usb_read_array[4] != 0 || PICkitFunctions.Usb_read_array[5] != 64)
 			{
 				PICkitFunctions.RunScript(1, 1);
 				return false;
@@ -323,43 +319,37 @@ namespace PICkit2V3
 			return true;
 		}
 
-		// Token: 0x06000084 RID: 132 RVA: 0x0000E0B0 File Offset: 0x0000D0B0
 		public static bool PE_DownloadAndConnect()
 		{
-			dsPIC33_PE.ICSPSpeedRestore = PICkitFunctions.LastICSPSpeed;
+            ICSPSpeedRestore = PICkitFunctions.LastICSPSpeed;
 			if (PICkitFunctions.LastICSPSpeed < 2)
-			{
 				PICkitFunctions.SetProgrammingSpeed(2);
-			}
-			if (!dsPIC33_PE.PE_Connect())
+
+			if (!PE_Connect())
 			{
-				dsPIC33_PE.UpdateStatusWinText("Downloading Programming Executive...");
-				if (!dsPIC33_PE.DownloadPE())
+                UpdateStatusWinText("Downloading Programming Executive...");
+				if (!DownloadPE())
 				{
-					dsPIC33_PE.UpdateStatusWinText("Downloading Programming Executive...FAILED!");
-					dsPIC33_PE.restoreICSPSpeed();
+                    UpdateStatusWinText("Downloading Programming Executive...FAILED!");
+                    RestoreICSPSpeed();
 					return false;
 				}
-				if (!dsPIC33_PE.PE_Connect())
+				if (!PE_Connect())
 				{
-					dsPIC33_PE.UpdateStatusWinText("Downloading Programming Executive...FAILED!");
-					dsPIC33_PE.restoreICSPSpeed();
+                    UpdateStatusWinText("Downloading Programming Executive...FAILED!");
+                    RestoreICSPSpeed();
 					return false;
 				}
 			}
 			return true;
 		}
 
-		// Token: 0x06000085 RID: 133 RVA: 0x0000E127 File Offset: 0x0000D127
-		private static void restoreICSPSpeed()
+		private static void RestoreICSPSpeed()
 		{
-			if (dsPIC33_PE.ICSPSpeedRestore != PICkitFunctions.LastICSPSpeed)
-			{
-				PICkitFunctions.SetProgrammingSpeed(dsPIC33_PE.ICSPSpeedRestore);
-			}
+			if (ICSPSpeedRestore != PICkitFunctions.LastICSPSpeed)
+				PICkitFunctions.SetProgrammingSpeed(ICSPSpeedRestore);
 		}
 
-		// Token: 0x06000086 RID: 134 RVA: 0x0000E140 File Offset: 0x0000D140
 		public static bool PEBlankCheck(uint lengthWords)
 		{
 			int i = 0;
@@ -376,11 +366,11 @@ namespace PICkit2V3
 			array[i++] = 242;
 			array[i++] = 0;
 			array[i++] = 242;
-			array[i++] = dsPIC33_PE.BitReverseTable[(int)((UIntPtr)(lengthWords >> 16 & 255U))];
+			array[i++] = bitReverseTable[(int)((UIntPtr)(lengthWords >> 16 & 255U))];
 			array[i++] = 242;
-			array[i++] = dsPIC33_PE.BitReverseTable[(int)((UIntPtr)(lengthWords >> 8 & 255U))];
+			array[i++] = bitReverseTable[(int)((UIntPtr)(lengthWords >> 8 & 255U))];
 			array[i++] = 242;
-			array[i++] = dsPIC33_PE.BitReverseTable[(int)((UIntPtr)(lengthWords & 255U))];
+			array[i++] = bitReverseTable[(int)((UIntPtr)(lengthWords & 255U))];
 			array[i++] = 243;
 			array[i++] = 2;
 			array[1] = (byte)(i - 2);
@@ -389,7 +379,7 @@ namespace PICkit2V3
 				array[i] = 173;
 				i++;
 			}
-			PICkitFunctions.writeUSB(array);
+			PICkitFunctions.WriteUSB(array);
 			Thread.Sleep(2000);
 			i = 0;
 			array[i++] = 166;
@@ -404,43 +394,39 @@ namespace PICkit2V3
 				array[i] = 173;
 				i++;
 			}
-			PICkitFunctions.writeUSB(array);
-			return PICkitFunctions.readUSB() && PICkitFunctions.Usb_read_array[1] == 4 && PICkitFunctions.Usb_read_array[2] == dsPIC33_PE.BitReverseTable[26] && PICkitFunctions.Usb_read_array[3] == dsPIC33_PE.BitReverseTable[240] && PICkitFunctions.Usb_read_array[4] == 0 && PICkitFunctions.Usb_read_array[5] == dsPIC33_PE.BitReverseTable[2];
+			PICkitFunctions.WriteUSB(array);
+			return PICkitFunctions.ReadUSB() && PICkitFunctions.Usb_read_array[1] == 4 && PICkitFunctions.Usb_read_array[2] == bitReverseTable[26] && PICkitFunctions.Usb_read_array[3] == bitReverseTable[240] && PICkitFunctions.Usb_read_array[4] == 0 && PICkitFunctions.Usb_read_array[5] == bitReverseTable[2];
 		}
 
-		// Token: 0x06000087 RID: 135 RVA: 0x0000E32C File Offset: 0x0000D32C
 		public static bool PE33BlankCheck(string saveText)
 		{
-			if (!dsPIC33_PE.PE_DownloadAndConnect())
-			{
+			if (!PE_DownloadAndConnect())
 				return false;
-			}
-			dsPIC33_PE.UpdateStatusWinText(saveText);
-			if (!dsPIC33_PE.PEBlankCheck(PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ProgramMem))
+
+			UpdateStatusWinText(saveText);
+			if (!PEBlankCheck(PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ProgramMem))
 			{
 				PICkitFunctions.RunScript(1, 1);
-				dsPIC33_PE.restoreICSPSpeed();
+				RestoreICSPSpeed();
 				return false;
 			}
 			PICkitFunctions.RunScript(1, 1);
-			dsPIC33_PE.restoreICSPSpeed();
+			RestoreICSPSpeed();
 			return true;
 		}
 
-		// Token: 0x06000088 RID: 136 RVA: 0x0000E38C File Offset: 0x0000D38C
 		public static bool PE33Read(string saveText)
 		{
-			if (!dsPIC33_PE.PE_DownloadAndConnect())
-			{
+			if (!PE_DownloadAndConnect())
 				return false;
-			}
-			dsPIC33_PE.UpdateStatusWinText(saveText);
+
+			UpdateStatusWinText(saveText);
 			byte[] array = new byte[128];
 			byte bytesPerLocation = PICkitFunctions.DevFile.Families[PICkitFunctions.GetActiveFamily()].BytesPerLocation;
 			int num = 32;
 			int num2 = 0;
 			byte[] array2 = new byte[64];
-			dsPIC33_PE.ResetStatusBar((int)((ulong)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ProgramMem / (ulong)((long)num)));
+			ResetStatusBar((int)(PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ProgramMem / num));
 			do
 			{
 				int i = 0;
@@ -455,15 +441,15 @@ namespace PICkit2V3
 				array2[i++] = 242;
 				array2[i++] = 0;
 				array2[i++] = 242;
-				array2[i++] = dsPIC33_PE.BitReverseTable[num];
+				array2[i++] = bitReverseTable[num];
 				array2[i++] = 242;
 				array2[i++] = 0;
 				array2[i++] = 242;
-				array2[i++] = dsPIC33_PE.BitReverseTable[num2 >> 15 & 255];
+				array2[i++] = bitReverseTable[num2 >> 15 & 255];
 				array2[i++] = 242;
-				array2[i++] = dsPIC33_PE.BitReverseTable[num2 >> 7 & 255];
+				array2[i++] = bitReverseTable[num2 >> 7 & 255];
 				array2[i++] = 242;
-				array2[i++] = dsPIC33_PE.BitReverseTable[num2 << 1 & 255];
+				array2[i++] = bitReverseTable[num2 << 1 & 255];
 				array2[i++] = 243;
 				array2[i++] = 2;
 				array2[i++] = 231;
@@ -486,64 +472,61 @@ namespace PICkit2V3
 					array2[i] = 173;
 					i++;
 				}
-				PICkitFunctions.writeUSB(array2);
+				PICkitFunctions.WriteUSB(array2);
 				PICkitFunctions.GetUpload();
-				Array.Copy(PICkitFunctions.Usb_read_array, 1L, array, 0L, 64L);
+				Array.Copy(PICkitFunctions.Usb_read_array, 1, array, 0, 64);
 				PICkitFunctions.GetUpload();
-				Array.Copy(PICkitFunctions.Usb_read_array, 1L, array, 64L, 64L);
+				Array.Copy(PICkitFunctions.Usb_read_array, 1, array, 64, 64);
 				int num3 = 0;
 				for (int j = 0; j < num; j += 2)
 				{
-					uint num4 = (uint)((uint)dsPIC33_PE.BitReverseTable[(int)array[num3++]] << 8);
-					num4 |= (uint)dsPIC33_PE.BitReverseTable[(int)array[num3++]];
-					uint num5 = (uint)((uint)dsPIC33_PE.BitReverseTable[(int)array[num3++]] << 16);
-					num4 |= (uint)((uint)dsPIC33_PE.BitReverseTable[(int)array[num3++]] << 16);
-					num5 |= (uint)((uint)dsPIC33_PE.BitReverseTable[(int)array[num3++]] << 8);
-					num5 |= (uint)dsPIC33_PE.BitReverseTable[(int)array[num3++]];
+					uint num4 = (uint)bitReverseTable[array[num3++]] << 8;
+					num4 |= bitReverseTable[array[num3++]];
+					uint num5 = (uint)bitReverseTable[array[num3++]] << 16;
+					num4 |= (uint)bitReverseTable[array[num3++]] << 16;
+					num5 |= (uint)bitReverseTable[array[num3++]] << 8;
+					num5 |= bitReverseTable[array[num3++]];
 					PICkitFunctions.DeviceBuffers.ProgramMemory[num2++] = num4;
 					PICkitFunctions.DeviceBuffers.ProgramMemory[num2++] = num5;
-					if ((long)num2 >= (long)((ulong)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ProgramMem))
-					{
+					if (num2 >= PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ProgramMem)
 						break;
-					}
+
 				}
-				dsPIC33_PE.StepStatusBar();
+				StepStatusBar();
 			}
-			while ((long)num2 < (long)((ulong)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ProgramMem));
+			while (num2 < PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ProgramMem);
 			PICkitFunctions.RunScript(1, 1);
-			dsPIC33_PE.restoreICSPSpeed();
+			RestoreICSPSpeed();
 			return true;
 		}
 
-		// Token: 0x06000089 RID: 137 RVA: 0x0000E784 File Offset: 0x0000D784
 		public static bool PE33Write(int endOfBuffer, string saveText)
 		{
-			if (!dsPIC33_PE.PE_DownloadAndConnect())
-			{
+			if (!PE_DownloadAndConnect())
 				return false;
-			}
-			dsPIC33_PE.UpdateStatusWinText(saveText);
+
+			UpdateStatusWinText(saveText);
 			byte[] array = new byte[256];
 			int num = 64;
 			int num2 = 0;
-			dsPIC33_PE.ResetStatusBar(endOfBuffer / num);
+			ResetStatusBar(endOfBuffer / num);
 			for (;;)
 			{
 				int num3 = 0;
 				for (int i = 0; i < num; i += 2)
 				{
 					uint num4 = PICkitFunctions.DeviceBuffers.ProgramMemory[num2++];
-					array[num3 + 1] = dsPIC33_PE.BitReverseTable[(int)((UIntPtr)(num4 & 255U))];
+					array[num3 + 1] = bitReverseTable[(int)(num4 & 255U)];
 					num4 >>= 8;
-					array[num3] = dsPIC33_PE.BitReverseTable[(int)((UIntPtr)(num4 & 255U))];
+					array[num3] = bitReverseTable[(int)(num4 & 255U)];
 					num4 >>= 8;
-					array[num3 + 3] = dsPIC33_PE.BitReverseTable[(int)((UIntPtr)(num4 & 255U))];
+					array[num3 + 3] = bitReverseTable[(int)(num4 & 255U)];
 					num4 = PICkitFunctions.DeviceBuffers.ProgramMemory[num2++];
-					array[num3 + 5] = dsPIC33_PE.BitReverseTable[(int)((UIntPtr)(num4 & 255U))];
+					array[num3 + 5] = bitReverseTable[(int)(num4 & 255U)];
 					num4 >>= 8;
-					array[num3 + 4] = dsPIC33_PE.BitReverseTable[(int)((UIntPtr)(num4 & 255U))];
+					array[num3 + 4] = bitReverseTable[(int)(num4 & 255U)];
 					num4 >>= 8;
-					array[num3 + 2] = dsPIC33_PE.BitReverseTable[(int)((UIntPtr)(num4 & 255U))];
+					array[num3 + 2] = bitReverseTable[(int)(num4 & 255U)];
 					num3 += 6;
 				}
 				for (int j = PICkitFunctions.DataClrAndDownload(array, 0); j < num3; j = PICkitFunctions.DataDownload(array, j, num3))
@@ -562,11 +545,11 @@ namespace PICkit2V3
 				array2[k++] = 242;
 				array2[k++] = 0;
 				array2[k++] = 242;
-				array2[k++] = dsPIC33_PE.BitReverseTable[num2 - 64 >> 15 & 255];
+				array2[k++] = bitReverseTable[num2 - 64 >> 15 & 255];
 				array2[k++] = 242;
-				array2[k++] = dsPIC33_PE.BitReverseTable[num2 - 64 >> 7 & 255];
+				array2[k++] = bitReverseTable[num2 - 64 >> 7 & 255];
 				array2[k++] = 242;
-				array2[k++] = dsPIC33_PE.BitReverseTable[num2 - 64 << 1 & 255];
+				array2[k++] = bitReverseTable[num2 - 64 << 1 & 255];
 				array2[k++] = 241;
 				array2[k++] = 241;
 				array2[k++] = 241;
@@ -588,56 +571,49 @@ namespace PICkit2V3
 					array2[k] = 173;
 					k++;
 				}
-				PICkitFunctions.writeUSB(array2);
-				if (!PICkitFunctions.readUSB())
-				{
+				PICkitFunctions.WriteUSB(array2);
+				if (!PICkitFunctions.ReadUSB())
 					break;
-				}
+
 				if (PICkitFunctions.Usb_read_array[1] != 4)
-				{
 					goto Block_6;
-				}
-				if (dsPIC33_PE.BitReverseTable[(int)PICkitFunctions.Usb_read_array[2]] != 21 || PICkitFunctions.Usb_read_array[3] != 0 || PICkitFunctions.Usb_read_array[4] != 0 || dsPIC33_PE.BitReverseTable[(int)PICkitFunctions.Usb_read_array[5]] != 2)
-				{
+
+				if (bitReverseTable[PICkitFunctions.Usb_read_array[2]] != 21 || PICkitFunctions.Usb_read_array[3] != 0 || PICkitFunctions.Usb_read_array[4] != 0 || bitReverseTable[PICkitFunctions.Usb_read_array[5]] != 2)
 					goto IL_3AB;
-				}
-				dsPIC33_PE.StepStatusBar();
+
+				StepStatusBar();
 				if (num2 >= endOfBuffer)
-				{
 					goto Block_10;
-				}
 			}
-			dsPIC33_PE.UpdateStatusWinText("Programming Executive Error during Write.");
+			UpdateStatusWinText("Programming Executive Error during Write.");
 			PICkitFunctions.RunScript(1, 1);
-			dsPIC33_PE.restoreICSPSpeed();
+			RestoreICSPSpeed();
 			return false;
 			Block_6:
-			dsPIC33_PE.UpdateStatusWinText("Programming Executive Error during Write.");
+			UpdateStatusWinText("Programming Executive Error during Write.");
 			PICkitFunctions.RunScript(1, 1);
-			dsPIC33_PE.restoreICSPSpeed();
+			RestoreICSPSpeed();
 			return false;
 			IL_3AB:
-			dsPIC33_PE.UpdateStatusWinText("Programming Executive Error during Write.");
+			UpdateStatusWinText("Programming Executive Error during Write.");
 			PICkitFunctions.RunScript(1, 1);
-			dsPIC33_PE.restoreICSPSpeed();
+			RestoreICSPSpeed();
 			return false;
 			Block_10:
 			PICkitFunctions.RunScript(1, 1);
-			dsPIC33_PE.restoreICSPSpeed();
+			RestoreICSPSpeed();
 			return true;
 		}
 
-		// Token: 0x0600008A RID: 138 RVA: 0x0000EB7C File Offset: 0x0000DB7C
 		public static bool PE33VerifyCRC(string saveText)
 		{
-			if (!dsPIC33_PE.PE_DownloadAndConnect())
-			{
+			if (!PE_DownloadAndConnect())
 				return false;
-			}
-			dsPIC33_PE.UpdateStatusWinText(saveText);
+
+			UpdateStatusWinText(saveText);
 			int i = 0;
 			byte[] array = new byte[64];
-			ushort num = dsPIC33_PE.CalcCRCProgMem();
+			ushort num = CalcCRCProgMem();
 			uint programMem = PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ProgramMem;
 			array[i++] = 166;
 			array[i++] = 0;
@@ -658,11 +634,11 @@ namespace PICkit2V3
 			array[i++] = 242;
 			array[i++] = 0;
 			array[i++] = 242;
-			array[i++] = dsPIC33_PE.BitReverseTable[(int)((UIntPtr)(programMem >> 16 & 255U))];
+			array[i++] = bitReverseTable[(int)(programMem >> 16 & 255U)];
 			array[i++] = 242;
-			array[i++] = dsPIC33_PE.BitReverseTable[(int)((UIntPtr)(programMem >> 8 & 255U))];
+			array[i++] = bitReverseTable[(int)(programMem >> 8 & 255U)];
 			array[i++] = 242;
-			array[i++] = dsPIC33_PE.BitReverseTable[(int)((UIntPtr)(programMem & 255U))];
+			array[i++] = bitReverseTable[(int)(programMem & 255U)];
 			array[i++] = 243;
 			array[i++] = 2;
 			array[1] = (byte)(i - 2);
@@ -671,7 +647,7 @@ namespace PICkit2V3
 				array[i] = 173;
 				i++;
 			}
-			PICkitFunctions.writeUSB(array);
+			PICkitFunctions.WriteUSB(array);
 			float num2 = PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ProgramMem * 0.034066133f;
 			Thread.Sleep((int)num2);
 			i = 0;
@@ -689,73 +665,56 @@ namespace PICkit2V3
 				array[i] = 173;
 				i++;
 			}
-			PICkitFunctions.writeUSB(array);
-			if (!PICkitFunctions.readUSB())
+			PICkitFunctions.WriteUSB(array);
+			if (!PICkitFunctions.ReadUSB())
 			{
 				PICkitFunctions.RunScript(1, 1);
-				dsPIC33_PE.restoreICSPSpeed();
+				RestoreICSPSpeed();
 				return false;
 			}
 			if (PICkitFunctions.Usb_read_array[1] != 6)
 			{
 				PICkitFunctions.RunScript(1, 1);
-				dsPIC33_PE.restoreICSPSpeed();
+				RestoreICSPSpeed();
 				return false;
 			}
 			PICkitFunctions.RunScript(1, 1);
-			dsPIC33_PE.restoreICSPSpeed();
-			ushort num3 = (ushort)dsPIC33_PE.BitReverseTable[(int)PICkitFunctions.Usb_read_array[7]];
-			num3 += (ushort)(dsPIC33_PE.BitReverseTable[(int)PICkitFunctions.Usb_read_array[6]] << 8);
+			RestoreICSPSpeed();
+			ushort num3 = bitReverseTable[PICkitFunctions.Usb_read_array[7]];
+			num3 += (ushort)(bitReverseTable[PICkitFunctions.Usb_read_array[6]] << 8);
 			return num3 == num;
 		}
 
-		// Token: 0x0600008B RID: 139 RVA: 0x0000EE38 File Offset: 0x0000DE38
 		private static ushort CalcCRCProgMem()
 		{
-			uint num = 65535U;
+			uint num = 65535;
 			int num2 = 0;
-			while ((long)num2 < (long)((ulong)PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ProgramMem))
+			while (num2 < PICkitFunctions.DevFile.PartsList[PICkitFunctions.ActivePart].ProgramMem)
 			{
 				uint num3 = PICkitFunctions.DeviceBuffers.ProgramMemory[num2];
-				dsPIC33_PE.CRC_Calculate((byte)(num3 & 255U), ref num);
-				dsPIC33_PE.CRC_Calculate((byte)(num3 >> 8 & 255U), ref num);
-				dsPIC33_PE.CRC_Calculate((byte)(num3 >> 16 & 255U), ref num);
+				CRC_Calculate((byte)(num3 & 255U), ref num);
+				CRC_Calculate((byte)(num3 >> 8 & 255U), ref num);
+				CRC_Calculate((byte)(num3 >> 16 & 255U), ref num);
 				num3 = PICkitFunctions.DeviceBuffers.ProgramMemory[num2 + 1];
-				dsPIC33_PE.CRC_Calculate((byte)(num3 >> 16 & 255U), ref num);
-				dsPIC33_PE.CRC_Calculate((byte)(num3 & 255U), ref num);
-				dsPIC33_PE.CRC_Calculate((byte)(num3 >> 8 & 255U), ref num);
+				CRC_Calculate((byte)(num3 >> 16 & 255U), ref num);
+				CRC_Calculate((byte)(num3 & 255U), ref num);
+				CRC_Calculate((byte)(num3 >> 8 & 255U), ref num);
 				num2 += 2;
 			}
 			return (ushort)(num & 65535U);
 		}
 
-		// Token: 0x0600008C RID: 140 RVA: 0x0000EF00 File Offset: 0x0000DF00
 		private static void CRC_Calculate(byte ByteValue, ref uint CRC_Value)
 		{
-			byte b = (byte)(CRC_Value >> 8 ^ (uint)ByteValue);
-			CRC_Value = ((uint)dsPIC33_PE.CRC_LUT_Array[(int)b] ^ CRC_Value << 8);
+			byte b = (byte)(CRC_Value >> 8 ^ ByteValue);
+			CRC_Value = crc_LUT_Array[b] ^ CRC_Value << 8;
 		}
 
-		// Token: 0x040000BE RID: 190
-		private const int dsPIC33_PE_Version = 38;
-
-		// Token: 0x040000BF RID: 191
-		private const int dsPIC33_PE_ID = 203;
-
-		// Token: 0x040000C0 RID: 192
-		public static DelegateStatusWin UpdateStatusWinText;
-
-		// Token: 0x040000C1 RID: 193
+        public static DelegateStatusWin UpdateStatusWinText;
 		public static DelegateResetStatusBar ResetStatusBar;
-
-		// Token: 0x040000C2 RID: 194
 		public static DelegateStepStatusBar StepStatusBar;
-
-		// Token: 0x040000C3 RID: 195
 		private static byte ICSPSpeedRestore = 0;
-
-		// Token: 0x040000C4 RID: 196
-		private static uint[] dsPIC33_PE_Code = new uint[]
+		private static readonly uint[] dsPIC33_PE_Code = new uint[]
 		{
 			262272U,
 			128U,
@@ -1783,8 +1742,7 @@ namespace PICkit2V3
 			16777215U
 		};
 
-		// Token: 0x040000C5 RID: 197
-		private static byte[] BitReverseTable = new byte[]
+		private static readonly byte[] bitReverseTable = new byte[]
 		{
 			0,
 			128,
@@ -2044,8 +2002,7 @@ namespace PICkit2V3
 			byte.MaxValue
 		};
 
-		// Token: 0x040000C6 RID: 198
-		private static ushort[] CRC_LUT_Array = new ushort[]
+		private static readonly ushort[] crc_LUT_Array = new ushort[]
 		{
 			0,
 			4129,
